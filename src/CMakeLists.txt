@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project(cog C)
+find_package(SDL REQUIRED)
+add_library (cog cog.c)
+add_executable(test test.c)
+target_link_libraries(test cog ${SDL_LIBRARY})
