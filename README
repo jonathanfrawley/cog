@@ -1,0 +1,14 @@
+To Compile
+==========
+Use cmake to build the project in a seperate directory.
+
+    mkdir build
+    cd build
+    cmake ../src
+    make
+
+To run tests:
+
+    ./tests
+
+The resultant library will be called libcog.a.
