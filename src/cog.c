@@ -10,6 +10,15 @@ static int COG_MAX_FILE_BUF = 4080;
 //TODO: Get these from config.
 static int COG_SCREEN_WIDTH = 640;
 static int COG_SCREEN_HEIGHT = 480;
+static GLfloat spritevertices[] = {
+    1.0,  1.0,  1.0, 1.0,
+    -1.0,  1.0,  1.0, 1.0,
+    -1.0, -1.0,  1.0, 1.0,
+    1.0, -1.0,  1.0, 1.0,
+};
+static GLushort spriteverticesorder[] = {
+    0,1,2,3
+};
 
 //data structures
 typedef struct
@@ -17,6 +26,15 @@ typedef struct
     int finished;
 } cog_game;
 static cog_game game;
+typedef struct
+{
+    GLuint vertid;
+    GLuint fragid;
+    GLuint vertbuffid;
+    GLuint vertorderbuffid;
+} cog_renderer;
+static cog_renderer renderer;
+
 
 typedef struct
 {
@@ -33,6 +51,7 @@ void cog_checkkeys(void);
 void cog_graphics_init(void);
 GLuint cog_graphics_load_shader(char* filename, GLenum shadertype);
 void cog_read_file(char* buf, char* filename);
+void cog_render();
 
 //implementations
 void cog_init()
@@ -48,6 +67,7 @@ void cog_mainloop()
     while(!game.finished)
     {
         cog_checkkeys();
+        cog_render();
     }
 }
 
@@ -137,32 +157,159 @@ void cog_graphics_init(void)
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LEQUAL );
     glViewport(0,0,COG_SCREEN_WIDTH,COG_SCREEN_HEIGHT);
+    glShadeModel(GL_SMOOTH);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(40, 1, 0.0001, 1000.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     if(! cog_graphics_init_shaders())
     {
         perror("Error creating shaders");
     }
+    /*
+    glGenBuffers(1, &(renderer.vertbuffid));
+    glBindBuffer(GL_ARRAY_BUFFER, renderer.vertbuffid);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(spritevertices), spritevertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    // Index array of vertex / color data
+    glGenBuffers(1, &(renderer.vertorderbuffid));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer.vertorderbuffid);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(spriteverticesorder), spriteverticesorder, GL_STATIC_DRAW);
+    */
 }
 
 int cog_graphics_init_shaders(void)
 {
-    cog_graphics_load_shader("../src/simple2d.vert", GL_VERTEX_SHADER);
-    cog_graphics_load_shader("../src/simple2d.frag", GL_FRAGMENT_SHADER);
+    renderer.vertid = cog_graphics_load_shader("../src/simple2d.vert", GL_VERTEX_SHADER);
+    renderer.fragid = cog_graphics_load_shader("../src/simple2d.frag", GL_FRAGMENT_SHADER);
+    if((renderer.vertid == 0) || (renderer.fragid == 0))
+    {
+        return 0;
+    }
+    int programid = glCreateProgram();
+    glAttachShader(programid, renderer.vertid);
+    glAttachShader(programid, renderer.fragid);
+    //glBindAttribLocation(programid, 0, "position");
+    glLinkProgram(programid);
+    int linkedstatus;
+    glGetProgramiv(programid, GL_LINK_STATUS, &linkedstatus);
+    if(! linkedstatus) {
+        int maxlength;
+        glGetShaderiv(programid, GL_INFO_LOG_LENGTH, &maxlength);
+        char* errorbuf = (char*)malloc(sizeof(char)*maxlength);
+        glGetShaderInfoLog(programid, maxlength, &maxlength, errorbuf);
+        perror(errorbuf);
+        return 0;
+    } else {
+        glUseProgram(programid);
+        return 1;
+    }
 }
 
 GLuint cog_graphics_load_shader(char* filename, GLenum shadertype)
 {
+    //char filebuf[COG_MAX_FILE_BUF];
     char filebuf[COG_MAX_FILE_BUF];
+    memset(filebuf,0,COG_MAX_FILE_BUF);
     cog_read_file(filebuf, filename);
-    printf("file is : %s\n", filebuf);
+    printf("File is \n---\n%s---\n", filebuf);
+    GLuint id = glCreateShader(shadertype);
+    //glShaderSource(id, 1, (const GLchar **)&filebuf, 0);
+    char* buf = &(filebuf[0]);
+    glShaderSource(id, 1, (const GLchar **)&buf, 0);
+    glCompileShader(id);
+    int compilestatus;
+    glGetShaderiv(id, GL_COMPILE_STATUS, &compilestatus);
+    if(! compilestatus)
+    {
+        int maxlength;
+        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxlength);
+        char* errorbuf = (char*)malloc(sizeof(char)*maxlength);
+        glGetShaderInfoLog(id, maxlength, &maxlength, errorbuf);
+        perror(errorbuf);
+        return 0;
+    }
+    else
+    {
+        return id;
+    }
 }
 
 void cog_read_file(char* buf, char* filename)
 {
     FILE *fp;
     fp=fopen(filename, "r");
-    fread(buf,
-           sizeof(char),
-           COG_MAX_BUF,
-           fp);
+    if(fp==0)
+    {
+        fprintf(stderr, "Can't open file %s", filename);
+        perror("Exiting");
+    }
+    fseek (fp , 0 , SEEK_END);
+    int filesize = ftell(fp);
+    rewind(fp);
+    if(filesize>COG_MAX_BUF)
+    {
+        perror("File too big to be read in");
+        goto cleanup;
+    }
+    int amountread = fread(buf,
+            sizeof(char),
+            COG_MAX_BUF,
+            fp);
+    if(amountread!=filesize)
+    {
+        perror("Error reading in file.");
+        goto cleanup;
+    }
+cleanup:
     fclose(fp);
+}
+
+void cog_render()
+{
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glLoadIdentity();
+    /*
+    //glTranslatef(0.0, 0.0, 150.0);
+    //glRotatef(-45.0, 1.0, 0.0, 0.0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, renderer.vertbuffid);
+    glVertexAttribPointer(
+            0, // attribute
+            4, // size
+            GL_FLOAT, // type
+            GL_FALSE, // normalized?
+            0, // stride
+            (void*)0 // array buffer offset
+            );
+//    glEnableVertexAttribArray(0);
+//    glBindBuffer(GL_ARRAY_BUFFER, renderer.vertorderbuffid);
+//    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+//    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer.vertorderbuffid);
+    glDrawElements(
+            GL_QUADS, // Mode
+            4, // Count
+            GL_UNSIGNED_SHORT, // Data type
+            (void*)0 // Offset
+            );
+            */
+    /*
+    GLfloat vVertices[] = {0.0f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f};
+    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE, 0, vVertices);
+    glEnableAttribArray(0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    */
+    glTranslatef(0.0, 0.0, -150.0);
+    glRotatef(-45.0, 1.0, 0.0, 0.0);
+    glBegin(GL_QUADS);                      // Draw A Quad
+        glVertex3f(-1.0f, 1.0f, 0.0f);              // Top Left
+        glVertex3f( 1.0f, 1.0f, 0.0f);              // Top Right
+        glVertex3f( 1.0f,-1.0f, 0.0f);              // Bottom Right
+        glVertex3f(-1.0f,-1.0f, 0.0f);              // Bottom Left
+    glEnd();
+
+    SDL_GL_SwapBuffers();
 }
