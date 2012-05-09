@@ -32,6 +32,7 @@ typedef struct
     GLuint fragid;
     GLuint vertbuffid;
     GLuint vertorderbuffid;
+    GLuint programid;
 } cog_renderer;
 static cog_renderer renderer;
 
@@ -50,8 +51,13 @@ void cog_window_togglefullscreen(void);
 void cog_checkkeys(void);
 void cog_graphics_init(void);
 GLuint cog_graphics_load_shader(char* filename, GLenum shadertype);
+void cog_graphics_print_shader_error();
 void cog_read_file(char* buf, char* filename);
 void cog_render();
+GLuint cog_upload_texture(SDL_Surface* image);
+SDL_Surface* cog_load_image(const char* filename);
+GLuint cog_texture_load(char* filename);
+
 
 //implementations
 void cog_init()
@@ -194,6 +200,11 @@ void cog_graphics_init(void)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer.vertorderbuffid);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(spriteverticesorder), spriteverticesorder, GL_STATIC_DRAW);
     */
+    //texture
+    int textureuniform = glGetUniformLocation(renderer.programid, "my_color_texture");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, cog_texture_load("../media/test0.png"));
+    glUniform1i(textureuniform, 0);
 }
 
 int cog_graphics_init_shaders(void)
@@ -204,22 +215,21 @@ int cog_graphics_init_shaders(void)
     {
         return 0;
     }
-    int programid = glCreateProgram();
-    glAttachShader(programid, renderer.vertid);
-    glAttachShader(programid, renderer.fragid);
+    renderer.programid = glCreateProgram();
+    glAttachShader(renderer.programid, renderer.vertid);
+    glAttachShader(renderer.programid, renderer.fragid);
     //glBindAttribLocation(programid, 0, "position");
-    glLinkProgram(programid);
+    glLinkProgram(renderer.programid);
     int linkedstatus;
-    glGetProgramiv(programid, GL_LINK_STATUS, &linkedstatus);
-    if(! linkedstatus) {
-        int maxlength;
-        glGetShaderiv(programid, GL_INFO_LOG_LENGTH, &maxlength);
-        char* errorbuf = (char*)malloc(sizeof(char)*maxlength);
-        glGetShaderInfoLog(programid, maxlength, &maxlength, errorbuf);
-        perror(errorbuf);
+    glGetProgramiv(renderer.programid, GL_LINK_STATUS, &linkedstatus);
+    if(! linkedstatus)
+    {
+        cog_graphics_print_shader_error(renderer.programid);
         return 0;
-    } else {
-        glUseProgram(programid);
+    }
+    else
+    {
+        glUseProgram(renderer.programid);
         return 1;
     }
 }
@@ -240,17 +250,22 @@ GLuint cog_graphics_load_shader(char* filename, GLenum shadertype)
     glGetShaderiv(id, GL_COMPILE_STATUS, &compilestatus);
     if(! compilestatus)
     {
-        int maxlength;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxlength);
-        char* errorbuf = (char*)malloc(sizeof(char)*maxlength);
-        glGetShaderInfoLog(id, maxlength, &maxlength, errorbuf);
-        perror(errorbuf);
+        cog_graphics_print_shader_error(id);
         return 0;
     }
     else
     {
         return id;
     }
+}
+
+void cog_graphics_print_shader_error(int shaderid)
+{
+    int maxlength;
+    glGetShaderiv(shaderid, GL_INFO_LOG_LENGTH, &maxlength);
+    char* errorbuf = (char*)malloc(sizeof(char)*maxlength);
+    glGetShaderInfoLog(shaderid, maxlength, &maxlength, errorbuf);
+    perror(errorbuf);
 }
 
 void cog_read_file(char* buf, char* filename)
@@ -265,14 +280,14 @@ void cog_read_file(char* buf, char* filename)
     fseek (fp , 0 , SEEK_END);
     int filesize = ftell(fp);
     rewind(fp);
-    if(filesize>COG_MAX_BUF)
+    if(filesize>COG_MAX_FILE_BUF)
     {
         perror("File too big to be read in");
         goto cleanup;
     }
     int amountread = fread(buf,
             sizeof(char),
-            COG_MAX_BUF,
+            COG_MAX_FILE_BUF,
             fp);
     if(amountread!=filesize)
     {
@@ -322,13 +337,109 @@ void cog_render()
     //glTranslatef(10.0, 10.0, 0.0);
     //glRotatef(-45.0, 1.0, 0.0, 0.0);
     //float scale = 0.01;
-    float scale = 100.0;
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    float scale = 1.0;
     glBegin(GL_QUADS);                      // Draw A Quad
+        glTexCoord2f( 0.0f, 0.0f );
         glVertex2f(-1.0f*scale, 1.0f*scale);              // Top Left
+        glTexCoord2f( 0.0f, 1.0f );
         glVertex2f( 1.0f*scale, 1.0f*scale);              // Top Right
+        glTexCoord2f( 1.0f, 1.0f );
         glVertex2f( 1.0f*scale,-1.0f*scale);              // Bottom Right
-        glVertex2f(-1.0f*scale,-1.0f*scale);              // Bottom Left
+        glTexCoord2f( 1.0f, 0.0f );
     glEnd();
 
     SDL_GL_SwapBuffers();
+}
+
+SDL_Surface* cog_load_image(const char* filename)
+{
+    //Loads an image and returns an SDL_Surface.
+    SDL_Surface* tempsurface;
+    SDL_Surface* result;
+
+    if((tempsurface = IMG_Load(filename))==NULL)
+    {
+        fprintf(stderr, "Cannot load image file <%s> : <%s>", filename, SDL_GetError());
+        return 0;
+    }
+
+    if((result = SDL_DisplayFormatAlpha(tempsurface))==NULL)
+    {
+        perror(SDL_GetError());
+    }
+    SDL_FreeSurface(tempsurface);
+
+    return result;
+}
+
+GLuint cog_upload_texture(SDL_Surface* image)
+{
+    int w = image->w;
+    int h = image->h;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    int rmask = 0xff000000;
+    int gmask = 0x00ff0000;
+    int bmask = 0x0000ff00;
+    int amask = 0x000000ff;
+#else
+    int rmask = 0x000000ff;
+    int gmask = 0x0000ff00;
+    int bmask = 0x00ff0000;
+    int amask = 0xff000000;
+#endif
+    /* Create the target alpha surface with correct color component ordering */
+    SDL_Surface* alphaimage = SDL_CreateRGBSurface(SDL_SWSURFACE,
+            image->w,image->h,32,
+            rmask,gmask,bmask,amask);
+    if(!alphaimage)
+    {
+        fprintf(stderr, "cog_upload_texture : RGB surface creation failed.");
+        cog_graphics_print_shader_error(renderer.programid);
+    }
+    // Set up so that colorkey pixels become transparent :
+    Uint32 colorkey = SDL_MapRGBA( alphaimage->format, rmask, gmask, bmask, amask );
+    SDL_FillRect( alphaimage, 0, colorkey );
+    colorkey = SDL_MapRGBA( image->format, rmask, gmask, bmask, amask);
+    SDL_SetColorKey( image, SDL_SRCCOLORKEY, colorkey );
+    SDL_Rect area;
+    SDL_SetAlpha(image, 0, amask); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
+    // Copy the surface into the GL texture image :
+    area.x = 0;
+    area.y = 0;
+    area.w = image->w;
+    area.h = image->h;
+    SDL_BlitSurface( image, &area, alphaimage, &area );
+    // Create an OpenGL texture for the image
+    GLuint textureID;
+    glGenTextures( 1, &textureID );
+    glBindTexture( GL_TEXTURE_2D, textureID );
+    /* Prepare the filtering of the texture image */
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    /* Map the alpha surface to the texture */
+    glTexImage2D( GL_TEXTURE_2D,
+            0,
+            GL_RGBA,
+            w,
+            h,
+            0,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
+            alphaimage->pixels );
+    SDL_FreeSurface(alphaimage);
+    return textureID ;
+}
+
+GLuint cog_texture_load(char* filename)
+{
+    SDL_Surface* image = cog_load_image(filename);
+    GLuint texture = cog_upload_texture(image);
+    SDL_FreeSurface(image);
+    return texture;
 }

@@ -1,8 +1,11 @@
 //attribute vec4 position;
+varying vec2 texture_coordinate;
 
 void main()
 {
-//    gl_Position=position;
     // Transforming The Vertex
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    // Passing The Texture Coordinate Of Texture Unit 0 To The Fragment Shader
+    texture_coordinate = vec2(gl_MultiTexCoord0);
 }
+
