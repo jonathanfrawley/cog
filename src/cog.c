@@ -361,7 +361,8 @@ SDL_Surface* cog_load_image(const char* filename)
     SDL_Surface* tempsurface;
     SDL_Surface* result;
 
-    if((tempsurface = IMG_Load(filename))==NULL)
+    tempsurface = IMG_Load(filename);
+    if(!tempsurface)
     {
         fprintf(stderr, "Cannot load image file <%s> : <%s>", filename, SDL_GetError());
         return 0;
