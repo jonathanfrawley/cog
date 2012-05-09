@@ -152,17 +152,33 @@ void cog_graphics_init(void)
         //TODO: Revert to software rendering if not available.
         perror("Error: OpenGL 2.1 not available, bailing out.");
     }
-    glClearColor(0.0f,0.0f,0.0f,0.0f);
+    /*
+    glClearColor(0.3f,0.3f,0.5f,0.0f);
     glClearDepth(1.0f);
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LEQUAL );
     glViewport(0,0,COG_SCREEN_WIDTH,COG_SCREEN_HEIGHT);
     glShadeModel(GL_SMOOTH);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(40, 1, 0.0001, 1000.0);
+    //glMatrixMode(GL_PROJECTION);
+    //glLoadIdentity();
+    //gluPerspective(40, 1, 0.0001, 1000.0);
     glMatrixMode(GL_MODELVIEW);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //
+    */
+
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //    glBlendFunc(GL_DST_COLOR,GL_ZERO);
+    //glClearColor( 0, 0, 0, 0 );
+    //glClearColor( 0, 0, 0, 0 );
+    glClearColor(0.3f,0.3f,0.5f,0.0f);
+    //glClearColor( 1, 1, 1, 1 );
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+    glOrtho( 0, COG_SCREEN_WIDTH, COG_SCREEN_HEIGHT, 0, -1, 1 );
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
 
     if(! cog_graphics_init_shaders())
     {
@@ -269,7 +285,7 @@ cleanup:
 
 void cog_render()
 {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glClear( GL_COLOR_BUFFER_BIT );
     glLoadIdentity();
     /*
     //glTranslatef(0.0, 0.0, 150.0);
@@ -302,13 +318,16 @@ void cog_render()
     glEnableAttribArray(0);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     */
-    glTranslatef(0.0, 0.0, -150.0);
-    glRotatef(-45.0, 1.0, 0.0, 0.0);
+    //glTranslatef(0.0, 0.0, -250.0);
+    //glTranslatef(10.0, 10.0, 0.0);
+    //glRotatef(-45.0, 1.0, 0.0, 0.0);
+    //float scale = 0.01;
+    float scale = 100.0;
     glBegin(GL_QUADS);                      // Draw A Quad
-        glVertex3f(-1.0f, 1.0f, 0.0f);              // Top Left
-        glVertex3f( 1.0f, 1.0f, 0.0f);              // Top Right
-        glVertex3f( 1.0f,-1.0f, 0.0f);              // Bottom Right
-        glVertex3f(-1.0f,-1.0f, 0.0f);              // Bottom Left
+        glVertex2f(-1.0f*scale, 1.0f*scale);              // Top Left
+        glVertex2f( 1.0f*scale, 1.0f*scale);              // Top Right
+        glVertex2f( 1.0f*scale,-1.0f*scale);              // Bottom Right
+        glVertex2f(-1.0f*scale,-1.0f*scale);              // Bottom Left
     glEnd();
 
     SDL_GL_SwapBuffers();
