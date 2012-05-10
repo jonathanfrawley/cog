@@ -175,9 +175,7 @@ void cog_graphics_init(void)
 
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //    glBlendFunc(GL_DST_COLOR,GL_ZERO);
-    //glClearColor( 0, 0, 0, 0 );
-    //glClearColor( 0, 0, 0, 0 );
+    glEnable(GL_TEXTURE_2D);
     glClearColor(0.3f,0.3f,0.5f,0.0f);
     //glClearColor( 1, 1, 1, 1 );
     glMatrixMode( GL_PROJECTION );
@@ -337,19 +335,21 @@ void cog_render()
     //glTranslatef(10.0, 10.0, 0.0);
     //glRotatef(-45.0, 1.0, 0.0, 0.0);
     //float scale = 0.01;
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    float scale = 1.0;
+    glTranslatef(100.0,100.0, 0.0);
+
+    float scale = 100.0;
     glBegin(GL_QUADS);                      // Draw A Quad
-        glTexCoord2f( 0.0f, 0.0f );
-        glVertex2f(-1.0f*scale, 1.0f*scale);              // Top Left
         glTexCoord2f( 0.0f, 1.0f );
-        glVertex2f( 1.0f*scale, 1.0f*scale);              // Top Right
+        glVertex2f(-1.0f*scale, 1.0f*scale);              // Top Left
         glTexCoord2f( 1.0f, 1.0f );
-        glVertex2f( 1.0f*scale,-1.0f*scale);              // Bottom Right
+        glVertex2f( 1.0f*scale, 1.0f*scale);              // Top Right
         glTexCoord2f( 1.0f, 0.0f );
+        glVertex2f( 1.0f*scale,-1.0f*scale);              // Bottom Right
+        glTexCoord2f( 0.0f, 0.0f );
+        glVertex2f(-1.0f*scale,-1.0f*scale); 
     glEnd();
 
     SDL_GL_SwapBuffers();
@@ -421,8 +421,8 @@ GLuint cog_upload_texture(SDL_Surface* image)
     /* Prepare the filtering of the texture image */
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     /* Map the alpha surface to the texture */
     glTexImage2D( GL_TEXTURE_2D,
             0,
