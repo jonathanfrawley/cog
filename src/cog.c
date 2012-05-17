@@ -201,7 +201,8 @@ void cog_graphics_init(void)
     //texture
     int textureuniform = glGetUniformLocation(renderer.programid, "my_color_texture");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, cog_texture_load("../media/test0.png"));
+    //glBindTexture(GL_TEXTURE_2D, cog_texture_load("../media/test0.png"));
+    glBindTexture(GL_TEXTURE_2D, cog_texture_load("../media/kitten_anim.png"));
     glUniform1i(textureuniform, 0);
 }
 
@@ -340,6 +341,7 @@ void cog_render()
 
     glTranslatef(100.0,100.0, 0.0);
 
+    /*
     float scale = 100.0;
     glBegin(GL_QUADS);                      // Draw A Quad
         glTexCoord2f( 0.0f, 1.0f );
@@ -349,7 +351,39 @@ void cog_render()
         glTexCoord2f( 1.0f, 0.0f );
         glVertex2f( 1.0f*scale,-1.0f*scale);              // Bottom Right
         glTexCoord2f( 0.0f, 0.0f );
-        glVertex2f(-1.0f*scale,-1.0f*scale); 
+        glVertex2f(-1.0f*scale,-1.0f*scale);
+    glEnd();
+    */
+    float scale = 100.0;
+    float xframes = 3.0;
+    float yframes = 1.0;
+    //NOTE: Indexed from 1, should be from 0? No, don't think so. Should add check for 0 though.
+    int framex=3;
+    int framey=1;
+    float frame_idx_x_start = (float)(framex-1.0f);
+    float frame_idx_y_start = (float)(framey-1.0f);
+    float frame_idx_x_end = (float)framex;
+    float frame_idx_y_end = (float)framey;
+    //Going from bottom left coord to top right.
+//    float tex_startx = (framex-1.0f)/xframes;
+//    float tex_starty = (framey-1.0f)/yframes;
+//    float tex_endx = (framex)/xframes;
+//    float tex_endy = (framey)/yframes;
+
+    float tex_startx = (framex-1.0f)/xframes;
+    float tex_starty = (framey)/yframes;
+    float tex_endx = (framex)/xframes;
+    float tex_endy = (framey-1.0f)/yframes;
+    glBegin(GL_QUADS);                      // Draw A Quad
+        glTexCoord2f(tex_startx, tex_starty);
+        glVertex2f(-1.0f*scale, 1.0f*scale);              // Top Left
+        //glTexCoord2f( frame_idx_x/xframes, frame_idx_y/yframes );
+        glTexCoord2f(tex_endx, tex_starty);
+        glVertex2f(1.0f*scale, 1.0f*scale);              // Top Right
+        glTexCoord2f(tex_endx, tex_endy);
+        glVertex2f(1.0f*scale,-1.0f*scale);              // Bottom Right
+        glTexCoord2f(tex_startx, tex_endy);
+        glVertex2f(-1.0f*scale,-1.0f*scale);
     glEnd();
 
     SDL_GL_SwapBuffers();

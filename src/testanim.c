@@ -10,7 +10,7 @@ void sprite_init(sprite* obj)
 {
     obj->x = 0;
     obj->y = 0;
-    obj->cogsprite = cog_add_anim("kitten.png", 10, 0, 1, 2, 3, 4,);
+    obj->cogsprite = cog_add_anim("kitten_anim.png", 10, 0, 1, 2, 3, 4,);
     cog_play_anim(obj->cogsprite);
 }
 
