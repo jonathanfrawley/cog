@@ -35,8 +35,27 @@ typedef struct
     GLuint programid;
 } cog_renderer;
 static cog_renderer renderer;
-
-
+/**
+ * All sprites have a texture id and texture coords.
+ **/
+typedef struct
+{
+     cog_sprite_id id;
+     GLuint texid;
+     cog_float x;
+     cog_float y;
+     cog_float w;
+     cog_float h;
+} cog_sprite;
+/**
+ * Anims are a collection of sprites with a specific duration between them.
+ **/
+typedef struct
+{
+     cog_anim_id id;
+     cog_uint transition_millis;
+     cog_sprite_id* sprites;
+} cog_anim;
 typedef struct
 {
     SDL_Surface* screen;
@@ -477,4 +496,15 @@ GLuint cog_texture_load(char* filename)
     GLuint texture = cog_upload_texture(image);
     SDL_FreeSurface(image);
     return texture;
+}
+
+//Anim
+cog_anim_id cog_add_anim(char* animimg, cog_uint transition_millis, ...)
+{
+    //TODO
+}
+
+void cog_play_anim(cog_anim_id id)
+{
+    //TODO
 }
