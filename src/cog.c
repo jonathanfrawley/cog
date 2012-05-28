@@ -34,12 +34,19 @@ void cog_init()
     cog_window_init();
 }
 
+//This is the cog default loop, can be overrided by just using cog_loopstep instead.
 void cog_mainloop()
 {
     while(!game.finished)
     {
-        cog_checkkeys();
+        cog_loopstep();
     }
+}
+
+//This is to allow the user to control the mainloop
+void cog_loopstep()
+{
+    cog_checkkeys();
 }
 
 void cog_destroy()
