@@ -42,10 +42,16 @@ typedef struct
 {
      cog_sprite_id id;
      GLuint texid;
+     //These coords and dimensions are for the whole sprite in the game world.
      cog_float x;
      cog_float y;
      cog_float w;
      cog_float h;
+     //These are the coords and dimensions of the sprite within the image. (Can have multiple sprites per image - anims are implemented using this, see below)
+     cog_float texx;
+     cog_float texy;
+     cog_float texw;
+     cog_float texh;
 } cog_sprite;
 /**
  * Anims are a collection of sprites with a specific duration between them.
@@ -54,7 +60,8 @@ typedef struct
 {
      cog_anim_id id;
      cog_uint transition_millis;
-     cog_sprite_id* sprites;
+     cog_uint currentframe;
+     cog_list* frames;
 } cog_anim;
 typedef struct
 {
@@ -77,6 +84,11 @@ GLuint cog_upload_texture(SDL_Surface* image);
 SDL_Surface* cog_load_image(const char* filename);
 GLuint cog_texture_load(char* filename);
 
+//global
+static cog_sprite_id cog_spritecnt;
+cog_list* sprites;
+static cog_anim_id cog_animcnt;
+cog_list* anims;
 
 //implementations
 void cog_init()
@@ -506,12 +518,56 @@ GLuint cog_texture_load(char* filename)
 }
 
 //Anim
-cog_anim_id cog_add_anim(char* animimg, cog_uint transition_millis, ...)
+/**
+ * Allocates a sprite and sets the variables accordingly.
+ * */
+cog_sprite_id cog_sprite_load(char* filename,
+        cog_float x,
+        cog_float y,
+        cog_float w,
+        cog_float h,
+        cog_float texx,
+        cog_float texy,
+        cog_float texw,
+        cog_float texh)
 {
-    //TODO
+    cog_sprite* sprite = (cog_sprite*)cog_malloc(sizeof(cog_sprite));
+    sprite->id = cog_spritecnt++;
+    sprite->texid = cog_texture_load(filename);
+    sprite->x = x;
+    sprite->y = y;
+    sprite->w = w;
+    sprite->h = h;
+    sprite->texx = texx;
+    sprite->texy = texy;
+    sprite->texw = texw;
+    sprite->texh = texh;
+    return sprite->id;
 }
 
+cog_anim_id cog_add_anim(char* animimg,
+        cog_uint transition_millis,
+        cog_bool looped,
+        cog_uint nimages, 
+        cog_float x,
+        cog_float y,
+        cog_float w,
+        cog_float h, ...)
+{
+    //TODO: Load sprites in for loop "nimages" times and set the sprite id accordingly. Divide up according to 
+}
+
+
 void cog_play_anim(cog_anim_id id)
+{
+    //TODO:Play animation.
+}
+
+cog_anim_id cog_move_anim(char* animimg,
+        cog_float x,
+        cog_float y,
+        cog_float w,
+        cog_float h, ...)
 {
     //TODO
 }

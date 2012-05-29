@@ -2,7 +2,7 @@
 
 typedef struct sprite
 {
-    cog_sprite* cogsprite;
+    cog_sprite_id sprite;
 } sprite;
 static sprite;
 
@@ -10,7 +10,7 @@ void sprite_init(sprite* obj)
 {
     obj->x = 0;
     obj->y = 0;
-    obj->cogsprite = cog_add_anim("kitten_anim.png", 10, 0, 1, 2, 3, 4,);
+    obj->sprite = cog_add_anim("../media/kitten_anim.png", 10, 1, 3, 0, 1, 2);
     cog_play_anim(obj->cogsprite);
 }
 
