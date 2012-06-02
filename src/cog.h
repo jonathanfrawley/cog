@@ -1,7 +1,7 @@
 #ifndef  COG_H
 #define  COG_H
 
-#include <cog_core.h>
+#include "cog_core.h"
 
 //main
 void cog_init();

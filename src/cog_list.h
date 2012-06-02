@@ -9,4 +9,7 @@ typedef struct cog_list
     cog_dataptr data;
 } cog_list;
 
+void cog_list_init(cog_list*);
+void cog_list_get(cog_list*);
+
 #endif   // COG_LIST_H

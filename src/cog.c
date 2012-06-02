@@ -61,7 +61,7 @@ typedef struct
      cog_anim_id id;
      cog_uint transition_millis;
      cog_uint currentframe;
-     cog_list* frames;
+     cog_map frames;
 } cog_anim;
 typedef struct
 {
@@ -84,11 +84,11 @@ GLuint cog_upload_texture(SDL_Surface* image);
 SDL_Surface* cog_load_image(const char* filename);
 GLuint cog_texture_load(char* filename);
 
-//global
+//global vars
 static cog_sprite_id cog_spritecnt;
-cog_list* sprites;
+cog_map* sprites;
 static cog_anim_id cog_animcnt;
-cog_list* anims;
+cog_map* anims;
 
 //implementations
 void cog_init()
@@ -97,6 +97,9 @@ void cog_init()
     cog_platform_init();
     cog_window_init();
     cog_graphics_init();
+    //Init globals
+    cog_map_init(&sprites);
+    cog_map_init(&anims);
 }
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
@@ -554,7 +557,24 @@ cog_anim_id cog_add_anim(char* animimg,
         cog_float w,
         cog_float h, ...)
 {
+    cog_anim* anim = (cog_anim*)cog_malloc(sizeof(cog_anim));
+    anim->id = cog_animcnt++;
     //TODO: Load sprites in for loop "nimages" times and set the sprite id accordingly. Divide up according to 
+    for(int i=0;i<nimages;i++)
+    {
+        sprite
+
+cog_sprite_id cog_sprite_load(char* filename,
+        cog_float x,
+        cog_float y,
+        cog_float w,
+        cog_float h,
+        cog_float texx,
+        cog_float texy,
+        cog_float texw,
+        cog_float texh)
+    }
+    return anim->id;
 }
 
 

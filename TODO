@@ -1,4 +1,7 @@
 1) Animation
+ - Implement Map [done]
+ - Use map as data structure for sprites and animations
+
 2) Sound
 3) Physics
 4) Particle Effects
