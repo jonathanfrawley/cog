@@ -4,6 +4,6 @@ int main(void)
 {
     cog_init();
     cog_mainloop();
-    cog_destroy();
+    cog_quit();
     return 0;
 }

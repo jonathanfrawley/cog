@@ -1,34 +1,50 @@
 #include "cog.h"
 
-typedef struct sprite
+typedef struct entity
 {
-    cog_sprite_id sprite;
-} sprite;
-static sprite;
+    cog_anim_id anim;
+} entity;
 
-void sprite_init(sprite* obj)
+void anim_init(entity* obj)
 {
-    obj->x = 0;
-    obj->y = 0;
-    obj->sprite = cog_add_anim("../media/kitten_anim.png", 10, 1, 3, 0, 1, 2);
-    cog_play_anim(obj->cogsprite);
+    obj->anim = cog_add_anim("../media/kitten_anim.png",
+            10,
+            1,
+            3,
+            10,
+            10,
+            32,
+            32,
+            0, 1, 2);
+    cog_play_anim(obj->anim);
 }
 
-void sprite_update(void* data)
+void entity_update(entity* obj)
 {
-    sprite* mysprite = (sprite*)data;
-    obj->cogsprite.x += x;
-    obj->cogsprite.y += y;
+    //entity* myentity = (entity*)data;
+    //cog_anim* anim = cog_get_anim(myentity->cog_anim_id);
+    //Do some simple movement
+    //anim->x += 2;
+    //anim->y += 2;
+    cog_anim_update_pos(obj->anim,
+            cog_anim_getx(obj->anim)+2,
+            cog_anim_gety(obj->anim)+2);
 }
 
 int main(void)
 {
     cog_init();
 
-    sprite_init(&sprite);
-    cog_add_entity(&sprite, sprite_update);
+    entity myentity;
+    anim_init(&myentity);
+//    cog_add_entity(&myentity, entity_update);
 
-    cog_mainloop();
-    cog_destroy();
+//    cog_mainloop();
+    while(! cog_hasquit())
+    {
+        entity_update(&myentity);
+        cog_loopstep();
+    }
+
     return 0;
 }

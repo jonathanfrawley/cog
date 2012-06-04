@@ -1,13 +1,15 @@
 #ifndef  COG_MAP_H
 #define  COG_MAP_H
 
+#include "cog_types.h"
+
 #define COG_MAP_SIZE 255
 
 typedef struct cog_map_elem
 {
     int key;
     void* data;
-    cog_map_elem* next;
+    struct cog_map_elem* next;
 } cog_map_elem;
 
 typedef struct cog_map
