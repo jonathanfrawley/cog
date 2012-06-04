@@ -67,7 +67,7 @@ typedef struct
      cog_anim_id id;
      cog_uint transition_millis;
      cog_uint currentframe;
-     cog_list* frames;
+     cog_list frames;
 } cog_anim;
 
 typedef struct
@@ -85,6 +85,8 @@ void cog_window_init(void);
 void cog_window_togglefullscreen(void);
 void cog_checkkeys(void);
 void cog_graphics_init(void);
+void cog_graphics_hwinit(void);
+void cog_graphics_swinit(void);
 //##shaders
 int cog_graphics_init_shaders(void);
 GLuint cog_graphics_load_shader(char* filename, GLenum shadertype);
@@ -92,27 +94,33 @@ void cog_graphics_print_shader_error();
 //##file io
 void cog_read_file(char* buf, char* filename);
 //##rendering
-void cog_render();
+void cog_graphics_render();
+void cog_graphics_hwrender();
+void cog_graphics_swrender();
 GLuint cog_upload_texture(SDL_Surface* image);
 SDL_Surface* cog_load_image(const char* filename);
 GLuint cog_texture_load(char* filename);
 
 //global vars
 static cog_sprite_id cog_spritecnt;
-cog_map* sprites;
+cog_map sprites;
 static cog_anim_id cog_animcnt;
-cog_map* anims;
+cog_map anims;
+static cog_int configmask;
+cog_list activesprites; //sprites drawn(active) at the moment
 
 //implementations
-void cog_init()
+void cog_init(cog_int config)
 {
     game.finished = 0;
     cog_platform_init();
     cog_window_init();
     cog_graphics_init();
     //Init globals
-    cog_map_init(sprites);
-    cog_map_init(anims);
+    cog_map_init(&sprites);
+    cog_map_init(&anims);
+    cog_list_init(&activesprites);
+    configmask = config;
 }
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
@@ -128,7 +136,7 @@ void cog_mainloop()
 void cog_loopstep()
 {
     cog_checkkeys();
-    cog_render();
+    cog_graphics_render();
 }
 
 void cog_quit()
@@ -211,6 +219,18 @@ void cog_checkkeys(void)
 //graphics
 void cog_graphics_init(void)
 {
+    if(configmask & COG_CONFIG_HWRENDER)
+    {
+        cog_graphics_hwinit();
+    }
+    else
+    {
+        cog_graphics_swinit();
+    }
+}
+
+void cog_graphics_hwinit(void)
+{
     glewInit();
     if(!GLEW_VERSION_2_1)
     {
@@ -263,6 +283,11 @@ void cog_graphics_init(void)
     //glBindTexture(GL_TEXTURE_2D, cog_texture_load("../media/test0.png"));
     glBindTexture(GL_TEXTURE_2D, cog_texture_load("../media/kitten_anim.png"));
     glUniform1i(textureuniform, 0);
+}
+
+void cog_graphics_swinit(void)
+{
+    //TODO
 }
 
 int cog_graphics_init_shaders(void)
@@ -356,7 +381,19 @@ cleanup:
     fclose(fp);
 }
 
-void cog_render()
+void cog_graphics_render()
+{
+    if(configmask & COG_CONFIG_HWRENDER)
+    {
+        cog_graphics_hwrender();
+    }
+    else
+    {
+        cog_graphics_swrender();
+    }
+}
+
+void cog_graphics_hwrender()
 {
     glClear( GL_COLOR_BUFFER_BIT );
     glLoadIdentity();
@@ -446,6 +483,11 @@ void cog_render()
     glEnd();
 
     SDL_GL_SwapBuffers();
+}
+
+void cog_graphics_swrender()
+{
+
 }
 
 SDL_Surface* cog_load_image(const char* filename)
@@ -564,14 +606,40 @@ cog_sprite_id cog_sprite_load(char* filename,
     sprite->texy = texy;
     sprite->texw = texw;
     sprite->texh = texh;
-    cog_map_put(sprites, sprite->id, (void*)sprite);
+    cog_map_put(&sprites, sprite->id, (void*)sprite);
     return sprite->id;
 }
 
 /**
+ * Loads sprite and readies for drawing
+ */
+cog_sprite_id cog_sprite_add(char* filename,
+        cog_float x,
+        cog_float y,
+        cog_float w,
+        cog_float h,
+        cog_float texx,
+        cog_float texy,
+        cog_float texw,
+        cog_float texh)
+{
+    cog_list_append(&activesprites, (cog_dataptr)cog_sprite_load(
+        filename,
+        x,
+        y,
+        w,
+        h,
+        texx,
+        texy,
+        texw,
+        texh));
+}
+
+
+/**
  * Assumes animation is a single 1D animation frame.
  * */
-cog_anim_id cog_add_anim(char* animimg,
+cog_anim_id cog_anim_add(char* animimg,
         cog_uint transition_millis,
         cog_bool looped,
         cog_uint nimages,
@@ -592,7 +660,7 @@ cog_anim_id cog_add_anim(char* animimg,
     int wanimframe = imagew / nimages;
     int hanimframe = imageh;
     //Load nimages sprites in, with offset dependant on frame number.
-    cog_list_init(anim->frames);
+    cog_list_init(&anim->frames);
     for(int i=0;i<nimages;i++)
     {
         cog_sprite_id sid = cog_sprite_load(animimg, 
@@ -604,14 +672,13 @@ cog_anim_id cog_add_anim(char* animimg,
                 0,
                 wanimframe,
                 hanimframe);
-        cog_list_append(anim->frames, cog_map_get(sprites, sid));
+        cog_list_append(&anim->frames, cog_map_get(&sprites, sid));
     }
-    cog_map_put(anims, anim->id, (void*)anim);
+    cog_map_put(&anims, anim->id, (void*)anim);
     return anim->id;
 }
 
-
-void cog_play_anim(cog_anim_id id)
+void cog_anim_play(cog_anim_id id)
 {
     //TODO:Play animation.
 }
@@ -620,8 +687,8 @@ void cog_anim_update_pos(cog_anim_id id,
         cog_float x,
         cog_float y)
 {
-    cog_anim* anim = (cog_anim*)cog_map_get(anims, id);
-    for(cog_list* frame = anim->frames;
+    cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
+    for(cog_list* frame = &anim->frames;
         frame != 0;
         frame=frame->next)
     {
@@ -630,15 +697,17 @@ void cog_anim_update_pos(cog_anim_id id,
         sprite->y = y;
     }
 }
+
 cog_float cog_anim_getx(cog_anim_id id)
 {
-    cog_anim* anim = (cog_anim*)cog_map_get(anims, id);
-    return ((cog_sprite*)anim->frames->data)->x;
+    cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
+    return ((cog_sprite*)anim->frames.data)->x;
 }
+
 cog_float cog_anim_gety(cog_anim_id id)
 {
-    cog_anim* anim = (cog_anim*)cog_map_get(anims, id);
-    return ((cog_sprite*)anim->frames->data)->y;
+    cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
+    return ((cog_sprite*)anim->frames.data)->y;
 }
 
 //sound

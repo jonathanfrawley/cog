@@ -7,7 +7,7 @@ typedef struct entity
 
 void anim_init(entity* obj)
 {
-    obj->anim = cog_add_anim("../media/kitten_anim.png",
+    obj->anim = cog_anim_add("../media/kitten_anim.png",
             10,
             1,
             3,
@@ -16,7 +16,7 @@ void anim_init(entity* obj)
             32,
             32,
             0, 1, 2);
-    cog_play_anim(obj->anim);
+    cog_anim_play(obj->anim);
 }
 
 void entity_update(entity* obj)
@@ -33,7 +33,7 @@ void entity_update(entity* obj)
 
 int main(void)
 {
-    cog_init();
+    cog_init(COG_CONFIG_HWRENDER);
 
     entity myentity;
     anim_init(&myentity);

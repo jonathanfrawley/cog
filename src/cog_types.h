@@ -13,5 +13,6 @@ typedef unsigned cog_uint;
 typedef int cog_bool;
 typedef void* cog_dataptr;
 typedef unsigned cog_uint;
+typedef int cog_int;
 
 #endif   // COG_TYPES_H
