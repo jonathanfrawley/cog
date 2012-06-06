@@ -5,7 +5,7 @@ typedef struct entity
     cog_anim_id anim;
 } entity;
 
-void anim_init(entity* obj)
+void entity_init(entity* obj)
 {
     obj->anim = cog_anim_add("../media/kitten_anim.png",
             10,
@@ -27,8 +27,8 @@ void entity_update(entity* obj)
     //anim->x += 2;
     //anim->y += 2;
     cog_anim_update_pos(obj->anim,
-            cog_anim_getx(obj->anim)+2,
-            cog_anim_gety(obj->anim)+2);
+            2,
+            2);
 }
 
 int main(void)
@@ -36,7 +36,7 @@ int main(void)
     cog_init(COG_CONFIG_HWRENDER);
 
     entity myentity;
-    anim_init(&myentity);
+    entity_init(&myentity);
 //    cog_add_entity(&myentity, entity_update);
 
 //    cog_mainloop();

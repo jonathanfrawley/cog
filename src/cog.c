@@ -67,7 +67,7 @@ typedef struct
      cog_anim_id id;
      cog_uint transition_millis;
      cog_uint currentframe;
-     cog_list frames;
+     cog_list* frames;
 } cog_anim;
 
 typedef struct
@@ -107,11 +107,12 @@ cog_map sprites;
 static cog_anim_id cog_animcnt;
 cog_map anims;
 static cog_int configmask;
-cog_list activesprites; //sprites drawn(active) at the moment
+cog_list* activesprites; //sprites drawn(active) at the moment
 
 //implementations
 void cog_init(cog_int config)
 {
+    configmask = config;
     game.finished = 0;
     cog_platform_init();
     cog_window_init();
@@ -119,8 +120,7 @@ void cog_init(cog_int config)
     //Init globals
     cog_map_init(&sprites);
     cog_map_init(&anims);
-    cog_list_init(&activesprites);
-    configmask = config;
+    cog_list_init(activesprites);
 }
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
@@ -159,6 +159,15 @@ void cog_errorf(const char* logMsg, ...)
     printf("CRITICAL: %s \n", buf);
     cog_quit();
     assert(0);
+}
+
+void cog_debugf(const char* logMsg, ...)
+{
+    va_list ap;
+    va_start(ap, logMsg);
+    char buf[COG_MAX_BUF];
+    vsprintf(buf, logMsg, ap);
+    printf("DEBUG: %s \n", buf);
 }
 
 //platform
@@ -221,10 +230,12 @@ void cog_graphics_init(void)
 {
     if(configmask & COG_CONFIG_HWRENDER)
     {
+        cog_debugf("Initializing hardware rendering...");
         cog_graphics_hwinit();
     }
     else
     {
+        cog_debugf("Initializing software rendering...");
         cog_graphics_swinit();
     }
 }
@@ -623,7 +634,7 @@ cog_sprite_id cog_sprite_add(char* filename,
         cog_float texw,
         cog_float texh)
 {
-    cog_list_append(&activesprites, (cog_dataptr)cog_sprite_load(
+    cog_sprite_id id = cog_sprite_load(
         filename,
         x,
         y,
@@ -632,9 +643,14 @@ cog_sprite_id cog_sprite_add(char* filename,
         texx,
         texy,
         texw,
-        texh));
+        texh);
+    //Need to malloc a copy of the id to ensure it is still around
+    //when the list entry is recalled.
+    cog_sprite_id* idcopy = COG_STRUCT_MALLOC(cog_sprite_id);
+    (*idcopy) = id;
+    cog_list_append(activesprites, idcopy);
+    return id;
 }
-
 
 /**
  * Assumes animation is a single 1D animation frame.
@@ -650,6 +666,7 @@ cog_anim_id cog_anim_add(char* animimg,
 {
     cog_anim* anim = COG_STRUCT_MALLOC(cog_anim);
     anim->id = cog_animcnt++;
+    anim->frames = COG_NULL;
     anim->transition_millis = transition_millis;
     anim->currentframe = 0;
 
@@ -660,10 +677,10 @@ cog_anim_id cog_anim_add(char* animimg,
     int wanimframe = imagew / nimages;
     int hanimframe = imageh;
     //Load nimages sprites in, with offset dependant on frame number.
-    cog_list_init(&anim->frames);
+    cog_list_init(anim->frames);
     for(int i=0;i<nimages;i++)
     {
-        cog_sprite_id sid = cog_sprite_load(animimg, 
+        cog_sprite_id sid = cog_sprite_load(animimg,
                 x,
                 y,
                 w,
@@ -672,7 +689,7 @@ cog_anim_id cog_anim_add(char* animimg,
                 0,
                 wanimframe,
                 hanimframe);
-        cog_list_append(&anim->frames, cog_map_get(&sprites, sid));
+        cog_list_append(anim->frames, cog_map_get(&sprites, sid));
     }
     cog_map_put(&anims, anim->id, (void*)anim);
     return anim->id;
@@ -688,11 +705,27 @@ void cog_anim_update_pos(cog_anim_id id,
         cog_float y)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
-    for(cog_list* frame = &anim->frames;
-        frame != 0;
+    if(anim == COG_NULL)
+    {
+        cog_errorf("anim is null in cog_anim_update_pos");
+    }
+    //Update the positions of all sprites in anim.
+    for(cog_list* frame = anim->frames;
+        frame != COG_NULL;
         frame=frame->next)
     {
-        cog_sprite* sprite = (cog_sprite*)frame->data;
+//        cog_sprite* sprite = (cog_sprite*)cog_map_get(sprites,frame->data);
+        cog_sprite* sprite = (cog_sprite*)(frame->data);
+        printf("anim <%d> ", anim);
+        printf("sprite <%d> ", sprite);
+        printf("frame <%d> ", frame);
+        printf("frame->data <%d> ", frame->data);
+        printf("frame->next <%d> ", frame->next);
+        if(sprite == COG_NULL)
+        {
+            cog_errorf("sprite is null in cog_anim_update_pos");
+        }
+
         sprite->x = x;
         sprite->y = y;
     }
@@ -701,13 +734,13 @@ void cog_anim_update_pos(cog_anim_id id,
 cog_float cog_anim_getx(cog_anim_id id)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
-    return ((cog_sprite*)anim->frames.data)->x;
+    return ((cog_sprite*)anim->frames->data)->x;
 }
 
 cog_float cog_anim_gety(cog_anim_id id)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
-    return ((cog_sprite*)anim->frames.data)->y;
+    return ((cog_sprite*)anim->frames->data)->y;
 }
 
 //sound

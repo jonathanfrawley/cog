@@ -10,7 +10,7 @@ void cog_map_init(cog_map* map)
     int i;
     for(i=0;i<COG_MAP_SIZE;i++)
     {
-        map->elems[i] = 0;
+        map->elems[i] = COG_NULL;
     }
 }
 
@@ -23,9 +23,9 @@ void* cog_map_get(cog_map* map, cog_uint key)
 
 void* cog_map_get_recurse(cog_map_elem* elem, cog_uint key)
 {
-    if(elem==0)
+    if(elem==COG_NULL)
     {
-        return 0;
+        return COG_NULL;
     }
     else
     {
@@ -35,7 +35,7 @@ void* cog_map_get_recurse(cog_map_elem* elem, cog_uint key)
         }
         else
         {
-            if(elem->next == 0)
+            if(elem->next == COG_NULL)
             {
                 return 0;
             }
@@ -48,7 +48,7 @@ void cog_map_put(cog_map* map, cog_uint key, void* data)
 {
     cog_uint idx = key % COG_MAP_SIZE; //TODO:Improve.
     cog_map_elem* elem = map->elems[idx];
-    if(elem==0)
+    if(elem==COG_NULL)
     {
         //First elem in linked list
         cog_map_elem* newelem = (cog_map_elem*)cog_malloc(sizeof(cog_map_elem));
@@ -65,6 +65,7 @@ void cog_map_put(cog_map* map, cog_uint key, void* data)
 
 void cog_map_put_recurse(cog_map_elem* elem, cog_uint key, void* data)
 {
+    //XXX:Problem exists here.
     if(elem->key == key)
     {
         //Nothing to do.
@@ -72,7 +73,7 @@ void cog_map_put_recurse(cog_map_elem* elem, cog_uint key, void* data)
     }
     else
     {
-        if(elem->next==0)
+        if(elem->next==COG_NULL)
         {
             elem->next = (cog_map_elem*)cog_malloc(sizeof(cog_map_elem));
             elem->next->key = key;

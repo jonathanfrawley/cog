@@ -1,4 +1,4 @@
-precision highp float;
+//precision highp float;
 
 varying vec2 texture_coordinate;
 uniform sampler2D my_color_texture;
