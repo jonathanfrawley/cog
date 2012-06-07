@@ -1,9 +1,15 @@
+TODO Tasks cog
+==============
+2) Finish animation implementation.
+    - Rendering
+3) Sound
+4) Physics
+5) Particle Effects
+6) Port lls to use it.
+7) Software renderer (Meh, not sure if this will be needed/possible due to opengl being so much more powerful with rotations and somewhat, but leave in stubs for functions at the moment)
+
+Done Tasks cog
+==============
 1) Animation
  - Implement Map [done]
- - Use map as data structure for sprites and animations
-1.5) Software renderer
-
-2) Sound
-3) Physics
-4) Particle Effects
-5) Port lls to use it.
+ - Use map and lists as data structures for sprites and animations [done]
