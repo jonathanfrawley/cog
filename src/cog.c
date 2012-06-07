@@ -716,11 +716,6 @@ void cog_anim_update_pos(cog_anim_id id,
     {
 //        cog_sprite* sprite = (cog_sprite*)cog_map_get(sprites,frame->data);
         cog_sprite* sprite = (cog_sprite*)(frame->data);
-        printf("anim <%d> ", anim);
-        printf("sprite <%d> ", sprite);
-        printf("frame <%d> ", frame);
-        printf("frame->data <%d> ", frame->data);
-        printf("frame->next <%d> ", frame->next);
         if(sprite == COG_NULL)
         {
             cog_errorf("sprite is null in cog_anim_update_pos");

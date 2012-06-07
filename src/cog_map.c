@@ -8,6 +8,8 @@ void cog_map_put_recurse(cog_map_elem* elem, cog_uint key, void* data);
 void cog_map_init(cog_map* map)
 {
     int i;
+    //dynamically allocate pointers
+    map->elems = (cog_map_elem**)(cog_malloc(sizeof(cog_map_elem*) * COG_MAP_SIZE));
     for(i=0;i<COG_MAP_SIZE;i++)
     {
         map->elems[i] = COG_NULL;
@@ -59,6 +61,7 @@ void cog_map_put(cog_map* map, cog_uint key, void* data)
     }
     else
     {
+        //Find element in linked list bucket.
         cog_map_put_recurse(elem,key,data);
     }
 }
@@ -75,10 +78,11 @@ void cog_map_put_recurse(cog_map_elem* elem, cog_uint key, void* data)
     {
         if(elem->next==COG_NULL)
         {
-            elem->next = (cog_map_elem*)cog_malloc(sizeof(cog_map_elem));
+            //elem->next = (cog_map_elem*)cog_malloc(sizeof(cog_map_elem));
+            elem->next = COG_STRUCT_MALLOC(cog_map_elem);
             elem->next->key = key;
             elem->next->data = data;
-            elem->next->next = 0;
+            elem->next->next = COG_NULL;
             return;
         }
         else
