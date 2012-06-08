@@ -9,13 +9,15 @@ typedef struct cog_list
     cog_dataptr data;
 } cog_list;
 
+cog_list* cog_list_alloc();
+
 void cog_list_init(cog_list*);
 
 //----------------------------------------------------------------------
 //  Adds data to this list. List will handle freeing data.
-//  Sets list pointer to point to new beginning of list.
+//  @return: New front of list
 //----------------------------------------------------------------------
-void cog_list_append(cog_list* list, cog_dataptr data);
+cog_list* cog_list_append(cog_list* list, cog_dataptr data);
 
 //----------------------------------------------------------------------
 //  Removes elem w/ data == data in this list.

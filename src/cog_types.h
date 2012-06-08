@@ -3,6 +3,8 @@
 
 //defines
 #define COG_NULL 0
+#define COG_FALSE 0
+#define COG_TRUE 1
 
 //types
 typedef float cog_float;

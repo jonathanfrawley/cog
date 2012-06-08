@@ -2,14 +2,20 @@
 
 #include "cog_core.h"
 
+cog_list* cog_list_alloc()
+{
+    cog_list* obj = COG_STRUCT_MALLOC(cog_list);
+    cog_list_init(obj);
+    return obj;
+}
+
 void cog_list_init(cog_list* list)
 {
-    list = COG_STRUCT_MALLOC(cog_list);
     list->data = COG_NULL;
     list->next = COG_NULL;
 }
 
-void cog_list_append(cog_list* list, cog_dataptr data)
+cog_list* cog_list_append(cog_list* list, cog_dataptr data)
 {
     cog_list* curr;
     cog_list* prev;
@@ -22,16 +28,23 @@ void cog_list_append(cog_list* list, cog_dataptr data)
         //First element.
         //This seems a bit contrary, wish we could just use
         //list argument as a variable...
+        /*
         cog_list* newfront;
         cog_list_init(newfront);
         //list->data = data;
         newfront->data = data;
         list = newfront;
+        */
+        list = cog_list_alloc();
+        list->data = data;
+        list->next = COG_NULL;
+        return list;
     }
     else
     {
-        cog_list_init(prev->next);
+        prev->next = cog_list_alloc();
         prev->next->data = data;
+        return list;
     }
 }
 

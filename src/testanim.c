@@ -7,14 +7,15 @@ typedef struct entity
 
 void entity_init(entity* obj)
 {
-    obj->anim = cog_anim_add("../media/kitten_anim.png",
-            10,
-            1,
-            3,
-            10,
-            10,
-            32,
-            32,
+    obj->anim = cog_anim_add(
+            "../media/kitten_anim.png",
+            10, //transition
+            COG_TRUE, //looped
+            3, //nimages
+            10, //x
+            10, //y
+            128, //w
+            128, //h
             0, 1, 2);
     cog_anim_play(obj->anim);
 }
@@ -27,8 +28,8 @@ void entity_update(entity* obj)
     //anim->x += 2;
     //anim->y += 2;
     cog_anim_update_pos(obj->anim,
-            2,
-            2);
+            200,
+            200);
 }
 
 int main(void)
