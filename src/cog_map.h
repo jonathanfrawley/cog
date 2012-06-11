@@ -21,5 +21,6 @@ typedef struct cog_map
 void cog_map_init(cog_map*);
 void* cog_map_get(cog_map*, cog_uint);
 void cog_map_put(cog_map*, cog_uint, void*);
+void cog_map_remove(cog_map*, cog_uint);
 
 #endif   // COG_MAP_H

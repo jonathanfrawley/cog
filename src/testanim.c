@@ -14,8 +14,8 @@ void entity_init(entity* obj)
             3, //nimages
             10, //x
             10, //y
-            128, //w
-            128, //h
+            256, //w
+            256, //h
             0, 1, 2);
     cog_anim_play(obj->anim);
 }

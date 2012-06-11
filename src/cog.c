@@ -67,7 +67,10 @@ typedef struct
      cog_anim_id id;
      cog_uint transition_millis;
      cog_uint currentframe;
+     cog_uint currentframe_millis;
+     cog_bool looped;
      cog_list* frames;
+     cog_uint nframes;
      cog_bool paused;
 } cog_anim;
 
@@ -88,6 +91,7 @@ void cog_checkkeys(void);
 void cog_graphics_init(void);
 void cog_graphics_hwinit(void);
 void cog_graphics_swinit(void);
+void cog_update_anims(cog_uint deltamillis);
 //##shaders
 int cog_graphics_init_shaders(void);
 GLuint cog_graphics_load_shader(char* filename, GLenum shadertype);
@@ -104,12 +108,16 @@ GLuint cog_texture_load(char* filename);
 
 //global vars
 static cog_sprite_id cog_spritecnt;
-cog_map sprites;
+static cog_map sprites;
 static cog_anim_id cog_animcnt;
-cog_map anims;
+static cog_map anims;
 static cog_int configmask;
-cog_list* activesprites; //sprites drawn(active) at the moment
-cog_list* activeanims; //anims drawn(active) at the moment
+static cog_list* activesprites; //sprites drawn(active) at the moment
+static cog_list* activeanims; //anims drawn(active) at the moment
+//timing
+static cog_uint now;
+static cog_uint timedelta;
+static cog_uint starttime;
 
 //implementations
 void cog_init(cog_int config)
@@ -125,6 +133,7 @@ void cog_init(cog_int config)
     cog_platform_init();
     cog_window_init();
     cog_graphics_init();
+    starttime = SDL_GetTicks();
 }
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
@@ -139,8 +148,14 @@ void cog_mainloop()
 //This is to allow the user to control the mainloop
 void cog_loopstep()
 {
+    now = SDL_GetTicks();
+    timedelta = now - starttime;
+
     cog_checkkeys();
+    cog_update_anims(timedelta);
     cog_graphics_render();
+
+    starttime = SDL_GetTicks();
 }
 
 void cog_quit()
@@ -225,6 +240,43 @@ void cog_checkkeys(void)
                         cog_window_togglefullscreen();
                         break;
                 }
+        }
+    }
+}
+
+void cog_update_anims(cog_uint deltamillis)
+{
+    for(cog_list* animid = activeanims;
+        animid != COG_NULL;
+        animid=animid->next)
+    {
+        //Draw current sprite
+        cog_anim_id id = *((cog_anim_id*)animid->data);
+        cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,id);
+        if(thisanim->paused)
+        {
+            continue;
+        }
+        thisanim->currentframe_millis += deltamillis;
+        if(thisanim->currentframe_millis >= thisanim->transition_millis)
+        {
+            thisanim->currentframe++;
+            thisanim->currentframe_millis = 0;
+            if(thisanim->currentframe >= thisanim->nframes)
+            {
+                if(thisanim->looped)
+                {
+                    thisanim->currentframe = 0;
+                }
+                else
+                {
+                    thisanim->paused = 0;
+
+                    cog_list_remove(activeanims, (void*)(animid->data));
+                    cog_map_remove(&anims, id);
+                    animid = COG_NULL;
+                }
+            }
         }
     }
 }
@@ -418,7 +470,7 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, sprite->texid);
     //glUniform1i(textureuniform, sprite->texid);
-    
+
     //Translate
     glTranslatef(sprite->x,sprite->y, 0.0);
 
@@ -427,24 +479,45 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
     //cog_errorf("sprite texw <%f> texh <%f>", sprite->texw, sprite->texh);
     //cog_errorf("sprite texid <%d>", sprite->texid);
 
+    /*
     glBegin(GL_QUADS);                      // Draw A Quad
-        glTexCoord2f(sprite->texx, 
+        glTexCoord2f(sprite->texx,
                 sprite->texy);
-        glVertex2f(-1.0f*sprite->w, 
+        glVertex2f(-1.0f*sprite->w,
                 1.0f*sprite->h);              // Top Left
         //glTexCoord2f( frame_idx_x/xframes, frame_idx_y/yframes );
-        glTexCoord2f(sprite->texx + sprite->texw, 
+        glTexCoord2f(sprite->texx + sprite->texw,
                 sprite->texy);
-        glVertex2f(1.0f*sprite->w, 
+        glVertex2f(1.0f*sprite->w,
                 1.0f*sprite->h);              // Top Right
-        glTexCoord2f(sprite->texx + sprite->texw, 
+        glTexCoord2f(sprite->texx + sprite->texw,
                 sprite->texy + sprite->texh);
         glVertex2f(1.0f*sprite->w,
                 -1.0f*sprite->h);             // Bottom Right
-        glTexCoord2f(sprite->texx, 
+        glTexCoord2f(sprite->texx,
                 sprite->texy + sprite->texh);
-        glVertex2f(-1.0f*sprite->w,           // Bottom left
-                -1.0f*sprite->h);
+        glVertex2f(-1.0f*sprite->w,
+                -1.0f*sprite->h);             // Bottom left
+    glEnd();
+    */
+    glBegin(GL_QUADS);                      // Draw A Quad
+        glTexCoord2f(sprite->texx,
+                sprite->texy + sprite->texh);
+        glVertex2f(-1.0f*sprite->w,
+                1.0f*sprite->h);              // Top Left
+        //glTexCoord2f( frame_idx_x/xframes, frame_idx_y/yframes );
+        glTexCoord2f(sprite->texx + sprite->texw,
+                sprite->texy + sprite->texh);
+        glVertex2f(1.0f*sprite->w,
+                1.0f*sprite->h);              // Top Right
+        glTexCoord2f(sprite->texx + sprite->texw,
+                sprite->texy);
+        glVertex2f(1.0f*sprite->w,
+                -1.0f*sprite->h);             // Bottom Right
+        glTexCoord2f(sprite->texx,
+                sprite->texy);
+        glVertex2f(-1.0f*sprite->w,
+                -1.0f*sprite->h);             // Bottom left
     glEnd();
 }
 
@@ -525,7 +598,7 @@ void cog_graphics_hwrender()
         animid != COG_NULL;
         animid=animid->next)
     {
-        //Draw current sprite 
+        //Draw current sprite
         cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,*((cog_anim_id*)animid->data));
         if(thisanim->paused)
         {
@@ -720,17 +793,24 @@ cog_anim_id cog_anim_add(
     anim->id = cog_animcnt++;
     anim->frames = COG_NULL;
     anim->transition_millis = transition_millis;
+    anim->looped = looped;
     anim->currentframe = 0;
+    anim->currentframe_millis = 0;
     anim->paused = COG_FALSE;
 
     //XXX: Find out w and h by loading SDL_Surface
-    SDL_Surface* image = cog_load_image(animimg);
-    int imagew = image->w;
-    int imageh = image->h;
-    int wanimframe = imagew / nimages;
-    int hanimframe = imageh;
+    //SDL_Surface* image = cog_load_image(animimg);
+    //int imagew = image->w;
+    //int imageh = image->h;
+    //int wanimframe = imagew / nimages;
+    //int hanimframe = imageh;
+    cog_float wanimframe = ((cog_float)1.0 / nimages);
+    cog_float hanimframe = 1.0;
+    //cog_errorf("wanimframe is %f ",wanimframe);
+    //cog_errorf("hanimframe is %d ",hanimframe);
     //Load nimages sprites in, with offset dependant on frame number.
     anim->frames = COG_NULL;
+    anim->nframes = 0;
     for(int i=0;i<nimages;i++)
     {
         cog_sprite_id sid = cog_sprite_load(animimg,
@@ -743,6 +823,7 @@ cog_anim_id cog_anim_add(
                 wanimframe,
                 hanimframe);
         anim->frames = cog_list_append(anim->frames, cog_map_get(&sprites, sid));
+        anim->nframes++;
     }
     cog_map_put(&anims, anim->id, (void*)anim);
 
