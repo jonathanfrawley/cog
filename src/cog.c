@@ -83,6 +83,7 @@ static cog_window window;
 //#prototypes
 //##logging
 void cog_errorf(const char* logMsg, ...);
+void cog_debugf(const char* logMsg, ...);
 //##main
 void cog_platform_init(void);
 void cog_window_init(void);
@@ -150,12 +151,12 @@ void cog_loopstep()
 {
     now = SDL_GetTicks();
     timedelta = now - starttime;
+    starttime = SDL_GetTicks();
+    cog_debugf("starttime <%d> timedelta <%d> \n", starttime, timedelta);
 
     cog_checkkeys();
     cog_update_anims(timedelta);
     cog_graphics_render();
-
-    starttime = SDL_GetTicks();
 }
 
 void cog_quit()
@@ -610,6 +611,7 @@ void cog_graphics_hwrender()
         while(i<thisanim->currentframe)
         {
             frame = frame->next;
+            i++;
         }
         //cog_graphics_draw_sprite((cog_sprite*)cog_map_get(&sprites,*((cog_uint*)frame->data)));
         cog_graphics_draw_sprite((cog_sprite*)frame->data);

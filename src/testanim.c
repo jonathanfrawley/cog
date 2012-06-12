@@ -9,7 +9,7 @@ void entity_init(entity* obj)
 {
     obj->anim = cog_anim_add(
             "../media/kitten_anim.png",
-            10, //transition
+            150, //transition
             COG_TRUE, //looped
             3, //nimages
             10, //x
@@ -28,7 +28,7 @@ void entity_update(entity* obj)
     //anim->x += 2;
     //anim->y += 2;
     cog_anim_update_pos(obj->anim,
-            200,
+            cog_anim_getx(obj->anim) + 0.001,
             200);
 }
 
