@@ -16,6 +16,7 @@ void entity_init(entity* obj)
             10, //y
             256, //w
             256, //h
+            0, //rot
             0, 1, 2);
     cog_anim_play(obj->anim);
 }
@@ -30,6 +31,9 @@ void entity_update(entity* obj)
     cog_anim_update_pos(obj->anim,
             cog_anim_getx(obj->anim) + 0.001,
             200);
+
+    cog_anim_update_rot(obj->anim,
+            cog_anim_getrot(obj->anim) + (COG_PI * 0.0001));
 }
 
 int main(void)

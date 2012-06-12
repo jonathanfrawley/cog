@@ -53,6 +53,7 @@ typedef struct
      cog_float y;
      cog_float w;
      cog_float h;
+     cog_float rot;
      //These are the coords and dimensions of the sprite within the image. (Can have multiple sprites per image - anims are implemented using this, see below)
      cog_float texx;
      cog_float texy;
@@ -106,6 +107,7 @@ void cog_graphics_swrender();
 GLuint cog_upload_texture(SDL_Surface* image);
 SDL_Surface* cog_load_image(const char* filename);
 GLuint cog_texture_load(char* filename);
+cog_float cog_math_radtodeg(cog_float rad);
 
 //global vars
 static cog_sprite_id cog_spritecnt;
@@ -474,6 +476,7 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
 
     //Translate
     glTranslatef(sprite->x,sprite->y, 0.0);
+    glRotatef( -cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f );
 
     //cog_errorf("sprite x <%f> y <%f>", sprite->x, sprite->y);
     //cog_errorf("sprite texx <%f> texy <%f>", sprite->texx, sprite->texy);
@@ -727,6 +730,7 @@ cog_sprite_id cog_sprite_load(char* filename,
         cog_float y,
         cog_float w,
         cog_float h,
+        cog_float rot,
         cog_float texx,
         cog_float texy,
         cog_float texw,
@@ -739,6 +743,7 @@ cog_sprite_id cog_sprite_load(char* filename,
     sprite->y = y;
     sprite->w = w;
     sprite->h = h;
+    sprite->rot = rot;
     sprite->texx = texx;
     sprite->texy = texy;
     sprite->texw = texw;
@@ -755,6 +760,7 @@ cog_sprite_id cog_sprite_add(char* filename,
         cog_float y,
         cog_float w,
         cog_float h,
+        cog_float rot,
         cog_float texx,
         cog_float texy,
         cog_float texw,
@@ -766,6 +772,7 @@ cog_sprite_id cog_sprite_add(char* filename,
         y,
         w,
         h,
+        rot,
         texx,
         texy,
         texw,
@@ -789,7 +796,8 @@ cog_anim_id cog_anim_add(
         cog_float x,
         cog_float y,
         cog_float w,
-        cog_float h, ...)
+        cog_float h,
+        cog_float rot, ...)
 {
     cog_anim* anim = COG_STRUCT_MALLOC(cog_anim);
     anim->id = cog_animcnt++;
@@ -820,6 +828,7 @@ cog_anim_id cog_anim_add(
                 y,
                 w,
                 h,
+                rot,
                 i*wanimframe,
                 0,
                 wanimframe,
@@ -887,6 +896,34 @@ cog_float cog_anim_gety(cog_anim_id id)
     return ((cog_sprite*)anim->frames->data)->y;
 }
 
+cog_float cog_anim_getrot(cog_anim_id id)
+{
+    cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
+    return ((cog_sprite*)anim->frames->data)->rot;
+}
+
+cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot)
+{
+    cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
+    if(anim == COG_NULL)
+    {
+        cog_errorf("anim is null in cog_anim_update_rot");
+    }
+    //Update the positions of all sprites in anim.
+    for(cog_list* frame = anim->frames;
+        frame != COG_NULL;
+        frame=frame->next)
+    {
+        cog_sprite* sprite = (cog_sprite*)(frame->data);
+        if(sprite == COG_NULL)
+        {
+            cog_errorf("sprite is null in cog_anim_update_rot");
+        }
+
+        sprite->rot = rot;
+    }
+}
+
 //sound
 cog_snd_id cog_sound_load(char* fname)
 {
@@ -901,4 +938,9 @@ void cog_sound_play(cog_snd_id snd)
 int cog_sound_isfinished(cog_snd_id snd)
 {
     //TODO
+}
+
+cog_float cog_math_radtodeg(cog_float rad)
+{
+    return (rad * (180.0f/COG_PI));
 }
