@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
 #include <GL/glew.h>
 
 #include "cog_core.h"
@@ -46,34 +47,43 @@ static cog_renderer renderer;
  **/
 typedef struct
 {
-     cog_sprite_id id;
-     GLuint texid;
-     //These coords and dimensions are for the whole sprite in the game world.
-     cog_float x;
-     cog_float y;
-     cog_float w;
-     cog_float h;
-     cog_float rot;
-     //These are the coords and dimensions of the sprite within the image. (Can have multiple sprites per image - anims are implemented using this, see below)
-     cog_float texx;
-     cog_float texy;
-     cog_float texw;
-     cog_float texh;
+    cog_sprite_id id;
+    GLuint texid;
+    //These coords and dimensions are for the whole sprite in the game world.
+    cog_float x;
+    cog_float y;
+    cog_float w;
+    cog_float h;
+    cog_float rot;
+    //These are the coords and dimensions of the sprite within the image. (Can have multiple sprites per image - anims are implemented using this, see below)
+    cog_float texx;
+    cog_float texy;
+    cog_float texw;
+    cog_float texh;
 } cog_sprite;
 /**
  * Anims are a collection of sprites with a specific duration between them.
  **/
 typedef struct
 {
-     cog_anim_id id;
-     cog_uint transition_millis;
-     cog_uint currentframe;
-     cog_uint currentframe_millis;
-     cog_bool looped;
-     cog_list* frames;
-     cog_uint nframes;
-     cog_bool paused;
+    cog_anim_id id;
+    cog_uint transition_millis;
+    cog_uint currentframe;
+    cog_uint currentframe_millis;
+    cog_bool looped;
+    cog_list* frames;
+    cog_uint nframes;
+    cog_bool paused;
 } cog_anim;
+/**
+ * snds hold info about sounds.
+ **/
+typedef struct
+{
+    cog_snd_id id;
+    Mix_Chunk* chunk;
+    cog_int channel;
+} cog_snd;
 
 typedef struct
 {
@@ -91,6 +101,7 @@ void cog_window_init(void);
 void cog_window_togglefullscreen(void);
 void cog_checkkeys(void);
 void cog_graphics_init(void);
+void cog_audio_init(void);
 void cog_graphics_hwinit(void);
 void cog_graphics_swinit(void);
 void cog_update_anims(cog_uint deltamillis);
@@ -117,6 +128,8 @@ static cog_map anims;
 static cog_int configmask;
 static cog_list* activesprites; //sprites drawn(active) at the moment
 static cog_list* activeanims; //anims drawn(active) at the moment
+static cog_snd_id cog_sndcnt;
+static cog_map snds;
 //timing
 static cog_uint now;
 static cog_uint timedelta;
@@ -129,6 +142,7 @@ void cog_init(cog_int config)
     //Init globals
     cog_map_init(&sprites);
     cog_map_init(&anims);
+    cog_map_init(&snds);
     activesprites = COG_NULL;
     activeanims = COG_NULL;
     //Init cog
@@ -136,7 +150,9 @@ void cog_init(cog_int config)
     cog_platform_init();
     cog_window_init();
     cog_graphics_init();
+    cog_audio_init();
     starttime = SDL_GetTicks();
+
 }
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
@@ -296,6 +312,20 @@ void cog_graphics_init(void)
     {
         cog_debugf("Initializing software rendering...");
         cog_graphics_swinit();
+    }
+}
+
+void cog_audio_init(void)
+{
+    int audio_rate = 22050;
+    Uint16 audio_format = AUDIO_S16SYS;
+    int audio_channels = 2;
+    int audio_buffers = 4096;
+
+    if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
+    {
+        cog_errorf("Unable to initialize audio: %s\n", Mix_GetError());
+        exit(1);
     }
 }
 
@@ -927,17 +957,33 @@ cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot)
 //sound
 cog_snd_id cog_sound_load(char* fname)
 {
-    //TODO
+    cog_snd* snd = COG_STRUCT_MALLOC(cog_snd);
+    snd->id = cog_sndcnt++;
+    snd->chunk = Mix_LoadWAV(fname);
+    if(snd->chunk == COG_NULL)
+    {
+        cog_errorf("Unable to load WAV file: %s\n", Mix_GetError());
+    }
+    cog_map_put(&snds, snd->id, (void*)snd);
+    return snd->id;
 }
 
-void cog_sound_play(cog_snd_id snd)
+void cog_sound_play(cog_snd_id id)
 {
-    //TODO
+    cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);
+    snd->channel = Mix_PlayChannel(-1, snd->chunk, 0);
+    if(snd->channel == -1)
+    {
+        cog_errorf("Unable to play WAV file: %s\n", Mix_GetError());
+    }
 }
 
-int cog_sound_isfinished(cog_snd_id snd)
+int cog_sound_isfinished(cog_snd_id id)
 {
     //TODO
+    cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);
+    //cog_errorf("mix : %d", Mix_Playing(snd->channel));
+    return ! (Mix_Playing(snd->channel));
 }
 
 cog_float cog_math_radtodeg(cog_float rad)
