@@ -10,13 +10,13 @@ add_definitions(-std=c99)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-add_library (cog cog.c cog_map.c cog_core.c cog_list.c)
-set(COG_LIBRARY cog ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLMIXER_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY})
+add_library (cog cog.c cog_map.c cog_core.c cog_list.c )
+target_link_libraries(cog ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLMIXER_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY})
 
 add_executable(test test.c)
-target_link_libraries(test ${COG_LIBRARY})
+target_link_libraries(test cog)
 add_executable(testanim testanim.c)
-target_link_libraries(testanim ${COG_LIBRARY})
+target_link_libraries(testanim cog)
 add_executable(testsound testsound.c)
-target_link_libraries(testsound ${COG_LIBRARY})
+target_link_libraries(testsound cog)
 
