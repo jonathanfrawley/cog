@@ -15,6 +15,7 @@
 static int COG_MAX_BUF = 255;
 static int COG_MAX_FILE_BUF = 4080;
 //TODO: Get these from config.
+//static int COG_SCREEN_WIDTH = 640;
 static int COG_SCREEN_WIDTH = 640;
 static int COG_SCREEN_HEIGHT = 480;
 static GLfloat spritevertices[] = {
@@ -152,7 +153,6 @@ void cog_init(cog_int config)
     cog_graphics_init();
     cog_audio_init();
     starttime = SDL_GetTicks();
-
 }
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
@@ -221,8 +221,8 @@ void cog_platform_init(void)
 void cog_window_init(void)
 {
     //TODO:Get from yaml conf.
-    int width = 800;
-    int height = 600;
+    int width = COG_SCREEN_WIDTH;
+    int height = COG_SCREEN_HEIGHT;
     int bpp = 32;
     int flags = SDL_OPENGL | SDL_DOUBLEBUF;
     if( (window.screen = SDL_SetVideoMode( width, height, bpp, flags )) == 0 )
@@ -496,8 +496,13 @@ void cog_graphics_render()
     }
 }
 
+/**
+ * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
+ * engines where they are drawn from the top left.
+ * */
 void cog_graphics_draw_sprite(cog_sprite* sprite)
 {
+    glPushMatrix();
     //Bind texture
     int textureuniform = glGetUniformLocation(renderer.programid, "my_color_texture");
     glActiveTexture(GL_TEXTURE0);
@@ -505,140 +510,85 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
     //glUniform1i(textureuniform, sprite->texid);
 
     //Translate
+    //glTranslatef(sprite->x - (sprite->w*0.5),sprite->y - (sprite->h*0.5), 0.0);
+    //glTranslatef(sprite->x + (sprite->w),sprite->y + (sprite->h), 0.0);
     glTranslatef(sprite->x,sprite->y, 0.0);
     glRotatef( -cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f );
 
-    //cog_errorf("sprite x <%f> y <%f>", sprite->x, sprite->y);
-    //cog_errorf("sprite texx <%f> texy <%f>", sprite->texx, sprite->texy);
-    //cog_errorf("sprite texw <%f> texh <%f>", sprite->texw, sprite->texh);
-    //cog_errorf("sprite texid <%d>", sprite->texid);
+    glBegin(GL_QUADS);                      // Draw A Quad
+        glTexCoord2f(sprite->texx,
+                sprite->texy + sprite->texh);
+        glVertex2f(-1.0f*sprite->w,
+                1.0f*sprite->h);              // Top Left
+        //glTexCoord2f( frame_idx_x/xframes, frame_idx_y/yframes );
+        glTexCoord2f(sprite->texx + sprite->texw,
+                sprite->texy + sprite->texh);
+        glVertex2f(1.0f*sprite->w,
+                1.0f*sprite->h);              // Top Right
+        glTexCoord2f(sprite->texx + sprite->texw,
+                sprite->texy);
+        glVertex2f(1.0f*sprite->w,
+                -1.0f*sprite->h);             // Bottom Right
+        glTexCoord2f(sprite->texx,
+                sprite->texy);
+        glVertex2f(-1.0f*sprite->w,
+                -1.0f*sprite->h);             // Bottom left
+    glEnd();
+/*
+    float verts[] = {
+        -1.0f*sprite->w,
+        1.0f*sprite->h,              // Top Left
+        1.0f*sprite->w,
+        1.0f*sprite->h,              // Top Right
+        1.0f*sprite->w,
+        -1.0f*sprite->h,             // Bottom Right
+        -1.0f*sprite->w,
+        -1.0f*sprite->h             // Bottom left
+    };
 
-    /*
-    glBegin(GL_QUADS);                      // Draw A Quad
-        glTexCoord2f(sprite->texx,
-                sprite->texy);
-        glVertex2f(-1.0f*sprite->w,
-                1.0f*sprite->h);              // Top Left
-        //glTexCoord2f( frame_idx_x/xframes, frame_idx_y/yframes );
-        glTexCoord2f(sprite->texx + sprite->texw,
-                sprite->texy);
-        glVertex2f(1.0f*sprite->w,
-                1.0f*sprite->h);              // Top Right
-        glTexCoord2f(sprite->texx + sprite->texw,
-                sprite->texy + sprite->texh);
-        glVertex2f(1.0f*sprite->w,
-                -1.0f*sprite->h);             // Bottom Right
-        glTexCoord2f(sprite->texx,
-                sprite->texy + sprite->texh);
-        glVertex2f(-1.0f*sprite->w,
-                -1.0f*sprite->h);             // Bottom left
-    glEnd();
+    const float texverts[] = {
+        tx, ty,
+        tx + tw, ty,
+        tx + tw, ty + th,
+        tx, ty + th
+    };
+
+    // ... Bind the texture, enable the proper arrays
+
+    glVertexPointer(2, GL_FLOAT, verts);
+    glTextureVertexPointer(2, GL_FLOAT, texVerts);
+    glDrawArrays(GL_TRI_STRIP, 0, 4);
     */
-    glBegin(GL_QUADS);                      // Draw A Quad
-        glTexCoord2f(sprite->texx,
-                sprite->texy + sprite->texh);
-        glVertex2f(-1.0f*sprite->w,
-                1.0f*sprite->h);              // Top Left
-        //glTexCoord2f( frame_idx_x/xframes, frame_idx_y/yframes );
-        glTexCoord2f(sprite->texx + sprite->texw,
-                sprite->texy + sprite->texh);
-        glVertex2f(1.0f*sprite->w,
-                1.0f*sprite->h);              // Top Right
-        glTexCoord2f(sprite->texx + sprite->texw,
-                sprite->texy);
-        glVertex2f(1.0f*sprite->w,
-                -1.0f*sprite->h);             // Bottom Right
-        glTexCoord2f(sprite->texx,
-                sprite->texy);
-        glVertex2f(-1.0f*sprite->w,
-                -1.0f*sprite->h);             // Bottom left
-    glEnd();
+
+    glPopMatrix();
 }
 
 void cog_graphics_hwrender()
 {
     glClear( GL_COLOR_BUFFER_BIT );
     glLoadIdentity();
-    /*
-    //glTranslatef(0.0, 0.0, 150.0);
-    //glRotatef(-45.0, 1.0, 0.0, 0.0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, renderer.vertbuffid);
-    glVertexAttribPointer(
-            0, // attribute
-            4, // size
-            GL_FLOAT, // type
-            GL_FALSE, // normalized?
-            0, // stride
-            (void*)0 // array buffer offset
-            );
-//    glEnableVertexAttribArray(0);
-//    glBindBuffer(GL_ARRAY_BUFFER, renderer.vertorderbuffid);
-//    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-//    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer.vertorderbuffid);
-    glDrawElements(
-            GL_QUADS, // Mode
-            4, // Count
-            GL_UNSIGNED_SHORT, // Data type
-            (void*)0 // Offset
-            );
-            */
-    /*
-    GLfloat vVertices[] = {0.0f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f};
-    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE, 0, vVertices);
-    glEnableAttribArray(0);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    */
-    //glTranslatef(0.0, 0.0, -250.0);
-    //glTranslatef(10.0, 10.0, 0.0);
-    //glRotatef(-45.0, 1.0, 0.0, 0.0);
-    //float scale = 0.01;
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    /*
-    glTranslatef(100.0,100.0, 0.0);
-
-    float scale = 100.0;
-    float xframes = 3.0;
-    float yframes = 1.0;
-    //NOTE: Indexed from 1, should be from 0? No, don't think so. Should add check for 0 though.
-    int framex=3;
-    int framey=1;
-    float frame_idx_x_start = (float)(framex-1.0f);
-    float frame_idx_y_start = (float)(framey-1.0f);
-    float frame_idx_x_end = (float)framex;
-    float frame_idx_y_end = (float)framey;
-    //Going from bottom left coord to top right.
-    float tex_startx = (framex-1.0f)/xframes;
-    float tex_starty = (framey)/yframes;
-    float tex_endx = (framex)/xframes;
-    float tex_endy = (framey-1.0f)/yframes;
-    glBegin(GL_QUADS);                      // Draw A Quad
-        glTexCoord2f(tex_startx, tex_starty);
-        glVertex2f(-1.0f*scale, 1.0f*scale);              // Top Left
-        //glTexCoord2f( frame_idx_x/xframes, frame_idx_y/yframes );
-        glTexCoord2f(tex_endx, tex_starty);
-        glVertex2f(1.0f*scale, 1.0f*scale);              // Top Right
-        glTexCoord2f(tex_endx, tex_endy);
-        glVertex2f(1.0f*scale,-1.0f*scale);              // Bottom Right
-        glTexCoord2f(tex_startx, tex_endy);
-        glVertex2f(-1.0f*scale,-1.0f*scale);
-    glEnd();
-    */
-    //TODO:Draw anims
+    //Draw sprites
+    for(cog_list* spriteid = activesprites;
+        spriteid != COG_NULL;
+        spriteid=spriteid->next)
+    {
+        //draw current sprite
+        cog_sprite* thissprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)spriteid->data));
+        cog_graphics_draw_sprite(thissprite);
+    }
+    //Draw anims
     for(cog_list* animid = activeanims;
         animid != COG_NULL;
         animid=animid->next)
     {
-        //Draw current sprite
+        //draw current sprite
         cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,*((cog_anim_id*)animid->data));
         if(thisanim->paused)
         {
             continue;
         }
-        //Find active frame to render
+        //find active frame to render
         cog_list* frame = thisanim->frames;
         cog_uint i=0;
         while(i<thisanim->currentframe)
@@ -649,8 +599,6 @@ void cog_graphics_hwrender()
         //cog_graphics_draw_sprite((cog_sprite*)cog_map_get(&sprites,*((cog_uint*)frame->data)));
         cog_graphics_draw_sprite((cog_sprite*)frame->data);
     }
-
-    //TODO:Draw sprites
 
     SDL_GL_SwapBuffers();
 }
@@ -684,6 +632,9 @@ SDL_Surface* cog_load_image(const char* filename)
 
 GLuint cog_upload_texture(SDL_Surface* image)
 {
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT,4);
+
     int w = image->w;
     int h = image->h;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -726,6 +677,8 @@ GLuint cog_upload_texture(SDL_Surface* image)
     /* Prepare the filtering of the texture image */
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     /* Map the alpha surface to the texture */
@@ -813,6 +766,25 @@ cog_sprite_id cog_sprite_add(char* filename,
     (*idcopy) = id;
     activesprites = cog_list_append(activesprites, idcopy);
     return id;
+}
+
+cog_sprite_id cog_sprite_simple_add(char* filename,
+        cog_float x,
+        cog_float y,
+        cog_float w,
+        cog_float h,
+        cog_float rot)
+{
+    return cog_sprite_add(filename,
+            x,
+            y,
+            w,
+            h,
+            rot,
+            0,
+            0,
+            1.0,
+            1.0);
 }
 
 /**
@@ -989,4 +961,14 @@ int cog_sound_isfinished(cog_snd_id id)
 cog_float cog_math_radtodeg(cog_float rad)
 {
     return (rad * (180.0f/COG_PI));
+}
+
+cog_float cog_get_screenw()
+{
+    return COG_SCREEN_WIDTH;
+}
+
+cog_float cog_get_screenh()
+{
+    return COG_SCREEN_HEIGHT;
 }

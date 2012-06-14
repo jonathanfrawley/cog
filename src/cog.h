@@ -15,6 +15,12 @@ void cog_quit();
 cog_bool cog_hasquit();
 
 //anim
+cog_sprite_id cog_sprite_simple_add(char* filename,
+        cog_float x,
+        cog_float y,
+        cog_float w,
+        cog_float h,
+        cog_float rot);
 cog_anim_id cog_anim_add(
         char* animimg,
         cog_uint transition_millis,
@@ -38,5 +44,9 @@ cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot);
 cog_snd_id cog_sound_load(char* fname);
 void cog_sound_play(cog_snd_id snd);
 int cog_sound_isfinished(cog_snd_id snd);
+
+//dimensions
+cog_float cog_get_screenw();
+cog_float cog_get_screenh();
 
 #endif   // COG_H
