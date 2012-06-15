@@ -675,10 +675,10 @@ GLuint cog_upload_texture(SDL_Surface* image)
     glGenTextures( 1, &textureID );
     glBindTexture( GL_TEXTURE_2D, textureID );
     /* Prepare the filtering of the texture image */
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     /* Map the alpha surface to the texture */
@@ -785,6 +785,39 @@ cog_sprite_id cog_sprite_simple_add(char* filename,
             0,
             1.0,
             1.0);
+}
+
+void cog_sprite_update_pos(cog_sprite_id id,
+        cog_float x,
+        cog_float y)
+{
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    sprite->x = x;
+    sprite->y = y;
+}
+
+cog_float cog_sprite_getx(cog_sprite_id id)
+{
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    return sprite->x;
+}
+
+cog_float cog_sprite_gety(cog_sprite_id id)
+{
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    return sprite->y;
+}
+
+cog_float cog_sprite_getrot(cog_sprite_id id)
+{
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    return sprite->rot;
+}
+
+cog_float cog_sprite_update_rot(cog_sprite_id id, cog_float rot)
+{
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    sprite->rot = rot;
 }
 
 /**

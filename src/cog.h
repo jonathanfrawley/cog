@@ -14,13 +14,21 @@ void cog_loopstep();
 void cog_quit();
 cog_bool cog_hasquit();
 
-//anim
+//sprite
 cog_sprite_id cog_sprite_simple_add(char* filename,
         cog_float x,
         cog_float y,
         cog_float w,
         cog_float h,
         cog_float rot);
+void cog_sprite_update_pos(cog_sprite_id,
+        cog_float x,
+        cog_float y);
+cog_float cog_sprite_getx(cog_sprite_id);
+cog_float cog_sprite_gety(cog_sprite_id);
+cog_float cog_sprite_getrot(cog_sprite_id id);
+cog_float cog_sprite_update_rot(cog_sprite_id id, cog_float rot);
+//anim
 cog_anim_id cog_anim_add(
         char* animimg,
         cog_uint transition_millis,
