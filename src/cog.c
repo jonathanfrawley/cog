@@ -12,12 +12,16 @@
 #include "cog_list.h"
 
 //constants
+#define FRAMES_PER_SECOND 40
+static cog_uint FRAME_TIME = 1000 / FRAMES_PER_SECOND;
+
 static int COG_MAX_BUF = 255;
 static int COG_MAX_FILE_BUF = 4080;
 //TODO: Get these from config.
 //static int COG_SCREEN_WIDTH = 640;
 static int COG_SCREEN_WIDTH = 640;
 static int COG_SCREEN_HEIGHT = 480;
+
 static GLfloat spritevertices[] = {
     1.0,  1.0,  1.0, 1.0,
     -1.0,  1.0,  1.0, 1.0,
@@ -135,6 +139,10 @@ static cog_map snds;
 static cog_uint now;
 static cog_uint timedelta;
 static cog_uint starttime;
+static cog_uint lastframetime;
+static cog_uint frametimecounter;
+static cog_uint framedrawcounter;
+static cog_uint frameupdatecounter;
 
 //implementations
 void cog_init(cog_int config)
@@ -164,16 +172,62 @@ void cog_mainloop()
     }
 }
 
-//This is to allow the user to control the mainloop
-void cog_loopstep()
+/* *
+ * This will be return true when the user should call another
+ * cog_update()
+ * */
+cog_bool cog_updateready()
 {
     now = SDL_GetTicks();
     timedelta = now - starttime;
-    starttime = SDL_GetTicks();
-    cog_debugf("starttime <%d> timedelta <%d> \n", starttime, timedelta);
+    //cog_debugf("starttime <%d> timedelta <%d> \n", starttime, timedelta);
+    //starttime = SDL_GetTicks();
+    //return (timedelta < FRAME_TIME);
+    return (timedelta > FRAME_TIME);
+}
+
+void cog_sleepuntilupdate()
+{
+    now = SDL_GetTicks();
+    timedelta = now - starttime;
+    if(timedelta<FRAME_TIME)
+    {
+        SDL_Delay(FRAME_TIME-timedelta);
+    }
+}
+
+void cog_update()
+{
+    //now = SDL_GetTicks();
+    //timedelta = now - starttime;
+    //starttime = SDL_GetTicks();
+    //cog_debugf("starttime <%d> timedelta <%d> \n", starttime, timedelta);
 
     cog_checkkeys();
     cog_update_anims(timedelta);
+
+    //performance timing
+    frameupdatecounter++;
+    lastframetime = SDL_GetTicks() - starttime;
+    starttime = SDL_GetTicks();
+#ifdef DEBUG
+    //Useful logging every second.
+    frametimecounter += lastframetime;
+    if(frametimecounter >= 1000)
+    {
+        cog_debugf("nupdates <%d>, ndraws <%d>", frameupdatecounter, framedrawcounter);
+
+        frametimecounter = 0;
+        framedrawcounter = 0;
+        frameupdatecounter = 0;
+    }
+#endif //DEBUG
+}
+
+//This is to allow the user to control the mainloop
+void cog_loopstep()
+{
+    cog_update();
     cog_graphics_render();
 }
 
@@ -486,6 +540,7 @@ cleanup:
 
 void cog_graphics_render()
 {
+    framedrawcounter++;
     if(configmask & COG_CONFIG_HWRENDER)
     {
         cog_graphics_hwrender();

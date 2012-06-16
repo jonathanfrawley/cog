@@ -9,10 +9,14 @@ static cog_float COG_PI = 3.14159265;
 
 //main
 void cog_init(cog_int config);
+cog_bool cog_updateready();
+void cog_sleepuntilupdate();
 void cog_mainloop();
+void cog_update();
 void cog_loopstep();
 void cog_quit();
 cog_bool cog_hasquit();
+void cog_graphics_render();
 
 //sprite
 cog_sprite_id cog_sprite_simple_add(char* filename,
