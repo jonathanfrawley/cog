@@ -1,7 +1,7 @@
 TODO Tasks cog
 ==============
+3.25) Get list iteration more sensibly implemented.
 3.5) Static frame rate for updates made easy for games.
-4) Physics [MAYBE]
 5) Particle Effects [MAYBE]
 6) Port lls to use it.
 7) Software renderer (Meh, not sure if this will be needed/possible due to opengl being so much more powerful with rotations and somewhat, but leave in stubs for functions at the moment)
@@ -14,3 +14,4 @@ Done Tasks cog
 2) Finish animation implementation.
     - Rendering in main loop.
 3) Sound
+4) Physics [MAYBE]
