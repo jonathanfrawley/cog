@@ -2,6 +2,8 @@
 
 #include "cog_core.h"
 
+#include "cog.h"
+
 cog_list* cog_list_alloc()
 {
     cog_list* obj = COG_STRUCT_MALLOC(cog_list);
@@ -48,7 +50,7 @@ cog_list* cog_list_append(cog_list* list, cog_dataptr data)
     }
 }
 
-void cog_list_remove(cog_list* list, cog_dataptr data)
+cog_list* cog_list_remove(cog_list* list, cog_dataptr data)
 {
     cog_list* prev;
     cog_list* curr;
@@ -58,17 +60,20 @@ void cog_list_remove(cog_list* list, cog_dataptr data)
         {
             if(prev == COG_NULL)
             {
-                list = curr->next;
+                cog_list* newlist = curr->next;
                 curr->next = COG_NULL;
+                cog_free(curr->data);
                 cog_free(curr);
+                return newlist;
             }
             else
             {
                 prev->next = curr->next;
                 curr->next = COG_NULL;
+                cog_free(curr->data);
                 cog_free(curr);
+                return list;
             }
-            return;
         }
     }
 }

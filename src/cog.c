@@ -105,7 +105,6 @@ static cog_window window;
 void cog_platform_init(void);
 void cog_window_init(void);
 void cog_window_togglefullscreen(void);
-void cog_checkkeys(void);
 void cog_graphics_init(void);
 void cog_audio_init(void);
 void cog_graphics_hwinit(void);
@@ -125,8 +124,14 @@ GLuint cog_upload_texture(SDL_Surface* image);
 SDL_Surface* cog_load_image(const char* filename);
 GLuint cog_texture_load(char* filename);
 cog_float cog_math_radtodeg(cog_float rad);
+//##input
+//###mouse
+void cog_input_checkmouse(void);
+//##keys
+void cog_input_checkkeys(void);
 
-//global vars
+//
+//#global vars
 static cog_sprite_id cog_spritecnt;
 static cog_map sprites;
 static cog_anim_id cog_animcnt;
@@ -136,7 +141,7 @@ static cog_list* activesprites; //sprites drawn(active) at the moment
 static cog_list* activeanims; //anims drawn(active) at the moment
 static cog_snd_id cog_sndcnt;
 static cog_map snds;
-//timing
+//##timing
 static cog_uint now;
 static cog_uint timedelta;
 static cog_uint starttime;
@@ -144,6 +149,13 @@ static cog_uint lastframetime;
 static cog_uint frametimecounter;
 static cog_uint framedrawcounter;
 static cog_uint frameupdatecounter;
+//##input
+static cog_bool mouseleftpressed;
+static cog_bool mouserightpressed;
+static cog_bool mouseleftjustpressed;
+static cog_bool mouserightjustpressed;
+static cog_float mousex;
+static cog_float mousey;
 
 //implementations
 void cog_init(cog_int config)
@@ -204,7 +216,8 @@ void cog_update()
     //starttime = SDL_GetTicks();
     //cog_debugf("starttime <%d> timedelta <%d> \n", starttime, timedelta);
 
-    cog_checkkeys();
+    cog_input_checkkeys();
+    cog_input_checkmouse();
     cog_update_anims(timedelta);
     cog_update_physics(timedelta);
 
@@ -294,30 +307,6 @@ void cog_window_togglefullscreen(void)
     SDL_WM_ToggleFullScreen(window.screen);
 }
 
-//keys
-void cog_checkkeys(void)
-{
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-        switch(event.type)
-        {
-            case SDL_QUIT:
-                cog_quit();
-                break;
-            case SDL_KEYDOWN:
-                switch(event.key.keysym.sym)
-                {
-                    case SDLK_ESCAPE:
-                        cog_quit();
-                        break;
-                    case SDLK_f:
-                        cog_window_togglefullscreen();
-                        break;
-                }
-        }
-    }
-}
 
 void cog_update_anims(cog_uint deltamillis)
 {
@@ -347,7 +336,7 @@ void cog_update_anims(cog_uint deltamillis)
                 {
                     thisanim->paused = 0;
 
-                    cog_list_remove(activeanims, (void*)(animid->data));
+                    activeanims = cog_list_remove(activeanims, (void*)(animid->data));
                     cog_map_remove(&anims, id);
                     animid = COG_NULL;
                 }
@@ -904,6 +893,21 @@ cog_float cog_sprite_update_yvel(cog_sprite_id id, cog_float yvel)
     sprite->yvel = yvel;
 }
 
+void cog_sprite_remove(cog_sprite_id id)
+{
+    for(cog_list* spriteid = activesprites;
+        spriteid != COG_NULL;
+        spriteid=spriteid->next)
+    {
+        if(*((cog_sprite_id*)spriteid->data) == id)
+        {
+            activesprites = cog_list_remove(activesprites, spriteid->data);
+            break;
+        }
+    }
+    cog_map_remove(&sprites, id);
+}
+
 /**
  * Assumes animation is a single 1D animation frame.
  * */
@@ -1133,6 +1137,95 @@ void cog_update_physics(cog_float timedelta)
             //do physics update for current sprite
             thissprite->x += timedelta * thissprite->xvel;
             thissprite->y += timedelta * thissprite->yvel;
+        }
+    }
+}
+
+//#input
+//##mouse
+cog_bool cog_input_mouseleftjustpressed()
+{
+    return mouseleftjustpressed;
+}
+
+cog_bool cog_input_mouserightjustpressed()
+{
+    return mouseleftjustpressed;
+}
+
+cog_float cog_input_mousex()
+{
+    return mousex;
+}
+
+cog_float cog_input_mousey()
+{
+    return mousey;
+}
+
+void cog_input_checkmouse(void)
+{
+    cog_uint x,y;
+    cog_uint state = SDL_GetMouseState(&x, &y);
+    cog_debugf("x <%d>,y <%d>\n", x, y);
+    mousex = (cog_float)x;
+    mousey = (cog_float)y;
+    if(SDL_BUTTON_LEFT == SDL_BUTTON(state))
+    {
+        if(!mouseleftpressed)
+        {
+            mouseleftjustpressed = COG_TRUE;
+        }
+        else
+        {
+            mouseleftjustpressed = COG_FALSE;
+        }
+        mouseleftpressed = COG_TRUE;
+    }
+    else
+    {
+        mouseleftpressed = COG_FALSE;
+    }
+
+    if(SDL_BUTTON_LEFT == SDL_BUTTON(state))
+    {
+        if(!mouserightpressed)
+        {
+            mouserightjustpressed = COG_TRUE;
+        }
+        else
+        {
+            mouserightjustpressed = COG_FALSE;
+        }
+        mouserightpressed = COG_TRUE;
+    }
+    else
+    {
+        mouserightpressed = COG_FALSE;
+    }
+}
+
+//##keys
+void cog_input_checkkeys(void)
+{
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
+    {
+        switch(event.type)
+        {
+            case SDL_QUIT:
+                cog_quit();
+                break;
+            case SDL_KEYDOWN:
+                switch(event.key.keysym.sym)
+                {
+                    case SDLK_ESCAPE:
+                        cog_quit();
+                        break;
+                    case SDLK_f:
+                        cog_window_togglefullscreen();
+                        break;
+                }
         }
     }
 }

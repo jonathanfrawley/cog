@@ -39,6 +39,7 @@ void cog_sprite_update_pos(cog_anim_id,
 cog_float cog_sprite_update_rot(cog_sprite_id id, cog_float rot);
 cog_float cog_sprite_update_xvel(cog_sprite_id id, cog_float xvel);
 cog_float cog_sprite_update_yvel(cog_sprite_id id, cog_float yvel);
+void cog_sprite_remove(cog_sprite_id id);
 //anim
 cog_anim_id cog_anim_add(
         char* animimg,
@@ -80,5 +81,11 @@ void cog_debugf(const char* logMsg, ...);
 
 //physics
 void cog_update_physics(cog_float timedelta);
+
+//input
+cog_bool cog_input_mouseleftjustpressed();
+cog_bool cog_input_mouserightjustpressed();
+cog_float cog_input_mousex();
+cog_float cog_input_mousey();
 
 #endif   // COG_H

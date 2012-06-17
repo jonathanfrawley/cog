@@ -22,7 +22,7 @@ cog_list* cog_list_append(cog_list* list, cog_dataptr data);
 //----------------------------------------------------------------------
 //  Removes elem w/ data == data in this list.
 //----------------------------------------------------------------------
-void cog_list_remove(cog_list* list, cog_dataptr data);
+cog_list* cog_list_remove(cog_list* list, cog_dataptr data);
 
 //----------------------------------------------------------------------
 //  Empties list and frees data.
