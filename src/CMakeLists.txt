@@ -11,7 +11,7 @@ add_definitions(-std=c99)
 set(CMAKE_BUILD_TYPE Debug)
 
 add_library (cog cog.c cog_map.c cog_core.c cog_list.c )
-target_link_libraries(cog ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLMIXER_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY})
+target_link_libraries(cog ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLMIXER_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} m)
 
 add_executable(test test.c)
 target_link_libraries(test cog)

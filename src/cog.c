@@ -1,5 +1,6 @@
 #include "cog.h"
 
+#include <math.h>
 #include <stdarg.h>
 #include <assert.h>
 #include <SDL/SDL.h>
@@ -97,9 +98,6 @@ typedef struct
 static cog_window window;
 
 //#prototypes
-//##logging
-void cog_errorf(const char* logMsg, ...);
-void cog_debugf(const char* logMsg, ...);
 //##main
 void cog_platform_init(void);
 void cog_window_init(void);
@@ -863,6 +861,18 @@ cog_float cog_sprite_gety(cog_sprite_id id)
     return sprite->y;
 }
 
+cog_float cog_sprite_getw(cog_sprite_id id)
+{
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    return sprite->w;
+}
+
+cog_float cog_sprite_geth(cog_sprite_id id)
+{
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    return sprite->w;
+}
+
 cog_float cog_sprite_getrot(cog_sprite_id id)
 {
     cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
@@ -1051,12 +1061,31 @@ cog_float cog_math_radtodeg(cog_float rad)
     return (rad * (180.0f/COG_PI));
 }
 
-cog_float cog_get_screenw()
+cog_float cog_math_sqrt(cog_float x)
+{
+    return sqrt(x);
+}
+
+cog_uint cog_get_screenw()
 {
     return COG_SCREEN_WIDTH;
 }
 
-cog_float cog_get_screenh()
+cog_uint cog_get_screenh()
 {
     return COG_SCREEN_HEIGHT;
+}
+
+cog_uint cog_nextrand()
+{
+    return rand();
+}
+
+cog_float cog_sprite_dist(cog_sprite_id a, cog_sprite_id b)
+{
+    cog_sprite* asprite = (cog_sprite*)cog_map_get(&sprites, a);
+    cog_sprite* bsprite = (cog_sprite*)cog_map_get(&sprites, b);
+    //TODO
+    return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
+        (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
 }
