@@ -66,6 +66,9 @@ typedef struct
     cog_float texy;
     cog_float texw;
     cog_float texh;
+    //physics
+    cog_float xvel;
+    cog_float yvel;
 } cog_sprite;
 /**
  * Anims are a collection of sprites with a specific duration between them.
@@ -203,6 +206,7 @@ void cog_update()
 
     cog_checkkeys();
     cog_update_anims(timedelta);
+    cog_update_physics(timedelta);
 
     //performance timing
     frameupdatecounter++;
@@ -784,6 +788,9 @@ cog_sprite_id cog_sprite_load(char* filename,
     sprite->texy = texy;
     sprite->texw = texw;
     sprite->texh = texh;
+    //physics always 0
+    sprite->xvel = 0.0f;
+    sprite->yvel = 0.0f;
     cog_map_put(&sprites, sprite->id, (void*)sprite);
     return sprite->id;
 }
@@ -883,6 +890,18 @@ cog_float cog_sprite_update_rot(cog_sprite_id id, cog_float rot)
 {
     cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
     sprite->rot = rot;
+}
+
+cog_float cog_sprite_update_xvel(cog_sprite_id id, cog_float xvel)
+{
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    sprite->xvel = xvel;
+}
+
+cog_float cog_sprite_update_yvel(cog_sprite_id id, cog_float yvel)
+{
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    sprite->yvel = yvel;
 }
 
 /**
@@ -1088,4 +1107,32 @@ cog_float cog_sprite_dist(cog_sprite_id a, cog_sprite_id b)
     //TODO
     return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
         (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
+}
+
+void cog_update_physics(cog_float timedelta)
+{
+    for(cog_list* spriteid = activesprites;
+        spriteid != COG_NULL;
+        spriteid=spriteid->next)
+    {
+        cog_sprite* thissprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)spriteid->data));
+        //do physics update for current sprite
+        thissprite->x += timedelta * thissprite->xvel;
+        thissprite->y += timedelta * thissprite->yvel;
+    }
+    for(cog_list* animid = activeanims;
+        animid != COG_NULL;
+        animid=animid->next)
+    {
+        cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,*((cog_anim_id*)animid->data));
+        for(cog_list* frame = thisanim->frames;
+            frame != COG_NULL;
+            frame=frame->next)
+        {
+            cog_sprite* thissprite = (cog_sprite*)(frame->data);
+            //do physics update for current sprite
+            thissprite->x += timedelta * thissprite->xvel;
+            thissprite->y += timedelta * thissprite->yvel;
+        }
+    }
 }
