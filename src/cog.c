@@ -312,7 +312,7 @@ void cog_update_anims(cog_uint deltamillis)
 {
     for(cog_list* animid = activeanims;
         animid != COG_NULL;
-        animid=animid->next)
+        )
     {
         //Draw current sprite
         cog_anim_id id = *((cog_anim_id*)animid->data);
@@ -336,12 +336,23 @@ void cog_update_anims(cog_uint deltamillis)
                 {
                     thisanim->paused = 0;
 
+                    cog_list* next = animid->next;
                     activeanims = cog_list_remove(activeanims, (void*)(animid->data));
                     cog_map_remove(&anims, id);
-                    animid = COG_NULL;
+                    //animid = COG_NULL;
+                    if(next == COG_NULL) //When we have only one in list
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        animid = next;
+                        continue;
+                    }
                 }
             }
         }
+        animid=animid->next;
     }
 }
 
