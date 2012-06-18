@@ -17,6 +17,7 @@ void cog_loopstep();
 void cog_quit();
 cog_bool cog_hasquit();
 void cog_graphics_render();
+cog_uint cog_gettimedelta();
 
 //sprite
 cog_sprite_id cog_sprite_simple_add(char* filename,

@@ -557,6 +557,11 @@ void cog_graphics_render()
     }
 }
 
+cog_uint cog_gettimedelta()
+{
+    return timedelta;
+}
+
 /**
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
  * engines where they are drawn from the top left.
