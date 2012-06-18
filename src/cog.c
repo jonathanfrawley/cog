@@ -215,6 +215,8 @@ void cog_update()
     //timedelta = now - starttime;
     //starttime = SDL_GetTicks();
     //cog_debugf("starttime <%d> timedelta <%d> \n", starttime, timedelta);
+    now = SDL_GetTicks();
+    timedelta = now - starttime;
 
     cog_input_checkkeys();
     cog_input_checkmouse();
@@ -1178,7 +1180,6 @@ void cog_input_checkmouse(void)
 {
     cog_uint x,y;
     cog_uint state = SDL_GetMouseState(&x, &y);
-    cog_debugf("x <%d>,y <%d>\n", x, y);
     mousex = (cog_float)x;
     mousey = (cog_float)y;
     if(SDL_BUTTON_LEFT == SDL_BUTTON(state))
