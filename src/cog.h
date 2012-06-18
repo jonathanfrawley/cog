@@ -57,8 +57,12 @@ void cog_anim_update_pos(cog_anim_id,
         cog_float y);
 cog_float cog_anim_getx(cog_anim_id);
 cog_float cog_anim_gety(cog_anim_id);
+cog_float cog_anim_getw(cog_anim_id);
+cog_float cog_anim_geth(cog_anim_id);
 cog_float cog_anim_getrot(cog_anim_id id);
 cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot);
+cog_bool cog_anim_isfinished(cog_anim_id id);
+void cog_anim_remove(cog_anim_id id);
 
 //sound
 cog_snd_id cog_sound_load(char* fname);
@@ -74,6 +78,7 @@ cog_uint cog_nextrand();
 
 //collision detection
 cog_float cog_sprite_dist(cog_sprite_id a, cog_sprite_id b);
+cog_float cog_sprite_anim_dist(cog_sprite_id a, cog_anim_id b);
 
 //##logging
 void cog_errorf(const char* logMsg, ...);

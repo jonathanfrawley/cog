@@ -339,8 +339,10 @@ void cog_update_anims(cog_uint deltamillis)
                     thisanim->paused = 0;
 
                     cog_list* next = animid->next;
-                    activeanims = cog_list_remove(activeanims, (void*)(animid->data));
-                    cog_map_remove(&anims, id);
+
+                    cog_anim_remove(id);
+                    //activeanims = cog_list_remove(activeanims, (void*)(animid->data));
+                    //cog_map_remove(&anims, id);
                     //animid = COG_NULL;
                     if(next == COG_NULL) //When we have only one in list
                     {
@@ -1032,6 +1034,18 @@ cog_float cog_anim_gety(cog_anim_id id)
     return ((cog_sprite*)anim->frames->data)->y;
 }
 
+cog_float cog_anim_getw(cog_anim_id id)
+{
+    cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
+    return ((cog_sprite*)anim->frames->data)->w;
+}
+
+cog_float cog_anim_geth(cog_anim_id id)
+{
+    cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
+    return ((cog_sprite*)anim->frames->data)->h;
+}
+
 cog_float cog_anim_getrot(cog_anim_id id)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
@@ -1058,6 +1072,28 @@ cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot)
 
         sprite->rot = rot;
     }
+}
+
+cog_bool cog_anim_isfinished(cog_anim_id id)
+{
+    cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
+    return (anim == COG_NULL);
+}
+
+void cog_anim_remove(cog_anim_id id)
+{
+    for(cog_list* animid = activeanims;
+        animid != COG_NULL;
+        animid=animid->next)
+    {
+        //draw current sprite
+        if(*((cog_anim_id*)animid->data) == id)
+        {
+            activeanims = cog_list_remove(activeanims, animid->data);
+            break;
+        }
+    }
+    cog_map_remove(&anims, id);
 }
 
 //sound
@@ -1121,6 +1157,16 @@ cog_float cog_sprite_dist(cog_sprite_id a, cog_sprite_id b)
 {
     cog_sprite* asprite = (cog_sprite*)cog_map_get(&sprites, a);
     cog_sprite* bsprite = (cog_sprite*)cog_map_get(&sprites, b);
+    //TODO
+    return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
+        (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
+}
+
+cog_float cog_sprite_anim_dist(cog_sprite_id a, cog_anim_id b)
+{
+    cog_sprite* asprite = (cog_sprite*)cog_map_get(&sprites, a);
+    cog_anim* banim = (cog_anim*)cog_map_get(&anims, b);
+    cog_sprite* bsprite = (cog_sprite*)banim->frames->data;
     //TODO
     return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
         (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
