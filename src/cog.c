@@ -6,6 +6,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
+#include <SDL/SDL_ttf.h>
 #include <GL/glew.h>
 
 #include "cog_core.h"
@@ -129,6 +130,9 @@ cog_float cog_math_radtodeg(cog_float rad);
 void cog_input_checkmouse(void);
 //##keys
 void cog_input_checkkeys(void);
+//##text
+void cog_text_init();
+void cog_text_openfont();
 
 //
 //#global vars
@@ -156,6 +160,10 @@ static cog_bool mouseleftjustpressed;
 static cog_bool mouserightjustpressed;
 static cog_float mousex;
 static cog_float mousey;
+//##text
+static const char* fontpath = "../media/font/ArcadeClassic.ttf"; //TODO:Add option to set this
+static TTF_Font* font;
+static cog_uint fontptsize = 12;
 
 //implementations
 void cog_init(cog_int config)
@@ -173,6 +181,7 @@ void cog_init(cog_int config)
     cog_window_init();
     cog_graphics_init();
     cog_audio_init();
+    cog_text_init();
     starttime = SDL_GetTicks();
 }
 
@@ -373,6 +382,7 @@ void cog_graphics_init(void)
         cog_debugf("Initializing software rendering...");
         cog_graphics_swinit();
     }
+
 }
 
 void cog_audio_init(void)
@@ -1291,4 +1301,97 @@ void cog_input_checkkeys(void)
                 }
         }
     }
+}
+
+//#text
+void cog_text_init()
+{
+    if(TTF_Init() < 0)
+    {
+        cog_errorf("Couldn't initialize TTF: %s\n",SDL_GetError());
+    }
+    cog_text_openfont();
+}
+
+void cog_text_openfont()
+{
+    font = TTF_OpenFont(fontpath, fontptsize);
+
+    if(font == COG_NULL)
+    {
+        cog_errorf("Couldn't load %d pt font from %s: %s\n",
+                fontptsize, fontpath, SDL_GetError());
+    }
+}
+
+void cog_text_loadfont(const char* fpath, cog_uint fsize)
+{
+    fontpath = fpath;
+    fontptsize = fsize;
+    cog_text_openfont();
+}
+
+cog_sprite_id cog_text_createsprite(const char* text,
+        cog_text_colour c,
+        cog_float x,
+        cog_float y,
+        cog_float w,
+        cog_float h,
+        cog_float rot,
+        cog_float texx,
+        cog_float texy,
+        cog_float texw,
+        cog_float texh)
+{
+    cog_int renderstyle = TTF_STYLE_NORMAL;
+    SDL_Color forecol;
+    if(c == COG_TEXT_COL_RED)
+    {
+        forecol.r = 0xff;
+        forecol.g = 0x00;
+        forecol.b = 0x00;
+        forecol.unused = 0x00;
+    }
+    else if(c == COG_TEXT_COL_BLACK)
+    {
+        forecol.r = 0x00;
+        forecol.g = 0x00;
+        forecol.b = 0x00;
+        forecol.unused = 0x00;
+    }
+    else
+    {
+        cog_errorf("Colour is not defined");
+    }
+    TTF_SetFontStyle(font, renderstyle);
+    SDL_Surface* textsurface = TTF_RenderText_Blended(font, text, forecol);
+
+    cog_sprite* sprite = COG_STRUCT_MALLOC(cog_sprite);
+    sprite->id = cog_spritecnt++;
+    sprite->texid = cog_upload_texture(textsurface);
+    sprite->x = x;
+    sprite->y = y;
+    //sprite->w = w;
+    //sprite->h = h;
+    sprite->w = textsurface->w;
+    sprite->h = textsurface->h;
+    sprite->rot = rot;
+    sprite->texx = texx;
+    sprite->texy = texy;
+    sprite->texw = texw;
+    sprite->texh = texh;
+    //physics always 0
+    sprite->xvel = 0.0f;
+    sprite->yvel = 0.0f;
+    cog_map_put(&sprites, sprite->id, (void*)sprite);
+
+    SDL_FreeSurface(textsurface);
+
+    //Need to malloc a copy of the id to ensure it is still around
+    //when the list entry is recalled.
+    cog_sprite_id* idcopy = COG_STRUCT_MALLOC(cog_sprite_id);
+    (*idcopy) = sprite->id;
+    activesprites = cog_list_append(activesprites, idcopy);
+
+    return sprite->id;
 }

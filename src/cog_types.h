@@ -17,4 +17,10 @@ typedef void* cog_dataptr;
 typedef unsigned cog_uint;
 typedef int cog_int;
 
+typedef enum cog_text_colour
+{
+    COG_TEXT_COL_RED,
+    COG_TEXT_COL_BLACK
+} cog_text_colour;
+
 #endif   // COG_TYPES_H

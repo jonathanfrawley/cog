@@ -94,4 +94,18 @@ cog_bool cog_input_mouserightjustpressed();
 cog_float cog_input_mousex();
 cog_float cog_input_mousey();
 
+//text loading
+void cog_text_loadfont(const char* fpath, cog_uint fsize);
+cog_sprite_id cog_text_createsprite(const char* text,
+        cog_text_colour c,
+        cog_float x,
+        cog_float y,
+        cog_float w,
+        cog_float h,
+        cog_float rot,
+        cog_float texx,
+        cog_float texy,
+        cog_float texw,
+        cog_float texh);
+
 #endif   // COG_H
