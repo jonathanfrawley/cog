@@ -20,4 +20,6 @@ add_executable(testanim testanim.c)
 target_link_libraries(testanim cog)
 add_executable(testsound testsound.c)
 target_link_libraries(testsound cog)
+add_executable(testtext testtext.c)
+target_link_libraries(testtext cog)
 

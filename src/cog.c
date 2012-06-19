@@ -1347,14 +1347,14 @@ cog_sprite_id cog_text_createsprite(const char* text,
     SDL_Color forecol;
     if(c == COG_TEXT_COL_RED)
     {
-        forecol.r = 0xff;
-        forecol.g = 0x00;
+        forecol.r = 0xFF;
+        forecol.g = 0x01; //SDL_ttf needs this to be non-zero for some reason.
         forecol.b = 0x00;
         forecol.unused = 0x00;
     }
     else if(c == COG_TEXT_COL_BLACK)
     {
-        forecol.r = 0x00;
+        forecol.r = 0x01;
         forecol.g = 0x00;
         forecol.b = 0x00;
         forecol.unused = 0x00;
