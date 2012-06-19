@@ -161,9 +161,10 @@ static cog_bool mouserightjustpressed;
 static cog_float mousex;
 static cog_float mousey;
 //##text
-static const char* fontpath = "../media/font/ArcadeClassic.ttf"; //TODO:Add option to set this
+//static const char* fontpath = "../media/font/ArcadeClassic.ttf"; //TODO:Add option to set this
+static const char* fontpath = "../media/font/04B_03__.ttf"; //TODO:Add option to set this
 static TTF_Font* font;
-static cog_uint fontptsize = 12;
+static cog_uint fontptsize = 8;
 
 //implementations
 void cog_init(cog_int config)
@@ -751,10 +752,10 @@ GLuint cog_upload_texture(SDL_Surface* image)
     glGenTextures( 1, &textureID );
     glBindTexture( GL_TEXTURE_2D, textureID );
     /* Prepare the filtering of the texture image */
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     /* Map the alpha surface to the texture */
@@ -1335,8 +1336,6 @@ cog_sprite_id cog_text_createsprite(const char* text,
         cog_text_colour c,
         cog_float x,
         cog_float y,
-        cog_float w,
-        cog_float h,
         cog_float rot,
         cog_float texx,
         cog_float texy,
@@ -1345,7 +1344,18 @@ cog_sprite_id cog_text_createsprite(const char* text,
 {
     cog_int renderstyle = TTF_STYLE_NORMAL;
     SDL_Color forecol;
+    forecol.r = c.r;
+    forecol.g = c.g;
+    forecol.b = c.b;
+    /*
     if(c == COG_TEXT_COL_RED)
+    {
+        forecol.r = 0xFF;
+        forecol.g = 0x01; //SDL_ttf needs this to be non-zero for some reason.
+        forecol.b = 0x00;
+        forecol.unused = 0x00;
+    }
+    else if(c == COG_TEXT_COL_RED)
     {
         forecol.r = 0xFF;
         forecol.g = 0x01; //SDL_ttf needs this to be non-zero for some reason.
@@ -1363,18 +1373,21 @@ cog_sprite_id cog_text_createsprite(const char* text,
     {
         cog_errorf("Colour is not defined");
     }
+    */
     TTF_SetFontStyle(font, renderstyle);
     SDL_Surface* textsurface = TTF_RenderText_Blended(font, text, forecol);
 
     cog_sprite* sprite = COG_STRUCT_MALLOC(cog_sprite);
     sprite->id = cog_spritecnt++;
     sprite->texid = cog_upload_texture(textsurface);
-    sprite->x = x;
-    sprite->y = y;
     //sprite->w = w;
     //sprite->h = h;
     sprite->w = textsurface->w;
     sprite->h = textsurface->h;
+    //XXX: This is unusual for fonts, we want them relative to top left,
+    //otherwise I become very angry.
+    sprite->x = x + sprite->w;
+    sprite->y = y + sprite->h;
     sprite->rot = rot;
     sprite->texx = texx;
     sprite->texy = texy;
@@ -1394,4 +1407,19 @@ cog_sprite_id cog_text_createsprite(const char* text,
     activesprites = cog_list_append(activesprites, idcopy);
 
     return sprite->id;
+}
+cog_sprite_id cog_text_simplecreate(const char* text,
+        cog_text_colour c,
+        cog_float x,
+        cog_float y)
+{
+    return cog_text_createsprite(text,
+            c,
+            x,
+            y,
+            0,
+            0,
+            0,
+            1,
+            1);
 }

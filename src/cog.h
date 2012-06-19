@@ -100,12 +100,14 @@ cog_sprite_id cog_text_createsprite(const char* text,
         cog_text_colour c,
         cog_float x,
         cog_float y,
-        cog_float w,
-        cog_float h,
         cog_float rot,
         cog_float texx,
         cog_float texy,
         cog_float texw,
         cog_float texh);
+cog_sprite_id cog_text_simplecreate(const char* text,
+        cog_text_colour c,
+        cog_float x,
+        cog_float y);
 
 #endif   // COG_H
