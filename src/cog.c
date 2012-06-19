@@ -184,6 +184,9 @@ void cog_init(cog_int config)
     cog_audio_init();
     cog_text_init();
     starttime = SDL_GetTicks();
+
+    //init rng
+    srand(2);
 }
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
