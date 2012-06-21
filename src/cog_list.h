@@ -3,6 +3,7 @@
 
 #include "cog_types.h"
 
+
 typedef struct cog_list
 {
     struct cog_list* next;

@@ -1,8 +1,9 @@
 #include "cog_list.h"
 
 #include "cog_core.h"
-
 #include "cog.h"
+
+static cog_uint COG_LIST_ENDSENTINAL = 0;
 
 cog_list* cog_list_alloc()
 {
@@ -13,12 +14,17 @@ cog_list* cog_list_alloc()
 
 void cog_list_init(cog_list* list)
 {
-    list->data = COG_NULL;
-    list->next = COG_NULL;
+    list->data = COG_LIST_ENDSENTINAL;
+    list->next = list;
+    //list->data = COG_NULL;
+    //list->next = COG_NULL;
 }
 
-cog_list* cog_list_append(cog_list* list, cog_dataptr data)
+void cog_list_append(cog_list** listptr, cog_dataptr data)
 {
+    cog_list* list = *listptr;
+    //TODO:
+    /*
     cog_list* curr;
     cog_list* prev;
     for(prev=COG_NULL, curr=list ; curr != COG_NULL ; prev=curr, curr=curr->next)
@@ -30,13 +36,6 @@ cog_list* cog_list_append(cog_list* list, cog_dataptr data)
         //First element.
         //This seems a bit contrary, wish we could just use
         //list argument as a variable...
-        /*
-        cog_list* newfront;
-        cog_list_init(newfront);
-        //list->data = data;
-        newfront->data = data;
-        list = newfront;
-        */
         list = cog_list_alloc();
         list->data = data;
         list->next = COG_NULL;
@@ -48,6 +47,7 @@ cog_list* cog_list_append(cog_list* list, cog_dataptr data)
         prev->next->data = data;
         return list;
     }
+    */
 }
 
 cog_list* cog_list_remove(cog_list* list, cog_dataptr data)
