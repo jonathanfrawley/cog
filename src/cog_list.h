@@ -3,6 +3,7 @@
 
 #include "cog_types.h"
 
+static cog_dataptr COG_LIST_ENDSENTINAL = 0;
 
 typedef struct cog_list
 {
@@ -16,23 +17,22 @@ void cog_list_init(cog_list*);
 
 //----------------------------------------------------------------------
 //  Adds data to this list. List will handle freeing data.
-//  @return: New front of list
 //----------------------------------------------------------------------
-cog_list* cog_list_append(cog_list* list, cog_dataptr data);
+void cog_list_append(cog_list** listptr, cog_dataptr data);
 
 //----------------------------------------------------------------------
 //  Removes elem w/ data == data in this list.
 //----------------------------------------------------------------------
-cog_list* cog_list_remove(cog_list* list, cog_dataptr data);
+void cog_list_remove(cog_list** listptr, cog_dataptr data);
 
 //----------------------------------------------------------------------
 //  Empties list and frees data.
 //----------------------------------------------------------------------
-void cog_list_empty(cog_list* list);
+void cog_list_empty(cog_list** listptr);
 
 //----------------------------------------------------------------------
 //  Returns: Length of list.
 //----------------------------------------------------------------------
-cog_uint cog_list_length(cog_list* list);
+cog_uint cog_list_length(cog_list** listptr);
 
 #endif   // COG_LIST_H
