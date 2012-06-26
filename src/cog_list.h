@@ -5,6 +5,11 @@
 
 static cog_dataptr COG_LIST_ENDSENTINAL = 0;
 
+#define COG_LIST_FOREACH(list) \
+    for(cog_list* curr=list->next, *next=list->next->next; \
+            curr->data!=COG_LIST_ENDSENTINAL; \
+            curr=next,next=next->next)
+
 typedef struct cog_list
 {
     struct cog_list* next;

@@ -4,11 +4,7 @@
 int main(void)
 {
     cog_list* list = cog_list_alloc();
-    cog_list* this;
-    cog_list* next;
-    for(this=list->next, next=list->next->next;
-            this->data!=COG_LIST_ENDSENTINAL;
-            this=next,next=next->next)
+    COG_LIST_FOREACH(list)
     {
         cog_errorf("ERROR:Should never get here");
     }
@@ -18,12 +14,10 @@ int main(void)
     (*a) = 4;
     cog_list_append(list, a);
 
-    for(this=list->next, next=list->next->next;
-            this->data!=COG_LIST_ENDSENTINAL;
-            this=next,next=next->next)
+    COG_LIST_FOREACH(list)
     {
         cog_debugf("This should be printed once");
-        if((*(cog_uint*)this->data) != 4)
+        if((*(cog_uint*)curr->data) != 4)
         {
             cog_errorf("This shall not pass");
         }
@@ -34,20 +28,16 @@ int main(void)
     (*b) = 4;
     cog_list_append(list, b);
 
-    for(this=list->next, next=list->next->next;
-            this->data!=COG_LIST_ENDSENTINAL;
-            this=next,next=next->next)
+    COG_LIST_FOREACH(list)
     {
         cog_debugf("This should be printed twice");
-        if((*(cog_uint*)this->data) != 4)
+        if((*(cog_uint*)curr->data) != 4)
         {
             cog_errorf("This shall not pass");
         }
     }
     cog_list_empty(list);
-    for(this=list->next, next=list->next->next;
-            this->data!=COG_LIST_ENDSENTINAL;
-            this=next,next=next->next)
+    COG_LIST_FOREACH(list)
     {
         cog_errorf("ERROR:Should never get here");
     }

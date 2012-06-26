@@ -824,7 +824,7 @@ cog_sprite_id cog_sprite_add(char* filename,
     //when the list entry is recalled.
     cog_sprite_id* idcopy = COG_STRUCT_MALLOC(cog_sprite_id);
     (*idcopy) = id;
-    activesprites = cog_list_append(activesprites, idcopy);
+    cog_list_append(activesprites, idcopy);
     return id;
 }
 
