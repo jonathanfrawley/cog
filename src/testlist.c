@@ -16,7 +16,7 @@ int main(void)
     //Add an element
     cog_uint* a = COG_STRUCT_MALLOC(cog_uint);
     (*a) = 4;
-    cog_list_append(&list, a);
+    cog_list_append(list, a);
 
     for(this=list->next, next=list->next->next;
             this->data!=COG_LIST_ENDSENTINAL;
@@ -32,7 +32,7 @@ int main(void)
     //Add another element
     cog_uint* b = COG_STRUCT_MALLOC(cog_uint);
     (*b) = 4;
-    cog_list_append(&list, b);
+    cog_list_append(list, b);
 
     for(this=list->next, next=list->next->next;
             this->data!=COG_LIST_ENDSENTINAL;
@@ -44,7 +44,7 @@ int main(void)
             cog_errorf("This shall not pass");
         }
     }
-    cog_list_empty(&list);
+    cog_list_empty(list);
     for(this=list->next, next=list->next->next;
             this->data!=COG_LIST_ENDSENTINAL;
             this=next,next=next->next)

@@ -18,21 +18,21 @@ void cog_list_init(cog_list*);
 //----------------------------------------------------------------------
 //  Adds data to this list. List will handle freeing data.
 //----------------------------------------------------------------------
-void cog_list_append(cog_list** listptr, cog_dataptr data);
+void cog_list_append(cog_list* list, cog_dataptr data);
 
 //----------------------------------------------------------------------
 //  Removes elem w/ data == data in this list.
 //----------------------------------------------------------------------
-void cog_list_remove(cog_list** listptr, cog_dataptr data);
+void cog_list_remove(cog_list* list, cog_dataptr data);
 
 //----------------------------------------------------------------------
 //  Empties list and frees data.
 //----------------------------------------------------------------------
-void cog_list_empty(cog_list** listptr);
+void cog_list_empty(cog_list* list);
 
 //----------------------------------------------------------------------
 //  Returns: Length of list.
 //----------------------------------------------------------------------
-cog_uint cog_list_length(cog_list** listptr);
+cog_uint cog_list_length(cog_list* list);
 
 #endif   // COG_LIST_H

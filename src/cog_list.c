@@ -3,7 +3,6 @@
 #include "cog_core.h"
 #include "cog.h"
 
-
 cog_list* cog_list_alloc()
 {
     cog_list* obj = COG_STRUCT_MALLOC(cog_list);
@@ -18,9 +17,9 @@ void cog_list_init(cog_list* list)
     list->next = list;
 }
 
-void cog_list_append(cog_list** listptr, cog_dataptr data)
+void cog_list_append(cog_list* list, cog_dataptr data)
 {
-    cog_list* list = *listptr;
+    //cog_list* list = *listptr;
 
     cog_list* curr;
     cog_list* prev;
@@ -37,9 +36,9 @@ void cog_list_append(cog_list** listptr, cog_dataptr data)
     prev->next = newnode;
 }
 
-void cog_list_remove(cog_list** listptr, cog_dataptr data)
+void cog_list_remove(cog_list* list, cog_dataptr data)
 {
-    cog_list* list = *listptr;
+    //cog_list* list = *listptr;
 
     cog_list* curr;
     cog_list* prev;
@@ -56,25 +55,26 @@ void cog_list_remove(cog_list** listptr, cog_dataptr data)
     }
 }
 
-void cog_list_empty(cog_list** listptr)
+void cog_list_empty(cog_list* list)
 {
-    cog_list* list = *listptr;
+    //cog_list* list = *listptr;
     cog_list* curr;
     cog_list* next;
-    for(curr=list, next=curr->next ;
-            next->data != COG_LIST_ENDSENTINAL ;
+    for(curr=list->next, next=curr->next->next ;
+            curr->data != COG_LIST_ENDSENTINAL ;
             curr=next, next=next->next)
     {
         cog_free(curr->data);
         cog_free(curr);
     }
+    list->next = list;
     //(*listptr) = COG_NULL;
-    (*listptr) = cog_list_alloc();
+    //(*listptr) = cog_list_alloc();
 }
 
-cog_uint cog_list_length(cog_list** listptr)
+cog_uint cog_list_length(cog_list* list)
 {
-    cog_list* list = *listptr;
+    //cog_list* list = *listptr;
     cog_uint cnt = 0;
     cog_list* curr;
     for(curr=list ; curr->data != COG_LIST_ENDSENTINAL ; curr=curr->next)
