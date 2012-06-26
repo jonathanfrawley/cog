@@ -1,6 +1,7 @@
 TODO Tasks cog
 ==============
-3.25) Get list iteration more sensibly implemented.
+3.25) Get list iteration more sensibly implemented. DONE
+    -> Integrate FOREACH into cog and littleearth codebases.
 3.5) Static frame rate for updates made easy for games.
 5) Particle Effects [MAYBE]
 6) Port lls to use it.
