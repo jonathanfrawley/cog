@@ -3,9 +3,16 @@
 
 #include "cog_types.h"
 
+static int COG_MAX_BUF = 255;
+static int COG_MAX_FILE_BUF = 4080;
+
 #define COG_STRUCT_MALLOC(type) (type*)cog_malloc(sizeof(type))
 
-//memory management
+//#logging
+void cog_errorf(const char* logMsg, ...);
+void cog_debugf(const char* logMsg, ...);
+
+//#memory management
 void* cog_malloc(cog_uint size);
 void cog_free(void* ptr);
 

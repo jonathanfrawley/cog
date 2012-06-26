@@ -68,7 +68,8 @@ void cog_list_empty(cog_list** listptr)
         cog_free(curr->data);
         cog_free(curr);
     }
-    (*listptr) = COG_NULL;
+    //(*listptr) = COG_NULL;
+    (*listptr) = cog_list_alloc();
 }
 
 cog_uint cog_list_length(cog_list** listptr)

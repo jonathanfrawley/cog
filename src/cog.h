@@ -81,10 +81,6 @@ cog_uint cog_nextrand();
 cog_float cog_sprite_dist(cog_sprite_id a, cog_sprite_id b);
 cog_float cog_sprite_anim_dist(cog_sprite_id a, cog_anim_id b);
 
-//##logging
-void cog_errorf(const char* logMsg, ...);
-void cog_debugf(const char* logMsg, ...);
-
 //physics
 void cog_update_physics(cog_float timedelta);
 

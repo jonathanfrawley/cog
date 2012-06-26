@@ -17,8 +17,6 @@
 #define FRAMES_PER_SECOND 40
 static cog_uint FRAME_TIME = 1000 / FRAMES_PER_SECOND;
 
-static int COG_MAX_BUF = 255;
-static int COG_MAX_FILE_BUF = 4080;
 //TODO: Get these from config.
 //static int COG_SCREEN_WIDTH = 640;
 static int COG_SCREEN_WIDTH = 640;
@@ -269,27 +267,6 @@ void cog_quit()
 cog_bool cog_hasquit()
 {
     return game.finished;
-}
-
-//local
-void cog_errorf(const char* logMsg, ...)
-{
-    va_list ap;
-    va_start(ap, logMsg);
-    char buf[COG_MAX_BUF];
-    vsprintf(buf, logMsg, ap);
-    printf("CRITICAL: %s \n", buf);
-    cog_quit();
-    assert(0);
-}
-
-void cog_debugf(const char* logMsg, ...)
-{
-    va_list ap;
-    va_start(ap, logMsg);
-    char buf[COG_MAX_BUF];
-    vsprintf(buf, logMsg, ap);
-    printf("DEBUG: %s \n", buf);
 }
 
 //platform

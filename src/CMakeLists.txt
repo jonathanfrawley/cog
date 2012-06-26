@@ -23,6 +23,6 @@ target_link_libraries(testsound cog)
 add_executable(testtext testtext.c)
 target_link_libraries(testtext cog)
 
-add_executable(testlist testlist.c cog_list.c)
+add_executable(testlist testlist.c cog_list.c cog_core.c)
 #target_link_libraries(testlist cog)
 
