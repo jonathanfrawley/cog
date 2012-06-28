@@ -1122,7 +1122,7 @@ cog_float cog_sprite_anim_dist(cog_sprite_id a, cog_anim_id b)
 {
     cog_sprite* asprite = (cog_sprite*)cog_map_get(&sprites, a);
     cog_anim* banim = (cog_anim*)cog_map_get(&anims, b);
-    cog_sprite* bsprite = (cog_sprite*)banim->frames.data;
+    cog_sprite* bsprite = (cog_sprite*)banim->frames.next->data;
     //TODO
     return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
         (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
