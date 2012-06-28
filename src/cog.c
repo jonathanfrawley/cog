@@ -79,7 +79,7 @@ typedef struct
     cog_uint currentframe;
     cog_uint currentframe_millis;
     cog_bool looped;
-    cog_list* frames;
+    cog_list frames;
     cog_uint nframes;
     cog_bool paused;
 } cog_anim;
@@ -139,8 +139,8 @@ static cog_map sprites;
 static cog_anim_id cog_animcnt;
 static cog_map anims;
 static cog_int configmask;
-static cog_list* activesprites; //sprites drawn(active) at the moment
-static cog_list* activeanims; //anims drawn(active) at the moment
+static cog_list activesprites; //sprites drawn(active) at the moment
+static cog_list activeanims; //anims drawn(active) at the moment
 static cog_snd_id cog_sndcnt;
 static cog_map snds;
 //##timing
@@ -172,8 +172,8 @@ void cog_init(cog_int config)
     cog_map_init(&sprites);
     cog_map_init(&anims);
     cog_map_init(&snds);
-    activesprites = COG_NULL;
-    activeanims = COG_NULL;
+    cog_list_init(&activesprites);
+    cog_list_init(&activeanims);
     //Init cog
     game.finished = 0;
     cog_platform_init();
@@ -302,12 +302,10 @@ void cog_window_togglefullscreen(void)
 
 void cog_update_anims(cog_uint deltamillis)
 {
-    for(cog_list* animid = activeanims;
-        animid != COG_NULL;
-        )
+    COG_LIST_FOREACH(&activeanims)
     {
         //Draw current sprite
-        cog_anim_id id = *((cog_anim_id*)animid->data);
+        cog_anim_id id = *((cog_anim_id*)curr->data);
         cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,id);
         if(thisanim->paused)
         {
@@ -327,26 +325,10 @@ void cog_update_anims(cog_uint deltamillis)
                 else
                 {
                     thisanim->paused = 0;
-
-                    cog_list* next = animid->next;
-
                     cog_anim_remove(id);
-                    //activeanims = cog_list_remove(activeanims, (void*)(animid->data));
-                    //cog_map_remove(&anims, id);
-                    //animid = COG_NULL;
-                    if(next == COG_NULL) //When we have only one in list
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        animid = next;
-                        continue;
-                    }
                 }
             }
         }
-        animid=animid->next;
     }
 }
 
@@ -626,27 +608,23 @@ void cog_graphics_hwrender()
     glLoadIdentity();
 
     //Draw sprites
-    for(cog_list* spriteid = activesprites;
-        spriteid != COG_NULL;
-        spriteid=spriteid->next)
+    COG_LIST_FOREACH(&activesprites)
     {
         //draw current sprite
-        cog_sprite* thissprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)spriteid->data));
+        cog_sprite* thissprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)curr->data));
         cog_graphics_draw_sprite(thissprite);
     }
     //Draw anims
-    for(cog_list* animid = activeanims;
-        animid != COG_NULL;
-        animid=animid->next)
+    COG_LIST_FOREACH(&activeanims)
     {
         //draw current sprite
-        cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,*((cog_anim_id*)animid->data));
+        cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,*((cog_anim_id*)curr->data));
         if(thisanim->paused)
         {
             continue;
         }
         //find active frame to render
-        cog_list* frame = thisanim->frames;
+        cog_list* frame = (thisanim->frames.next);
         cog_uint i=0;
         while(i<thisanim->currentframe)
         {
@@ -824,7 +802,7 @@ cog_sprite_id cog_sprite_add(char* filename,
     //when the list entry is recalled.
     cog_sprite_id* idcopy = COG_STRUCT_MALLOC(cog_sprite_id);
     (*idcopy) = id;
-    cog_list_append(activesprites, idcopy);
+    cog_list_append(&activesprites, idcopy);
     return id;
 }
 
@@ -906,13 +884,11 @@ cog_float cog_sprite_update_yvel(cog_sprite_id id, cog_float yvel)
 
 void cog_sprite_remove(cog_sprite_id id)
 {
-    for(cog_list* spriteid = activesprites;
-        spriteid != COG_NULL;
-        spriteid=spriteid->next)
+    COG_LIST_FOREACH(&activesprites)
     {
-        if(*((cog_sprite_id*)spriteid->data) == id)
+        if(*((cog_sprite_id*)curr->data) == id)
         {
-            activesprites = cog_list_remove(activesprites, spriteid->data);
+            cog_list_remove(&activesprites, curr->data);
             break;
         }
     }
@@ -935,7 +911,7 @@ cog_anim_id cog_anim_add(
 {
     cog_anim* anim = COG_STRUCT_MALLOC(cog_anim);
     anim->id = cog_animcnt++;
-    anim->frames = COG_NULL;
+    cog_list_init(&anim->frames);
     anim->transition_millis = transition_millis;
     anim->looped = looped;
     anim->currentframe = 0;
@@ -953,7 +929,7 @@ cog_anim_id cog_anim_add(
     //cog_errorf("wanimframe is %f ",wanimframe);
     //cog_errorf("hanimframe is %d ",hanimframe);
     //Load nimages sprites in, with offset dependant on frame number.
-    anim->frames = COG_NULL;
+    cog_list_init(&anim->frames);
     anim->nframes = 0;
     for(int i=0;i<nimages;i++)
     {
@@ -967,7 +943,7 @@ cog_anim_id cog_anim_add(
                 0,
                 wanimframe,
                 hanimframe);
-        anim->frames = cog_list_append(anim->frames, cog_map_get(&sprites, sid));
+        cog_list_append(&(anim->frames), cog_map_get(&sprites, sid));
         anim->nframes++;
     }
     cog_map_put(&anims, anim->id, (void*)anim);
@@ -976,7 +952,7 @@ cog_anim_id cog_anim_add(
     //when the list entry is recalled.
     cog_anim_id* idcopy = COG_STRUCT_MALLOC(cog_anim_id);
     (*idcopy) = anim->id;
-    activeanims = cog_list_append(activeanims, idcopy);
+    cog_list_append(&activeanims, idcopy);
 
     return anim->id;
 }
@@ -1002,16 +978,9 @@ void cog_anim_update_pos(cog_anim_id id,
         cog_errorf("anim is null in cog_anim_update_pos");
     }
     //Update the positions of all sprites in anim.
-    for(cog_list* frame = anim->frames;
-        frame != COG_NULL;
-        frame=frame->next)
+    COG_LIST_FOREACH(&anim->frames)
     {
-//        cog_sprite* sprite = (cog_sprite*)cog_map_get(sprites,frame->data);
-        cog_sprite* sprite = (cog_sprite*)(frame->data);
-        if(sprite == COG_NULL)
-        {
-            cog_errorf("sprite is null in cog_anim_update_pos");
-        }
+        cog_sprite* sprite = (cog_sprite*)(curr->data);
 
         sprite->x = x;
         sprite->y = y;
@@ -1021,31 +990,31 @@ void cog_anim_update_pos(cog_anim_id id,
 cog_float cog_anim_getx(cog_anim_id id)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
-    return ((cog_sprite*)anim->frames->data)->x;
+    return ((cog_sprite*)anim->frames.next->data)->x;
 }
 
 cog_float cog_anim_gety(cog_anim_id id)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
-    return ((cog_sprite*)anim->frames->data)->y;
+    return ((cog_sprite*)anim->frames.next->data)->y;
 }
 
 cog_float cog_anim_getw(cog_anim_id id)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
-    return ((cog_sprite*)anim->frames->data)->w;
+    return ((cog_sprite*)anim->frames.next->data)->w;
 }
 
 cog_float cog_anim_geth(cog_anim_id id)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
-    return ((cog_sprite*)anim->frames->data)->h;
+    return ((cog_sprite*)anim->frames.next->data)->h;
 }
 
 cog_float cog_anim_getrot(cog_anim_id id)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
-    return ((cog_sprite*)anim->frames->data)->rot;
+    return ((cog_sprite*)anim->frames.next->data)->rot;
 }
 
 cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot)
@@ -1056,16 +1025,9 @@ cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot)
         cog_errorf("anim is null in cog_anim_update_rot");
     }
     //Update the positions of all sprites in anim.
-    for(cog_list* frame = anim->frames;
-        frame != COG_NULL;
-        frame=frame->next)
+    COG_LIST_FOREACH(&anim->frames)
     {
-        cog_sprite* sprite = (cog_sprite*)(frame->data);
-        if(sprite == COG_NULL)
-        {
-            cog_errorf("sprite is null in cog_anim_update_rot");
-        }
-
+        cog_sprite* sprite = (cog_sprite*)(curr->data);
         sprite->rot = rot;
     }
 }
@@ -1078,14 +1040,12 @@ cog_bool cog_anim_isfinished(cog_anim_id id)
 
 void cog_anim_remove(cog_anim_id id)
 {
-    for(cog_list* animid = activeanims;
-        animid != COG_NULL;
-        animid=animid->next)
+    COG_LIST_FOREACH(&activeanims)
     {
         //draw current sprite
-        if(*((cog_anim_id*)animid->data) == id)
+        if(*((cog_anim_id*)curr->data) == id)
         {
-            activeanims = cog_list_remove(activeanims, animid->data);
+            cog_list_remove(&activeanims, curr->data);
             break;
         }
     }
@@ -1162,7 +1122,7 @@ cog_float cog_sprite_anim_dist(cog_sprite_id a, cog_anim_id b)
 {
     cog_sprite* asprite = (cog_sprite*)cog_map_get(&sprites, a);
     cog_anim* banim = (cog_anim*)cog_map_get(&anims, b);
-    cog_sprite* bsprite = (cog_sprite*)banim->frames->data;
+    cog_sprite* bsprite = (cog_sprite*)banim->frames.data;
     //TODO
     return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
         (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
@@ -1170,25 +1130,19 @@ cog_float cog_sprite_anim_dist(cog_sprite_id a, cog_anim_id b)
 
 void cog_update_physics(cog_float timedelta)
 {
-    for(cog_list* spriteid = activesprites;
-        spriteid != COG_NULL;
-        spriteid=spriteid->next)
+    COG_LIST_FOREACH(&activesprites)
     {
-        cog_sprite* thissprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)spriteid->data));
+        cog_sprite* thissprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)curr->data));
         //do physics update for current sprite
         thissprite->x += timedelta * thissprite->xvel;
         thissprite->y += timedelta * thissprite->yvel;
     }
-    for(cog_list* animid = activeanims;
-        animid != COG_NULL;
-        animid=animid->next)
+    COG_LIST_FOREACH(&activeanims)
     {
-        cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,*((cog_anim_id*)animid->data));
-        for(cog_list* frame = thisanim->frames;
-            frame != COG_NULL;
-            frame=frame->next)
+        cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,*((cog_anim_id*)curr->data));
+        COG_LIST_FOREACH2(&thisanim->frames)
         {
-            cog_sprite* thissprite = (cog_sprite*)(frame->data);
+            cog_sprite* thissprite = (cog_sprite*)(curr2->data);
             //do physics update for current sprite
             thissprite->x += timedelta * thissprite->xvel;
             thissprite->y += timedelta * thissprite->yvel;
@@ -1384,7 +1338,7 @@ cog_sprite_id cog_text_createsprite(const char* text,
     //when the list entry is recalled.
     cog_sprite_id* idcopy = COG_STRUCT_MALLOC(cog_sprite_id);
     (*idcopy) = sprite->id;
-    activesprites = cog_list_append(activesprites, idcopy);
+    cog_list_append(&activesprites, idcopy);
 
     return sprite->id;
 }

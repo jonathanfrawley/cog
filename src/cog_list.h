@@ -6,9 +6,15 @@
 static cog_dataptr COG_LIST_ENDSENTINAL = 0;
 
 #define COG_LIST_FOREACH(list) \
-    for(cog_list* curr=list->next, *next=list->next->next; \
+    for(cog_list* curr=(list)->next, *next=(list)->next->next; \
             curr->data!=COG_LIST_ENDSENTINAL; \
             curr=next,next=next->next)
+
+//For double loops
+#define COG_LIST_FOREACH2(list) \
+    for(cog_list* curr2=(list)->next, *next2=(list)->next->next; \
+            curr2->data!=COG_LIST_ENDSENTINAL; \
+            curr2=next2,next2=next2->next)
 
 typedef struct cog_list
 {
