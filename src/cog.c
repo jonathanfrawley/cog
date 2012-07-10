@@ -1053,7 +1053,7 @@ void cog_anim_remove(cog_anim_id id)
 }
 
 //sound
-cog_snd_id cog_sound_load(char* fname)
+cog_snd_id cog_snd_load(char* fname)
 {
     cog_snd* snd = COG_STRUCT_MALLOC(cog_snd);
     snd->id = cog_sndcnt++;
@@ -1066,17 +1066,27 @@ cog_snd_id cog_sound_load(char* fname)
     return snd->id;
 }
 
-void cog_sound_play(cog_snd_id id)
+void cog_snd_play(cog_snd_id id, cog_uint channel)
 {
     cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);
-    snd->channel = Mix_PlayChannel(-1, snd->chunk, 0);
+    snd->channel = Mix_PlayChannel(channel, snd->chunk, 0);
     if(snd->channel == -1)
     {
         cog_errorf("Unable to play WAV file: %s\n", Mix_GetError());
     }
 }
 
-int cog_sound_isfinished(cog_snd_id id)
+void cog_snd_play_sfx(cog_snd_id id)
+{
+    cog_snd_play(id, 1);
+}
+
+void cog_snd_play_music(cog_snd_id id)
+{
+    cog_snd_play(id, 0);
+}
+
+int cog_snd_isfinished(cog_snd_id id)
 {
     //TODO
     cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);

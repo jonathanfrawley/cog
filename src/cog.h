@@ -66,9 +66,11 @@ cog_bool cog_anim_isfinished(cog_anim_id id);
 void cog_anim_remove(cog_anim_id id);
 
 //sound
-cog_snd_id cog_sound_load(char* fname);
-void cog_sound_play(cog_snd_id snd);
-int cog_sound_isfinished(cog_snd_id snd);
+cog_snd_id cog_snd_load(char* fname);
+void cog_snd_play(cog_snd_id id, cog_uint channel);
+void cog_snd_play_sfx(cog_snd_id snd);
+void cog_snd_play_music(cog_snd_id snd);
+int cog_snd_isfinished(cog_snd_id snd);
 
 //dimensions
 cog_uint cog_get_screenw();
