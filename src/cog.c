@@ -5,7 +5,8 @@
 #include <assert.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include <SDL/SDL_mixer.h>
+//#include <SDL/SDL_mixer.h>
+#include <AL/alut.h>
 #include <SDL/SDL_ttf.h>
 #include <GL/glew.h>
 
@@ -89,8 +90,10 @@ typedef struct
 typedef struct
 {
     cog_snd_id id;
-    Mix_Chunk* chunk;
-    cog_int channel;
+    ALuint buffer;
+    ALuint source;
+    //Mix_Chunk* chunk;
+    //cog_int channel;
 } cog_snd;
 
 typedef struct
@@ -210,13 +213,18 @@ cog_bool cog_updateready()
     return (timedelta > FRAME_TIME);
 }
 
+void cog_sleep(cog_uint millis)
+{
+    SDL_Delay(millis);
+}
+
 void cog_sleepuntilupdate()
 {
     now = SDL_GetTicks();
     timedelta = now - starttime;
     if(timedelta<FRAME_TIME)
     {
-        SDL_Delay(FRAME_TIME-timedelta);
+        cog_sleep(FRAME_TIME-timedelta);
     }
 }
 
@@ -262,6 +270,8 @@ void cog_loopstep()
 void cog_quit()
 {
     game.finished = 1;
+    //TODO:Add more cleanup here.
+    alutExit();
 }
 
 cog_bool cog_hasquit()
@@ -350,6 +360,7 @@ void cog_graphics_init(void)
 
 void cog_audio_init(void)
 {
+    /*
     int audio_rate = 22050;
     Uint16 audio_format = AUDIO_S16SYS;
     int audio_channels = 2;
@@ -360,6 +371,10 @@ void cog_audio_init(void)
         cog_errorf("Unable to initialize audio: %s\n", Mix_GetError());
         exit(1);
     }
+    */
+    int argc = 1;
+    char* argv = "cog";
+    alutInit(&argc, &argv);
 }
 
 void cog_graphics_hwinit(void)
@@ -1057,41 +1072,28 @@ cog_snd_id cog_snd_load(char* fname)
 {
     cog_snd* snd = COG_STRUCT_MALLOC(cog_snd);
     snd->id = cog_sndcnt++;
-    snd->chunk = Mix_LoadWAV(fname);
-    if(snd->chunk == COG_NULL)
-    {
-        cog_errorf("Unable to load WAV file: %s\n", Mix_GetError());
-    }
+    snd->buffer = alutCreateBufferFromFile(fname);
+    alGenSources(1, &snd->source);
+    alSourcei(snd->source, AL_BUFFER, snd->buffer);
     cog_map_put(&snds, snd->id, (void*)snd);
     return snd->id;
 }
 
-void cog_snd_play(cog_snd_id id, cog_uint channel)
+//TODO:Remove channel arg.
+void cog_snd_play(cog_snd_id id)
 {
     cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);
-    snd->channel = Mix_PlayChannel(channel, snd->chunk, 0);
-    if(snd->channel == -1)
-    {
-        cog_errorf("Unable to play WAV file: %s\n", Mix_GetError());
-    }
+    alSourcePlay(snd->source);
 }
 
 void cog_snd_play_sfx(cog_snd_id id)
 {
-    cog_snd_play(id, 1);
+    cog_snd_play(id);
 }
 
 void cog_snd_play_music(cog_snd_id id)
 {
-    cog_snd_play(id, 0);
-}
-
-int cog_snd_isfinished(cog_snd_id id)
-{
-    //TODO
-    cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);
-    //cog_errorf("mix : %d", Mix_Playing(snd->channel));
-    return ! (Mix_Playing(snd->channel));
+    cog_snd_play(id);
 }
 
 cog_float cog_math_radtodeg(cog_float rad)

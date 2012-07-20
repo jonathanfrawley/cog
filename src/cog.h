@@ -10,6 +10,7 @@ static cog_float COG_PI = 3.14159265;
 //main
 void cog_init(cog_int config);
 cog_bool cog_updateready();
+void cog_sleep(cog_uint millis);
 void cog_sleepuntilupdate();
 void cog_mainloop();
 void cog_update();
@@ -67,10 +68,9 @@ void cog_anim_remove(cog_anim_id id);
 
 //sound
 cog_snd_id cog_snd_load(char* fname);
-void cog_snd_play(cog_snd_id id, cog_uint channel);
+void cog_snd_play(cog_snd_id id);
 void cog_snd_play_sfx(cog_snd_id snd);
 void cog_snd_play_music(cog_snd_id snd);
-int cog_snd_isfinished(cog_snd_id snd);
 
 //dimensions
 cog_uint cog_get_screenw();
