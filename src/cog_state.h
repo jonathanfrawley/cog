@@ -2,16 +2,17 @@
 #define  COG_STATE_H
 
 #include "cog_types.h"
+#include "cog_list.h"
 
 typedef cog_int cog_state;
 typedef cog_int cog_event;
 
-#define COG_STATE_START -255
-#define COG_STATE_FINISH -254
-#define COG_STATE_ANY -253
-#define COG_STATE_ERROR -252
+//#define COG_STATE_START -255
+//#define COG_STATE_FINISH -254
+//#define COG_STATE_ANY -253
+#define COG_STATE_ERROR -255
 
-#define COG_EVENT_ANY -255
+#define COG_EVENT_ERROR -255
 
 typedef struct cog_state_transition
 {
@@ -30,7 +31,7 @@ typedef struct cog_state_transition
     cog_state (*transition_fn)(void);
 } cog_state_transition;
 
-typedef cog_state_fsm
+typedef struct cog_state_fsm
 {
     cog_list transitions;
     cog_state currentstate;
@@ -55,5 +56,9 @@ void cog_state_fsm_update(cog_state_fsm* fsm);
  * Push an event which will cause a transition in the cog_state_fsm when it reaches the front of the fifo.
  * */
 void cog_state_fsm_push_event(cog_state_fsm* fsm, cog_event event);
+/* *
+ * Set the current state of the FSM.
+ * */
+void cog_state_fsm_set_state(cog_state_fsm* fsm, cog_state state);
 
 #endif   // COG_STATE_H

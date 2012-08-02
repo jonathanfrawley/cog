@@ -1,50 +1,62 @@
 #include <assert.h>
 
+#include "cog_core.h"
 #include "cog_state.h"
 
-#define STATE_LEVEL_RUNNING 0
-#define STATE_END 1
+#define STATE_START 0
+#define STATE_LEVEL_RUNNING 1
+#define STATE_END 2
+#define STATE_FINISH 3
 
 #define EVENT_TEST 0
 
+
 static cog_int load_firstlevel(void)
 {
-    printf("loading first level...");
+    cog_debugf("loading first level...");
     return STATE_LEVEL_RUNNING;
 }
 
 static cog_int show_death_screen(void)
 {
-    printf("showing death screen...");
+    cog_debugf("showing death screen...");
     return STATE_END;
 }
 
 static cog_int cleanup_game(void)
 {
-    printf("cleaning up game...");
-    return COG_STATE_FINISH;
+    cog_debugf("cleaning up game...");
+    return STATE_FINISH;
+}
+
+static cog_int infinite_loop(void)
+{
+    cog_debugf("infinite loop state at finish...");
+    return STATE_FINISH;
 }
 
 cog_state_transition transitions[] = {
-    { COG_STATE_START, EV_TESTEVENT, &load_firstlevel },
-    { STATE_LEVEL_RUNNING, EV_TESTEVENT, &show_death_screen },
-    { STATE_END, EV_TESTEVENT, &cleanup_game },
+    { STATE_START, EVENT_TEST, &load_firstlevel },
+    { STATE_LEVEL_RUNNING, EVENT_TEST, &show_death_screen },
+    { STATE_END, EVENT_TEST, &cleanup_game },
+    { STATE_FINISH, EVENT_TEST, &infinite_loop },
 };
 
 int main(void)
 {
-    cog_state_fsm fsm* cog_state_fsm_alloc();
-    cog_state_fsm_add_transitions(fsm, transitions, (sizeof(transitions)/sizeof(*transitions)));
+    cog_state_fsm* fsm = cog_state_fsm_alloc();
+    cog_state_fsm_add_transitions(fsm, &(transitions[0]), (sizeof(transitions)/sizeof(*transitions)));
+    cog_state_fsm_set_state(fsm, STATE_START);
 
-    assert(fsm->currentstate==COG_STATE_START && "Start state not properly set");
-    cog_state_fsm_push_event(fsm, TEST_EVENT);
+    assert(fsm->currentstate==STATE_START && "Start state not properly set");
+    cog_state_fsm_push_event(fsm, EVENT_TEST);
     cog_state_fsm_update(fsm);
     assert(fsm->currentstate==STATE_LEVEL_RUNNING && "Level Running transition not working");
-    cog_state_fsm_push_event(fsm, TEST_EVENT);
+    cog_state_fsm_push_event(fsm, EVENT_TEST);
     cog_state_fsm_update(fsm);
     assert(fsm->currentstate==STATE_END && "STATE_END transition not working.");
-    cog_state_fsm_push_event(fsm, TEST_EVENT);
+    cog_state_fsm_push_event(fsm, EVENT_TEST);
     cog_state_fsm_update(fsm);
-    assert(fsm->currentstate==COG_STATE_FINISH && "COG_STATE_FINISH transition not working.");
+    assert(fsm->currentstate==STATE_FINISH && "COG_STATE_FINISH transition not working.");
 }
 

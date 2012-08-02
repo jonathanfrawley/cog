@@ -46,4 +46,9 @@ void cog_list_empty(cog_list* list);
 //----------------------------------------------------------------------
 cog_uint cog_list_length(cog_list* list);
 
+//----------------------------------------------------------------------
+//  Pops the front element of the list and returns it.
+//----------------------------------------------------------------------
+cog_dataptr cog_list_pop_first(cog_list* list);
+
 #endif   // COG_LIST_H

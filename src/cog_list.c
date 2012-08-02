@@ -83,3 +83,18 @@ cog_uint cog_list_length(cog_list* list)
     }
     return cnt;
 }
+
+cog_dataptr cog_list_pop_first(cog_list* list)
+{
+    if(list->data == COG_LIST_ENDSENTINAL)
+    {
+//        cog_errorf("Can't pop an element from an empty list.");
+        return COG_NULL;
+    }
+    else
+    {
+        cog_dataptr result = list->data;
+        cog_list_remove(list, result);
+        return result;
+    }
+}
