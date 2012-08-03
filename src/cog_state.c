@@ -19,31 +19,44 @@ void cog_state_fsm_init(cog_state_fsm* fsm)
 
 void cog_state_fsm_add_transition(cog_state_fsm* fsm, cog_state_transition* transition)
 {
-    cog_list_append(&fsm->transitions, (cog_dataptr)transition);
+    cog_debugf("transition->state is : %d", transition->state);
+    cog_debugf("transition->transition_fn is : %d", transition->transition_fn);
+    cog_debugf("transition->event is : %d", transition->event);
+    //cog_list_append(&fsm->transitions, (cog_dataptr)transition);
+    cog_state_transition* transitioncopy = COG_STRUCT_MALLOC(cog_state_transition);
+    (*transitioncopy) = *transition;
+    cog_list_append(&fsm->transitions, (cog_dataptr)transitioncopy);
 }
 
-void cog_state_fsm_add_transitions(cog_state_fsm* fsm, cog_state_transition** transitions, cog_uint size)
+void cog_state_fsm_add_transitions(cog_state_fsm* fsm, cog_state_transition* transitions, cog_uint size)
 {
     cog_int i;
     for(i=0;i<size;i++)
     {
-        cog_state_fsm_add_transition(fsm, transitions[i]);
+        cog_state_fsm_add_transition(fsm, &(transitions[i]));
     }
 }
 
 void cog_state_fsm_update(cog_state_fsm* fsm)
 {
-    cog_event event = cog_list_pop_first(&fsm->events);
+    cog_event* event = cog_list_pop_first(&fsm->events);
     if(event == COG_NULL)
     {
+        cog_errorf("HI");
         return;
     }
     COG_LIST_FOREACH(&fsm->transitions)
     {
         cog_state_transition* transition = (cog_state_transition*)curr;
-        if(transition->event == event)
+        cog_debugf("transition->state is : %d", transition->state);
+        cog_debugf("transition->transition_fn is : %d", transition->transition_fn);
+        cog_debugf("transition->event is : %d", transition->event);
+        cog_debugf("transition->event is : %d", ((cog_state_transition*)(fsm->transitions.next->data))->event);
+        cog_debugf("transition->transition_fn is : %d", ((cog_state_transition*)(fsm->transitions.next->data))->transition_fn);
+        cog_debugf("transition->state is : %d", ((cog_state_transition*)(fsm->transitions.next->data))->state);
+        if(transition->event == (*event))
         {
-            fsm->currentstate = (transition->transition_fn)();
+            fsm->currentstate = transition->transition_fn();
             break;
         }
     }
@@ -51,7 +64,9 @@ void cog_state_fsm_update(cog_state_fsm* fsm)
 
 void cog_state_fsm_push_event(cog_state_fsm* fsm, cog_event event)
 {
-    cog_list_append(&fsm->events, event);
+    cog_event* eventcopy = COG_STRUCT_MALLOC(cog_event);
+    (*eventcopy) = event;
+    cog_list_append(&fsm->events, eventcopy);
 }
 
 void cog_state_fsm_set_state(cog_state_fsm* fsm, cog_state state)

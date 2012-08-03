@@ -47,7 +47,7 @@ void cog_state_fsm_add_transition(cog_state_fsm* fsm, cog_state_transition* tran
 /* *
  * Add an array of transitions.
  * */
-void cog_state_fsm_add_transitions(cog_state_fsm* fsm, cog_state_transition** transitions, cog_uint size);
+void cog_state_fsm_add_transitions(cog_state_fsm* fsm, cog_state_transition* transitions, cog_uint size);
 /* *
  * Process any new events and transition the state of the fsm accordingly.
  * */
