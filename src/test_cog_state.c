@@ -47,24 +47,27 @@ int main(void)
 {
     cog_int (*testp)(void);
     testp = &load_firstlevel;
-    cog_debugf("Hi, result of calling load_firstlevel() : %d", testp());
 
     cog_state_fsm* fsm = cog_state_fsm_alloc();
     cog_state_fsm_add_transitions(fsm, transitions, (sizeof(transitions)/sizeof(*transitions)));
-    cog_state_fsm_set_state(fsm, STATE_START);
 
+    cog_state_fsm_set_state(fsm, STATE_START);
     assert(fsm->currentstate==STATE_START && "Start state not properly set");
+
     cog_state_fsm_push_event(fsm, EVENT_TEST);
     cog_state_fsm_update(fsm);
     assert(fsm->currentstate==STATE_LEVEL_RUNNING && "Level Running transition not working");
+
     cog_state_fsm_push_event(fsm, EVENT_TEST);
     cog_state_fsm_update(fsm);
     assert(fsm->currentstate==STATE_END && "STATE_END transition not working.");
+
     cog_state_fsm_push_event(fsm, EVENT_TEST2);
     cog_state_fsm_update(fsm);
-    assert(fsm->currentstate==STATE_FINISH && "COG_STATE_FINISH transition not working.");
+    assert(fsm->currentstate==STATE_FINISH && "STATE_FINISH transition not working.");
+
     cog_state_fsm_push_event(fsm, EVENT_TEST2);
     cog_state_fsm_update(fsm);
-    assert(fsm->currentstate==STATE_FINISH && "COG_STATE_FINISH transition not working.");
+    assert(fsm->currentstate==STATE_FINISH && "STATE_FINISH transition not working.");
 }
 
