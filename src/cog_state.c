@@ -38,7 +38,6 @@ void cog_state_fsm_update(cog_state_fsm* fsm)
     cog_event* event = cog_list_pop_first(&fsm->events);
     if(event == COG_NULL)
     {
-        cog_errorf("HI");
         return;
     }
     COG_LIST_FOREACH(&fsm->transitions)

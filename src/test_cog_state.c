@@ -45,9 +45,6 @@ cog_state_transition transitions[] = {
 
 int main(void)
 {
-    cog_int (*testp)(void);
-    testp = &load_firstlevel;
-
     cog_state_fsm* fsm = cog_state_fsm_alloc();
     cog_state_fsm_add_transitions(fsm, transitions, (sizeof(transitions)/sizeof(*transitions)));
 

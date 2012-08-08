@@ -89,7 +89,6 @@ cog_dataptr cog_list_pop_first(cog_list* list)
     cog_list* curr = list->next;
     if(curr->data == COG_LIST_ENDSENTINAL)
     {
-        cog_errorf("Can't pop an element from an empty list.");
         return COG_NULL;
     }
     else
