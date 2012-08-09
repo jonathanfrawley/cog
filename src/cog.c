@@ -910,6 +910,11 @@ void cog_sprite_remove(cog_sprite_id id)
     cog_map_remove(&sprites, id);
 }
 
+void cog_sprite_remove_all(void)
+{
+    cog_list_empty(&activesprites);
+}
+
 /**
  * Assumes animation is a single 1D animation frame.
  * */
@@ -1065,6 +1070,11 @@ void cog_anim_remove(cog_anim_id id)
         }
     }
     cog_map_remove(&anims, id);
+}
+
+void cog_anim_remove_all(void)
+{
+    cog_list_empty(&activeanims);
 }
 
 //sound

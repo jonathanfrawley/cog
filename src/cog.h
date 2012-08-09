@@ -42,6 +42,8 @@ cog_float cog_sprite_update_rot(cog_sprite_id id, cog_float rot);
 cog_float cog_sprite_update_xvel(cog_sprite_id id, cog_float xvel);
 cog_float cog_sprite_update_yvel(cog_sprite_id id, cog_float yvel);
 void cog_sprite_remove(cog_sprite_id id);
+void cog_sprite_remove_all(void);
+
 //anim
 cog_anim_id cog_anim_add(
         char* animimg,
@@ -65,6 +67,7 @@ cog_float cog_anim_getrot(cog_anim_id id);
 cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot);
 cog_bool cog_anim_isfinished(cog_anim_id id);
 void cog_anim_remove(cog_anim_id id);
+void cog_anim_remove_all(void);
 
 //sound
 cog_snd_id cog_snd_load(char* fname);
