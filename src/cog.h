@@ -74,6 +74,8 @@ cog_snd_id cog_snd_load(char* fname);
 void cog_snd_play(cog_snd_id id);
 void cog_snd_play_sfx(cog_snd_id snd);
 void cog_snd_play_music(cog_snd_id snd);
+cog_snd_id cog_snd_stop(cog_snd_id id);
+cog_snd_id cog_snd_stop_all();
 
 //dimensions
 cog_uint cog_get_screenw();
@@ -96,8 +98,8 @@ cog_float cog_input_mousex();
 cog_float cog_input_mousey();
 
 //text loading
-void cog_text_loadfont(const char* fpath, cog_uint fsize);
-cog_sprite_id cog_text_createsprite(const char* text,
+void cog_text_load_font(const char* fpath, cog_uint fsize);
+cog_sprite_id cog_text_create_sprite(const char* text,
         cog_text_colour c,
         cog_float x,
         cog_float y,
@@ -106,7 +108,11 @@ cog_sprite_id cog_text_createsprite(const char* text,
         cog_float texy,
         cog_float texw,
         cog_float texh);
-cog_sprite_id cog_text_simplecreate(const char* text,
+cog_sprite_id cog_text_create(const char* text,
+        cog_text_colour c,
+        cog_float x,
+        cog_float y);
+cog_sprite_id cog_text_create_xcentred(const char* text,
         cog_text_colour c,
         cog_float x,
         cog_float y);

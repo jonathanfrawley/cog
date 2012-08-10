@@ -144,6 +144,7 @@ static cog_map anims;
 static cog_int configmask;
 static cog_list activesprites; //sprites drawn(active) at the moment
 static cog_list activeanims; //anims drawn(active) at the moment
+static cog_list activesnds; //snds playing at the moment
 static cog_snd_id cog_sndcnt;
 static cog_map snds;
 //##timing
@@ -177,6 +178,7 @@ void cog_init(cog_int config)
     cog_map_init(&snds);
     cog_list_init(&activesprites);
     cog_list_init(&activeanims);
+    cog_list_init(&activesnds);
     //Init cog
     game.finished = 0;
     cog_platform_init();
@@ -1094,6 +1096,7 @@ void cog_snd_play(cog_snd_id id)
 {
     cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);
     alSourcePlay(snd->source);
+    cog_list_append(&activesnds, (cog_dataptr)snd);
 }
 
 void cog_snd_play_sfx(cog_snd_id id)
@@ -1104,6 +1107,22 @@ void cog_snd_play_sfx(cog_snd_id id)
 void cog_snd_play_music(cog_snd_id id)
 {
     cog_snd_play(id);
+}
+
+cog_snd_id cog_snd_stop(cog_snd_id id)
+{
+    cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);
+    alSourceStop(snd->source);
+    cog_list_remove(&activesnds, (cog_dataptr)snd);
+}
+
+cog_snd_id cog_snd_stop_all()
+{
+    COG_LIST_FOREACH(&activesnds)
+    {
+        cog_snd* snd = (cog_snd*)curr->data;
+        cog_snd_stop(snd->id);
+    }
 }
 
 cog_float cog_math_radtodeg(cog_float rad)
@@ -1281,14 +1300,14 @@ void cog_text_openfont()
     }
 }
 
-void cog_text_loadfont(const char* fpath, cog_uint fsize)
+void cog_text_load_font(const char* fpath, cog_uint fsize)
 {
     fontpath = fpath;
     fontptsize = fsize;
     cog_text_openfont();
 }
 
-cog_sprite_id cog_text_createsprite(const char* text,
+cog_sprite_id cog_text_create_sprite(const char* text,
         cog_text_colour c,
         cog_float x,
         cog_float y,
@@ -1303,33 +1322,7 @@ cog_sprite_id cog_text_createsprite(const char* text,
     forecol.r = c.r;
     forecol.g = c.g;
     forecol.b = c.b;
-    /*
-    if(c == COG_TEXT_COL_RED)
-    {
-        forecol.r = 0xFF;
-        forecol.g = 0x01; //SDL_ttf needs this to be non-zero for some reason.
-        forecol.b = 0x00;
-        forecol.unused = 0x00;
-    }
-    else if(c == COG_TEXT_COL_RED)
-    {
-        forecol.r = 0xFF;
-        forecol.g = 0x01; //SDL_ttf needs this to be non-zero for some reason.
-        forecol.b = 0x00;
-        forecol.unused = 0x00;
-    }
-    else if(c == COG_TEXT_COL_BLACK)
-    {
-        forecol.r = 0x01;
-        forecol.g = 0x00;
-        forecol.b = 0x00;
-        forecol.unused = 0x00;
-    }
-    else
-    {
-        cog_errorf("Colour is not defined");
-    }
-    */
+
     TTF_SetFontStyle(font, renderstyle);
     SDL_Surface* textsurface = TTF_RenderText_Blended(font, text, forecol);
 
@@ -1364,12 +1357,12 @@ cog_sprite_id cog_text_createsprite(const char* text,
 
     return sprite->id;
 }
-cog_sprite_id cog_text_simplecreate(const char* text,
+cog_sprite_id cog_text_create(const char* text,
         cog_text_colour c,
         cog_float x,
         cog_float y)
 {
-    return cog_text_createsprite(text,
+    return cog_text_create_sprite(text,
             c,
             x,
             y,
@@ -1378,4 +1371,23 @@ cog_sprite_id cog_text_simplecreate(const char* text,
             0,
             1,
             1);
+}
+
+cog_sprite_id cog_text_create_xcentred(const char* text,
+        cog_text_colour c,
+        cog_float x,
+        cog_float y)
+{
+    cog_sprite_id id = cog_text_create_sprite(text,
+            c,
+            x,
+            y,
+            0,
+            0,
+            0,
+            1,
+            1);
+    cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
+    sprite->x -= sprite->w;
+    return id;
 }
