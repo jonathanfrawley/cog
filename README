@@ -12,3 +12,9 @@ To run tests:
     ./tests
 
 The resultant library will be called libcog.a.
+
+On Windows
+==========
+1) Install MSys + c compiler tool (w/ mingw-get-inst)
+2) Install python27 + scons
+3) Build cog using "scons", the dlls + exe will end up in the bin/ directory.
