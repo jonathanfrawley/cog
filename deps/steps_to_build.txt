@@ -1,0 +1,11 @@
+freealut-1.1.0:
+ - cmake -G "MSYS Makefiles" -DBUILD_STATIC=1 ../
+
+alsoft:
+ - cmake -G "MSYS Makefiles" -DLIBTYPE=STATIC ../
+
+glew:
+ - Shell script http://stackoverflow.com/a/6005262/639602
+
+SDL_*:
+ - Prebuilt from web
