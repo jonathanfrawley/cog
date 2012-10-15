@@ -1106,6 +1106,8 @@ void cog_snd_play_sfx(cog_snd_id id)
 
 void cog_snd_play_music(cog_snd_id id)
 {
+    cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);
+    alSourcei(snd->source,AL_LOOPING,AL_TRUE);
     cog_snd_play(id);
 }
 
