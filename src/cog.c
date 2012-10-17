@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-//#include <SDL/SDL_mixer.h>
 #include <AL/alut.h>
 #include <SDL/SDL_ttf.h>
 #include <GL/glew.h>
@@ -19,7 +18,6 @@
 static cog_uint FRAME_TIME = 1000 / FRAMES_PER_SECOND;
 
 //TODO: Get these from config.
-//static int COG_SCREEN_WIDTH = 640;
 static int COG_SCREEN_WIDTH = 640;
 static int COG_SCREEN_HEIGHT = 480;
 
@@ -84,16 +82,11 @@ typedef struct
     cog_uint nframes;
     cog_bool paused;
 } cog_anim;
-/**
- * snds hold info about sounds.
- **/
 typedef struct
 {
     cog_snd_id id;
     ALuint buffer;
     ALuint source;
-    //Mix_Chunk* chunk;
-    //cog_int channel;
 } cog_snd;
 
 typedef struct
@@ -163,7 +156,6 @@ static cog_bool mouserightjustpressed;
 static cog_float mousex;
 static cog_float mousey;
 //##text
-//static const char* fontpath = "../media/font/ArcadeClassic.ttf"; //TODO:Add option to set this
 static const char* fontpath = "../media/font/04B_03__.ttf"; //TODO:Add option to set this
 static TTF_Font* font;
 static cog_uint fontptsize = 8;
@@ -209,9 +201,6 @@ cog_bool cog_updateready()
 {
     now = SDL_GetTicks();
     timedelta = now - starttime;
-    //cog_debugf("starttime <%d> timedelta <%d> \n", starttime, timedelta);
-    //starttime = SDL_GetTicks();
-    //return (timedelta < FRAME_TIME);
     return (timedelta > FRAME_TIME);
 }
 
@@ -232,10 +221,6 @@ void cog_sleepuntilupdate()
 
 void cog_update()
 {
-    //now = SDL_GetTicks();
-    //timedelta = now - starttime;
-    //starttime = SDL_GetTicks();
-    //cog_debugf("starttime <%d> timedelta <%d> \n", starttime, timedelta);
     now = SDL_GetTicks();
     timedelta = now - starttime;
 
@@ -254,7 +239,6 @@ void cog_update()
     if(frametimecounter >= 1000)
     {
         cog_debugf("nupdates <%d>, ndraws <%d>", frameupdatecounter, framedrawcounter);
-
         frametimecounter = 0;
         framedrawcounter = 0;
         frameupdatecounter = 0;
@@ -311,7 +295,6 @@ void cog_window_togglefullscreen(void)
     SDL_WM_ToggleFullScreen(window.screen);
 }
 
-
 void cog_update_anims(cog_uint deltamillis)
 {
     COG_LIST_FOREACH(&activeanims)
@@ -319,6 +302,7 @@ void cog_update_anims(cog_uint deltamillis)
         //Draw current sprite
         cog_anim_id id = *((cog_anim_id*)curr->data);
         cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,id);
+
         if(thisanim->paused)
         {
             continue;
@@ -327,7 +311,7 @@ void cog_update_anims(cog_uint deltamillis)
         if(thisanim->currentframe_millis >= thisanim->transition_millis)
         {
             thisanim->currentframe++;
-            thisanim->currentframe_millis = 0;
+            thisanim->currentframe_millis = thisanim->currentframe_millis - thisanim->transition_millis; //Diff
             if(thisanim->currentframe >= thisanim->nframes)
             {
                 if(thisanim->looped)
@@ -1056,15 +1040,20 @@ cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot)
 
 cog_bool cog_anim_isfinished(cog_anim_id id)
 {
-    cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
-    return (anim == COG_NULL);
+    COG_LIST_FOREACH(&activeanims)
+    {
+        if(*((cog_anim_id*)curr->data) == id)
+        {
+            return COG_FALSE;
+        }
+    }
+    return COG_TRUE;
 }
 
 void cog_anim_remove(cog_anim_id id)
 {
     COG_LIST_FOREACH(&activeanims)
     {
-        //draw current sprite
         if(*((cog_anim_id*)curr->data) == id)
         {
             cog_list_remove(&activeanims, curr->data);

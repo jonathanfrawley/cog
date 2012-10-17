@@ -10,7 +10,7 @@ static cog_dataptr COG_LIST_ENDSENTINAL = 0;
             curr->data!=COG_LIST_ENDSENTINAL; \
             curr=next,next=next->next)
 
-//For double loops
+//nested for loop
 #define COG_LIST_FOREACH2(list) \
     for(cog_list* curr2=(list)->next, *next2=(list)->next->next; \
             curr2->data!=COG_LIST_ENDSENTINAL; \
