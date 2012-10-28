@@ -151,7 +151,7 @@ static cog_uint frameupdatecounter;
 //##input
 static cog_bool mouseleftpressed;
 static cog_bool mouserightpressed;
-static cog_bool mouseleftjustpressed;
+static cog_bool mouseleftjustpressed = 0;
 static cog_bool mouserightjustpressed;
 static cog_float mousex;
 static cog_float mousey;
@@ -1191,7 +1191,7 @@ cog_bool cog_input_mouseleftjustpressed()
 
 cog_bool cog_input_mouserightjustpressed()
 {
-    return mouseleftjustpressed;
+    return mouserightjustpressed;
 }
 
 cog_float cog_input_mousex()
