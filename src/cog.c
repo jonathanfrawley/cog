@@ -18,8 +18,8 @@
 static cog_uint FRAME_TIME = 1000 / FRAMES_PER_SECOND;
 
 //TODO: Get these from config.
-static int COG_SCREEN_WIDTH = 640;
-static int COG_SCREEN_HEIGHT = 480;
+//static int COG_SCREEN_WIDTH = 640;
+//static int COG_SCREEN_HEIGHT = 480;
 
 //data structures
 typedef struct
@@ -267,11 +267,11 @@ void cog_platform_init(void)
 void cog_window_init(void)
 {
     //TODO:Get from yaml conf.
-    int width = COG_SCREEN_WIDTH;
-    int height = COG_SCREEN_HEIGHT;
+    int width = 0;
+    int height = 0;
     int bpp = 32;
     int flags = SDL_OPENGL | SDL_DOUBLEBUF;
-    if( (window.screen = SDL_SetVideoMode( width, height, bpp, flags )) == 0 )
+    if( (window.screen = SDL_SetVideoMode(width, height, bpp, flags)) == 0 )
     {
         cog_errorf("cog_window_init failed when creating SDL window <%s> \n", SDL_GetError());
     }
@@ -335,18 +335,6 @@ void cog_graphics_init(void)
 
 void cog_audio_init(void)
 {
-    /*
-    int audio_rate = 22050;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
-
-    if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
-    {
-        cog_errorf("Unable to initialize audio: %s\n", Mix_GetError());
-        exit(1);
-    }
-    */
     int argc = 1;
     char* argv = "cog";
     alutInit(&argc, &argv);
@@ -360,29 +348,14 @@ void cog_graphics_hwinit(void)
         //TODO: Revert to software rendering if not available.
         perror("Error: OpenGL 2.1 not available, bailing out.");
     }
-    /*
-    glClearColor(0.3f,0.3f,0.5f,0.0f);
-    glClearDepth(1.0f);
-    glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LEQUAL );
-    glViewport(0,0,COG_SCREEN_WIDTH,COG_SCREEN_HEIGHT);
-    glShadeModel(GL_SMOOTH);
-    //glMatrixMode(GL_PROJECTION);
-    //glLoadIdentity();
-    //gluPerspective(40, 1, 0.0001, 1000.0);
-    glMatrixMode(GL_MODELVIEW);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //
-    */
 
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glClearColor(0.3f,0.3f,0.5f,0.0f);
-    //glClearColor( 1, 1, 1, 1 );
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    glOrtho( 0, COG_SCREEN_WIDTH, COG_SCREEN_HEIGHT, 0, -1, 1 );
+    glOrtho( 0, window.screen->w, window.screen->h, 0, -1, 1 );
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 
@@ -390,25 +363,6 @@ void cog_graphics_hwinit(void)
     {
         perror("Error creating shaders");
     }
-    /*
-    glGenBuffers(1, &(renderer.vertbuffid));
-    glBindBuffer(GL_ARRAY_BUFFER, renderer.vertbuffid);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(spritevertices), spritevertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-    // Index array of vertex / color data
-    glGenBuffers(1, &(renderer.vertorderbuffid));
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer.vertorderbuffid);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(spriteverticesorder), spriteverticesorder, GL_STATIC_DRAW);
-    */
-    /*
-    //XXX:TEX STUFF HERE
-    //texture
-    int textureuniform = glGetUniformLocation(renderer.programid, "my_color_texture");
-    glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, cog_texture_load("../media/test0.png"));
-    glBindTexture(GL_TEXTURE_2D, cog_texture_load("../media/kitten_anim.png"));
-    glUniform1i(textureuniform, 0);
-    */
 }
 
 void cog_graphics_swinit(void)
@@ -427,7 +381,6 @@ int cog_graphics_init_shaders(void)
     renderer.programid = glCreateProgram();
     glAttachShader(renderer.programid, renderer.vertid);
     glAttachShader(renderer.programid, renderer.fragid);
-    //glBindAttribLocation(programid, 0, "position");
     glLinkProgram(renderer.programid);
     int linkedstatus;
     glGetProgramiv(renderer.programid, GL_LINK_STATUS, &linkedstatus);
@@ -451,7 +404,6 @@ GLuint cog_graphics_load_shader(char* filename, GLenum shadertype)
     cog_read_file(filebuf, filename);
     printf("File is \n---\n%s---\n", filebuf);
     GLuint id = glCreateShader(shadertype);
-    //glShaderSource(id, 1, (const GLchar **)&filebuf, 0);
     char* buf = &(filebuf[0]);
     glShaderSource(id, 1, (const GLchar **)&buf, 0);
     glCompileShader(id);
@@ -671,10 +623,6 @@ GLuint cog_upload_texture(SDL_Surface* image)
     /* Prepare the filtering of the texture image */
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     /* Map the alpha surface to the texture */
     glTexImage2D( GL_TEXTURE_2D,
             0,
@@ -1069,12 +1017,12 @@ cog_float cog_math_sqrt(cog_float x)
 
 cog_uint cog_get_screenw()
 {
-    return COG_SCREEN_WIDTH;
+    return window.screen->w;
 }
 
 cog_uint cog_get_screenh()
 {
-    return COG_SCREEN_HEIGHT;
+    return window.screen->h;
 }
 
 cog_uint cog_nextrand()
@@ -1163,7 +1111,6 @@ void cog_input_checkmouse(void)
     cog_uint state = SDL_GetMouseState(&x, &y);
     mousex = (cog_float)x;
     mousey = (cog_float)y;
-    cog_debugf("mouse is (%f,%f)", mousex, mousey);
     if(SDL_BUTTON_LEFT == SDL_BUTTON(state))
     {
         if(!mouseleftpressed)
@@ -1180,8 +1127,7 @@ void cog_input_checkmouse(void)
     {
         mouseleftpressed = COG_FALSE;
     }
-
-    if(SDL_BUTTON_LEFT == SDL_BUTTON(state))
+    if(SDL_BUTTON_RIGHT == SDL_BUTTON(state))
     {
         if(!mouserightpressed)
         {
