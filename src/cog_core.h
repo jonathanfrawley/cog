@@ -15,5 +15,6 @@ void cog_debugf(const char* logMsg, ...);
 //#memory management
 void* cog_malloc(cog_uint size);
 void cog_free(void* ptr);
+void* cog_memcpy(cog_dataptr destination, cog_dataptr source, cog_uint size);
 
 #endif   // COG_CORE_H

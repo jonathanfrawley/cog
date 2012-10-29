@@ -12,16 +12,14 @@ cog_state_fsm* cog_state_fsm_alloc(void)
 
 void cog_state_fsm_init(cog_state_fsm* fsm)
 {
-    cog_list_init(&fsm->transitions);
+    cog_list_init(&fsm->transitions, sizeof(cog_state_transition));
     fsm->currentstate = COG_STATE_ERROR;
-    cog_list_init(&fsm->events);
+    cog_list_init(&fsm->events, sizeof(cog_event));
 }
 
 void cog_state_fsm_add_transition(cog_state_fsm* fsm, cog_state_transition* transition)
 {
-    cog_state_transition* transitioncopy = COG_STRUCT_MALLOC(cog_state_transition);
-    (*transitioncopy) = *transition;
-    cog_list_append(&fsm->transitions, (cog_dataptr)transitioncopy);
+    cog_list_append(&fsm->transitions, transition);
 }
 
 void cog_state_fsm_add_transitions(cog_state_fsm* fsm, cog_state_transition* transitions, cog_uint size)
@@ -35,7 +33,7 @@ void cog_state_fsm_add_transitions(cog_state_fsm* fsm, cog_state_transition* tra
 
 void cog_state_fsm_update(cog_state_fsm* fsm)
 {
-    cog_event* event = cog_list_pop_first(&fsm->events);
+    cog_event* event = cog_list_pop(&fsm->events);
     if(event == COG_NULL)
     {
         return;

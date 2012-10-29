@@ -39,3 +39,8 @@ void cog_free(void* ptr)
 {
     free(ptr);
 }
+
+void* cog_memcpy(cog_dataptr destination, cog_dataptr source, cog_uint size)
+{
+    return memcpy(destination, source, size);
+}

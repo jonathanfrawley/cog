@@ -168,9 +168,9 @@ void cog_init(cog_int config)
     cog_map_init(&sprites);
     cog_map_init(&anims);
     cog_map_init(&snds);
-    cog_list_init(&activesprites);
-    cog_list_init(&activeanims);
-    cog_list_init(&activesnds);
+    cog_list_init(&activesprites, sizeof(cog_sprite_id));
+    cog_list_init(&activeanims, sizeof(cog_sprite_id));
+    cog_list_init(&activesnds, sizeof(cog_sprite_id));
     //Init cog
     game.finished = 0;
     cog_platform_init();
@@ -896,9 +896,9 @@ void cog_sprite_remove(cog_sprite_id id)
     cog_map_remove(&sprites, id);
 }
 
-void cog_sprite_remove_all(void)
+void cog_sprite_removeall(void)
 {
-    cog_list_empty(&activesprites);
+    cog_list_removeall(&activesprites);
 }
 
 /**
@@ -917,26 +917,17 @@ cog_anim_id cog_anim_add(
 {
     cog_anim* anim = COG_STRUCT_MALLOC(cog_anim);
     anim->id = cog_animcnt++;
-    cog_list_init(&anim->frames);
+    cog_list_init(&anim->frames, sizeof(cog_sprite));
     anim->transition_millis = transition_millis;
     anim->looped = looped;
     anim->currentframe = 0;
     anim->currentframe_millis = 0;
     anim->paused = COG_FALSE;
+    anim->nframes = 0;
 
-    //XXX: Find out w and h by loading SDL_Surface
-    //SDL_Surface* image = cog_load_image(animimg);
-    //int imagew = image->w;
-    //int imageh = image->h;
-    //int wanimframe = imagew / nimages;
-    //int hanimframe = imageh;
     cog_float wanimframe = ((cog_float)1.0 / nimages);
     cog_float hanimframe = 1.0;
-    //cog_errorf("wanimframe is %f ",wanimframe);
-    //cog_errorf("hanimframe is %d ",hanimframe);
     //Load nimages sprites in, with offset dependant on frame number.
-    cog_list_init(&anim->frames);
-    anim->nframes = 0;
     for(int i=0;i<nimages;i++)
     {
         cog_sprite_id sid = cog_sprite_load(animimg,
@@ -1063,9 +1054,9 @@ void cog_anim_remove(cog_anim_id id)
     cog_map_remove(&anims, id);
 }
 
-void cog_anim_remove_all(void)
+void cog_anim_removeall(void)
 {
-    cog_list_empty(&activeanims);
+    cog_list_removeall(&activeanims);
 }
 
 //sound

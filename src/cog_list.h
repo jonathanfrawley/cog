@@ -20,11 +20,23 @@ typedef struct cog_list
 {
     struct cog_list* next;
     cog_dataptr data;
+    cog_uint size; //size of data member
 } cog_list;
 
-cog_list* cog_list_alloc();
+//List structure:
+//  NULL -> a0 -> a1 -> a2 -> a3 ->|
+//  / \                            |
+//   |-----------------------------|
+// The first element has COG_LIST_ENDSENTINAL as its data field.
+// The last element is a pointer to the first element again, thereby acting as a sentinal to for loops.
+//
+//Memory: 
+// All data members are alloced and dealloced by the list data structure.
+// Do not rely on these data values lying around for reference elsewhere.
 
-void cog_list_init(cog_list*);
+cog_list* cog_list_alloc(cog_uint size);
+
+void cog_list_init(cog_list* list, cog_uint size);
 
 //----------------------------------------------------------------------
 //  Adds data to this list. List will handle freeing data.
@@ -39,16 +51,16 @@ void cog_list_remove(cog_list* list, cog_dataptr data);
 //----------------------------------------------------------------------
 //  Empties list and frees data.
 //----------------------------------------------------------------------
-void cog_list_empty(cog_list* list);
+void cog_list_removeall(cog_list* list);
 
 //----------------------------------------------------------------------
 //  Returns: Length of list.
 //----------------------------------------------------------------------
-cog_uint cog_list_length(cog_list* list);
+cog_uint cog_list_len(cog_list* list);
 
 //----------------------------------------------------------------------
 //  Pops the front element of the list and returns it.
 //----------------------------------------------------------------------
-cog_dataptr cog_list_pop_first(cog_list* list);
+cog_dataptr cog_list_pop(cog_list* list);
 
 #endif   // COG_LIST_H
