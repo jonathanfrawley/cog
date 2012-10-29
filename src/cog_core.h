@@ -3,8 +3,8 @@
 
 #include "cog_types.h"
 
-static int COG_MAX_BUF = 255;
-static int COG_MAX_FILE_BUF = 4080;
+#define COG_MAX_BUF 255
+#define COG_MAX_FILE_BUF 4080
 
 #define COG_STRUCT_MALLOC(type) (type*)cog_malloc(sizeof(type))
 

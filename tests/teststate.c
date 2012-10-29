@@ -2,6 +2,7 @@
 
 #include "cog_core.h"
 #include "cog_state.h"
+#include "cog_test.h"
 
 #define STATE_START 0
 #define STATE_LEVEL_RUNNING 1
@@ -49,22 +50,22 @@ int main(void)
     cog_state_fsm_add_transitions(fsm, transitions, (sizeof(transitions)/sizeof(*transitions)));
 
     cog_state_fsm_set_state(fsm, STATE_START);
-    assert(fsm->currentstate==STATE_START && "Start state not properly set");
+    cog_test("Start state setting", (fsm->currentstate==STATE_START));
 
     cog_state_fsm_push_event(fsm, EVENT_TEST);
     cog_state_fsm_update(fsm);
-    assert(fsm->currentstate==STATE_LEVEL_RUNNING && "Level Running transition not working");
+    cog_test("Level running transition", (fsm->currentstate==STATE_LEVEL_RUNNING));
 
     cog_state_fsm_push_event(fsm, EVENT_TEST);
     cog_state_fsm_update(fsm);
-    assert(fsm->currentstate==STATE_END && "STATE_END transition not working.");
+    cog_test("STATE_END transition", (fsm->currentstate==STATE_END));
 
     cog_state_fsm_push_event(fsm, EVENT_TEST2);
     cog_state_fsm_update(fsm);
-    assert(fsm->currentstate==STATE_FINISH && "STATE_FINISH transition not working.");
+    cog_test("STATE_FINISH transition", (fsm->currentstate==STATE_FINISH));
 
     cog_state_fsm_push_event(fsm, EVENT_TEST2);
     cog_state_fsm_update(fsm);
-    assert(fsm->currentstate==STATE_FINISH && "STATE_FINISH transition not working.");
+    cog_test("STATE_FINISH transition", (fsm->currentstate==STATE_FINISH));
 }
 

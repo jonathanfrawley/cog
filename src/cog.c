@@ -21,16 +21,6 @@ static cog_uint FRAME_TIME = 1000 / FRAMES_PER_SECOND;
 static int COG_SCREEN_WIDTH = 640;
 static int COG_SCREEN_HEIGHT = 480;
 
-static GLfloat spritevertices[] = {
-    1.0,  1.0,  1.0, 1.0,
-    -1.0,  1.0,  1.0, 1.0,
-    -1.0, -1.0,  1.0, 1.0,
-    1.0, -1.0,  1.0, 1.0,
-};
-static GLushort spriteverticesorder[] = {
-    0,1,2,3
-};
-
 //data structures
 typedef struct
 {
@@ -145,7 +135,6 @@ static cog_uint now;
 static cog_uint timedelta;
 static cog_uint starttime;
 static cog_uint lastframetime;
-static cog_uint frametimecounter;
 static cog_uint framedrawcounter;
 static cog_uint frameupdatecounter;
 //##input
@@ -544,14 +533,10 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
 {
     glPushMatrix();
     //Bind texture
-    int textureuniform = glGetUniformLocation(renderer.programid, "my_color_texture");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, sprite->texid);
-    //glUniform1i(textureuniform, sprite->texid);
 
     //Translate
-    //glTranslatef(sprite->x - (sprite->w*0.5),sprite->y - (sprite->h*0.5), 0.0);
-    //glTranslatef(sprite->x + (sprite->w),sprite->y + (sprite->h), 0.0);
     glTranslatef(sprite->x,sprite->y, 0.0);
     glRotatef( -cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f );
 
@@ -560,7 +545,6 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
                 sprite->texy + sprite->texh);
         glVertex2f(-1.0f*sprite->w,
                 1.0f*sprite->h);              // Top Left
-        //glTexCoord2f( frame_idx_x/xframes, frame_idx_y/yframes );
         glTexCoord2f(sprite->texx + sprite->texw,
                 sprite->texy + sprite->texh);
         glVertex2f(1.0f*sprite->w,
@@ -574,32 +558,6 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
         glVertex2f(-1.0f*sprite->w,
                 -1.0f*sprite->h);             // Bottom left
     glEnd();
-/*
-    float verts[] = {
-        -1.0f*sprite->w,
-        1.0f*sprite->h,              // Top Left
-        1.0f*sprite->w,
-        1.0f*sprite->h,              // Top Right
-        1.0f*sprite->w,
-        -1.0f*sprite->h,             // Bottom Right
-        -1.0f*sprite->w,
-        -1.0f*sprite->h             // Bottom left
-    };
-
-    const float texverts[] = {
-        tx, ty,
-        tx + tw, ty,
-        tx + tw, ty + th,
-        tx, ty + th
-    };
-
-    // ... Bind the texture, enable the proper arrays
-
-    glVertexPointer(2, GL_FLOAT, verts);
-    glTextureVertexPointer(2, GL_FLOAT, texVerts);
-    glDrawArrays(GL_TRI_STRIP, 0, 4);
-    */
-
     glPopMatrix();
 }
 
@@ -799,11 +757,7 @@ cog_sprite_id cog_sprite_add(char* filename,
         texy,
         texw,
         texh);
-    //Need to malloc a copy of the id to ensure it is still around
-    //when the list entry is recalled.
-    cog_sprite_id* idcopy = COG_STRUCT_MALLOC(cog_sprite_id);
-    (*idcopy) = id;
-    cog_list_append(&activesprites, idcopy);
+    cog_list_append(&activesprites, &id);
     return id;
 }
 
@@ -865,19 +819,19 @@ cog_float cog_sprite_getrot(cog_sprite_id id)
     return sprite->rot;
 }
 
-cog_float cog_sprite_update_rot(cog_sprite_id id, cog_float rot)
+void cog_sprite_update_rot(cog_sprite_id id, cog_float rot)
 {
     cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
     sprite->rot = rot;
 }
 
-cog_float cog_sprite_update_xvel(cog_sprite_id id, cog_float xvel)
+void cog_sprite_update_xvel(cog_sprite_id id, cog_float xvel)
 {
     cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
     sprite->xvel = xvel;
 }
 
-cog_float cog_sprite_update_yvel(cog_sprite_id id, cog_float yvel)
+void cog_sprite_update_yvel(cog_sprite_id id, cog_float yvel)
 {
     cog_sprite* sprite = (cog_sprite*)cog_map_get(&sprites, id);
     sprite->yvel = yvel;
@@ -945,11 +899,7 @@ cog_anim_id cog_anim_add(
     }
     cog_map_put(&anims, anim->id, (void*)anim);
 
-    //Need to malloc a copy of the id to ensure it is still around
-    //when the list entry is recalled.
-    cog_anim_id* idcopy = COG_STRUCT_MALLOC(cog_anim_id);
-    (*idcopy) = anim->id;
-    cog_list_append(&activeanims, idcopy);
+    cog_list_append(&activeanims, (cog_dataptr)&(anim->id));
 
     return anim->id;
 }
@@ -1014,7 +964,7 @@ cog_float cog_anim_getrot(cog_anim_id id)
     return ((cog_sprite*)anim->frames.next->data)->rot;
 }
 
-cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot)
+void cog_anim_update_rot(cog_anim_id id, cog_float rot)
 {
     cog_anim* anim = (cog_anim*)cog_map_get(&anims, id);
     if(anim == COG_NULL)
@@ -1091,14 +1041,14 @@ void cog_snd_play_music(cog_snd_id id)
     cog_snd_play(id);
 }
 
-cog_snd_id cog_snd_stop(cog_snd_id id)
+void cog_snd_stop(cog_snd_id id)
 {
     cog_snd* snd = (cog_snd*)cog_map_get(&snds, id);
     alSourceStop(snd->source);
     cog_list_remove(&activesnds, (cog_dataptr)snd);
 }
 
-cog_snd_id cog_snd_stop_all()
+void cog_snd_stopall()
 {
     COG_LIST_FOREACH(&activesnds)
     {
@@ -1197,7 +1147,7 @@ cog_float cog_input_mousey()
 
 void cog_input_checkmouse(void)
 {
-    cog_uint x,y;
+    cog_int x,y;
     cog_uint state = SDL_GetMouseState(&x, &y);
     mousex = (cog_float)x;
     mousey = (cog_float)y;
@@ -1255,6 +1205,9 @@ void cog_input_checkkeys(void)
                         break;
                     case SDLK_f:
                         cog_window_togglefullscreen();
+                        break;
+                    default:
+                        cog_debugf("WARNING: Unhandled keypress <%d>", (event.key.keysym.sym));
                         break;
                 }
         }
@@ -1328,15 +1281,8 @@ cog_sprite_id cog_text_create_sprite(const char* text,
     sprite->xvel = 0.0f;
     sprite->yvel = 0.0f;
     cog_map_put(&sprites, sprite->id, (void*)sprite);
-
     SDL_FreeSurface(textsurface);
-
-    //Need to malloc a copy of the id to ensure it is still around
-    //when the list entry is recalled.
-    cog_sprite_id* idcopy = COG_STRUCT_MALLOC(cog_sprite_id);
-    (*idcopy) = sprite->id;
-    cog_list_append(&activesprites, idcopy);
-
+    cog_list_append(&activesprites, (cog_dataptr)&(sprite->id));
     return sprite->id;
 }
 cog_sprite_id cog_text_create(const char* text,

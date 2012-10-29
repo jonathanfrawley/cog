@@ -9,7 +9,7 @@ int main(void)
     c.r = 0x44;
     c.g = 0x04;
     c.b = 0x04;
-    cog_sprite_id id = cog_text_create_sprite("Yo there",
+    cog_text_create_sprite("Yo there",
             c,
             cog_get_screenw() * 0.5, //x
             cog_get_screenh() * 0.5, //y

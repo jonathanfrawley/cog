@@ -5,7 +5,7 @@
 
 #define COG_CONFIG_HWRENDER 0x00000001
 
-static cog_float COG_PI = 3.14159265;
+#define COG_PI 3.14159265
 
 //main
 void cog_init(cog_int config);
@@ -38,11 +38,11 @@ cog_float cog_sprite_getrot(cog_sprite_id id);
 void cog_sprite_update_pos(cog_anim_id,
         cog_float x,
         cog_float y);
-cog_float cog_sprite_update_rot(cog_sprite_id id, cog_float rot);
-cog_float cog_sprite_update_xvel(cog_sprite_id id, cog_float xvel);
-cog_float cog_sprite_update_yvel(cog_sprite_id id, cog_float yvel);
+void cog_sprite_update_rot(cog_sprite_id id, cog_float rot);
+void cog_sprite_update_xvel(cog_sprite_id id, cog_float xvel);
+void cog_sprite_update_yvel(cog_sprite_id id, cog_float yvel);
 void cog_sprite_remove(cog_sprite_id id);
-void cog_sprite_remove_all(void);
+void cog_sprite_removeall(void);
 
 //anim
 cog_anim_id cog_anim_add(
@@ -64,18 +64,18 @@ cog_float cog_anim_gety(cog_anim_id);
 cog_float cog_anim_getw(cog_anim_id);
 cog_float cog_anim_geth(cog_anim_id);
 cog_float cog_anim_getrot(cog_anim_id id);
-cog_float cog_anim_update_rot(cog_anim_id id, cog_float rot);
+void cog_anim_update_rot(cog_anim_id id, cog_float rot);
 cog_bool cog_anim_isfinished(cog_anim_id id);
 void cog_anim_remove(cog_anim_id id);
-void cog_anim_remove_all(void);
+void cog_anim_removeall(void);
 
 //sound
 cog_snd_id cog_snd_load(char* fname);
 void cog_snd_play(cog_snd_id id);
 void cog_snd_play_sfx(cog_snd_id snd);
 void cog_snd_play_music(cog_snd_id snd);
-cog_snd_id cog_snd_stop(cog_snd_id id);
-cog_snd_id cog_snd_stop_all();
+void cog_snd_stop(cog_snd_id id);
+void cog_snd_stopall();
 
 //dimensions
 cog_uint cog_get_screenw();

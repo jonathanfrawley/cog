@@ -59,8 +59,6 @@ void cog_list_remove(cog_list* list, cog_dataptr data)
 
 void cog_list_removeall(cog_list* list)
 {
-    cog_list* curr;
-    cog_list* next;
     COG_LIST_FOREACH(list)
     {
         cog_free(curr->data);
@@ -72,7 +70,6 @@ void cog_list_removeall(cog_list* list)
 cog_uint cog_list_len(cog_list* list)
 {
     cog_uint cnt = 0;
-    cog_list* curr;
     COG_LIST_FOREACH(list)
     {
         cnt++;

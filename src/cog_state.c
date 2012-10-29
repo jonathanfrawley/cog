@@ -45,6 +45,7 @@ void cog_state_fsm_update(cog_state_fsm* fsm)
         {
             if(transition->event == (*event))
             {
+                cog_debugf("HI event is : %d", (*event));
                 fsm->currentstate = transition->transition_fn();
                 break;
             }
@@ -54,9 +55,7 @@ void cog_state_fsm_update(cog_state_fsm* fsm)
 
 void cog_state_fsm_push_event(cog_state_fsm* fsm, cog_event event)
 {
-    cog_event* eventcopy = COG_STRUCT_MALLOC(cog_event);
-    (*eventcopy) = event;
-    cog_list_append(&fsm->events, eventcopy);
+    cog_list_append(&fsm->events, &event);
 }
 
 void cog_state_fsm_set_state(cog_state_fsm* fsm, cog_state state)
