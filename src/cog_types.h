@@ -17,6 +17,7 @@ typedef void* cog_dataptr;
 typedef unsigned cog_uint;
 typedef unsigned char cog_uint8;
 typedef int cog_int;
+typedef const char* cog_string;
 
 typedef struct cog_text_colour
 {

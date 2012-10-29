@@ -13,21 +13,22 @@ add_definitions(-std=c99)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-add_library (cog cog.c cog_map.c cog_core.c cog_list.c cog_state.c )
+add_library (cog cog.c cog_map.c cog_core.c cog_list.c cog_state.c cog_test.c )
 target_link_libraries(cog ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} m ${ALUT_LIBRARY} ${OPENAL_LIBRARY})
 
-add_executable(test test.c)
+set(TEST_DIR ../tests)
+include_directories("${CMAKE_SOURCE_DIR}" "${TEST_DIR}")
+
+add_executable(test ${TEST_DIR}/test.c)
 target_link_libraries(test cog)
-add_executable(testanim testanim.c)
+add_executable(testanim ${TEST_DIR}/testanim.c)
 target_link_libraries(testanim cog)
-add_executable(testsound testsound.c)
+add_executable(testsound ${TEST_DIR}/testsound.c)
 target_link_libraries(testsound cog)
-add_executable(testtext testtext.c)
+add_executable(testtext ${TEST_DIR}/testtext.c)
 target_link_libraries(testtext cog)
-
-add_executable(testlist testlist.c)
+add_executable(testlist ${TEST_DIR}/testlist.c)
 target_link_libraries(testlist cog)
-
-add_executable(test_cog_state test_cog_state.c)
+add_executable(test_cog_state ${TEST_DIR}/test_cog_state.c)
 target_link_libraries(test_cog_state cog)
 

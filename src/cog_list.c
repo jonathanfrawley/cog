@@ -45,7 +45,7 @@ void cog_list_remove(cog_list* list, cog_dataptr data)
             curr->data!=COG_LIST_ENDSENTINAL;
             curr=curr->next,prev=prev->next)
     {
-        if(curr->data == data)
+        if(cog_memcmp(curr->data, data, list->size))
         {
             cog_list* removed = curr;
             prev->next = curr->next;
