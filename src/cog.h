@@ -92,6 +92,7 @@ cog_float cog_sprite_anim_dist(cog_sprite_id a, cog_anim_id b);
 void cog_update_physics(cog_float timedelta);
 
 //input
+void cog_input_blank();
 cog_bool cog_input_mouseleftjustpressed();
 cog_bool cog_input_mouserightjustpressed();
 cog_float cog_input_mousex();

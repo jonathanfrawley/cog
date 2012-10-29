@@ -7,12 +7,7 @@
 typedef cog_int cog_state;
 typedef cog_int cog_event;
 
-//#define COG_STATE_START -255
-//#define COG_STATE_FINISH -254
-//#define COG_STATE_ANY -253
 #define COG_STATE_ERROR -255
-
-#define COG_EVENT_ERROR -255
 
 typedef struct cog_state_transition
 {

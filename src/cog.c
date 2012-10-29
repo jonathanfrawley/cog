@@ -118,7 +118,6 @@ void cog_input_checkkeys(void);
 void cog_text_init();
 void cog_text_openfont();
 
-//
 //#global vars
 static cog_sprite_id cog_spritecnt;
 static cog_map sprites;
@@ -135,6 +134,7 @@ static cog_uint now;
 static cog_uint timedelta;
 static cog_uint starttime;
 static cog_uint lastframetime;
+static cog_uint frametimecounter;
 static cog_uint framedrawcounter;
 static cog_uint frameupdatecounter;
 //##input
@@ -1125,14 +1125,26 @@ void cog_update_physics(cog_float timedelta)
 
 //#input
 //##mouse
+void cog_input_blank()
+{
+    mouseleftjustpressed = COG_FALSE;
+    mouserightjustpressed = COG_FALSE;
+}
+
 cog_bool cog_input_mouseleftjustpressed()
 {
-    return mouseleftjustpressed;
+    cog_bool just_pressed = mouseleftjustpressed;
+    //Stop mouse from sticking
+    mouseleftjustpressed = COG_FALSE;
+    return just_pressed;
 }
 
 cog_bool cog_input_mouserightjustpressed()
 {
-    return mouserightjustpressed;
+    cog_bool just_pressed = mouserightjustpressed;
+    //Stop mouse from sticking
+    mouserightjustpressed = COG_FALSE;
+    return just_pressed;
 }
 
 cog_float cog_input_mousex()
@@ -1151,6 +1163,7 @@ void cog_input_checkmouse(void)
     cog_uint state = SDL_GetMouseState(&x, &y);
     mousex = (cog_float)x;
     mousey = (cog_float)y;
+    cog_debugf("mouse is (%f,%f)", mousex, mousey);
     if(SDL_BUTTON_LEFT == SDL_BUTTON(state))
     {
         if(!mouseleftpressed)

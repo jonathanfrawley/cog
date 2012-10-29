@@ -45,13 +45,11 @@ void cog_list_remove(cog_list* list, cog_dataptr data)
             curr->data!=COG_LIST_ENDSENTINAL;
             curr=curr->next,prev=prev->next)
     {
-        if(cog_memcmp(curr->data, data, list->size))
+        if(cog_memcmp(curr->data, data, list->size)==0)
         {
-            cog_list* removed = curr;
             prev->next = curr->next;
-            curr->next = COG_LIST_ENDSENTINAL;
-            cog_free(removed->data);
-            cog_free(removed);
+            cog_free(curr->data);
+            cog_free(curr);
             break;
         }
     }
@@ -86,8 +84,12 @@ cog_dataptr cog_list_pop(cog_list* list)
     }
     else
     {
-        cog_dataptr result = curr->data;
-        cog_list_remove(list, result);
+        //make copy of data
+        cog_dataptr result = cog_malloc(list->size);
+        cog_memcpy(result, curr->data, list->size);
+        //then delete
+        cog_list_remove(list, curr->data);
+        //and return copy
         return result;
     }
 }

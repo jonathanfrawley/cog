@@ -45,7 +45,6 @@ void cog_state_fsm_update(cog_state_fsm* fsm)
         {
             if(transition->event == (*event))
             {
-                cog_debugf("HI event is : %d", (*event));
                 fsm->currentstate = transition->transition_fn();
                 break;
             }
