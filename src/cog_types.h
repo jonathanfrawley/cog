@@ -8,9 +8,10 @@
 
 //types
 typedef float cog_float;
-typedef int cog_sprite_id;
 typedef int cog_anim_id;
 typedef int cog_snd_id;
+typedef int cog_sprite_id;
+typedef int cog_text_id;
 typedef unsigned cog_uint;
 typedef int cog_bool;
 typedef void* cog_dataptr;
@@ -18,12 +19,5 @@ typedef unsigned cog_uint;
 typedef unsigned char cog_uint8;
 typedef int cog_int;
 typedef const char* cog_string;
-
-typedef struct cog_text_colour
-{
-    cog_uint8 r;
-    cog_uint8 g;
-    cog_uint8 b;
-} cog_text_colour;
 
 #endif   // COG_TYPES_H

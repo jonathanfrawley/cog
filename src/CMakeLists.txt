@@ -13,7 +13,7 @@ add_definitions(-std=c99 -Werror -Wall)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-add_library(cog cog.c cog_map.c cog_core.c cog_list.c cog_state.c cog_test.c)
+add_library(cog cog.c cog_anim.c cog_core.c cog_graphics.c cog_list.c cog_map.c cog_math.c cog_sprite.c cog_state.c cog_test.c cog_text.c)
 target_link_libraries(cog ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} m ${ALUT_LIBRARY} ${OPENAL_LIBRARY})
 
 set(TEST_DIR ../tests)
