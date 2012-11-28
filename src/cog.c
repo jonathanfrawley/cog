@@ -63,10 +63,12 @@ static cog_list activesnds; //snds playing at the moment
 static cog_snd_id cog_sndcnt;
 static cog_map snds;
 //##timing
-static cog_uint now;
 static cog_uint timedelta;
 static cog_uint starttime;
+static cog_uint now;
+static cog_uint framedrawcounter;
 static cog_uint lastframetime;
+static cog_uint frametimecounter;
 static cog_uint frameupdatecounter;
 //##input
 static cog_bool mouseleftpressed;
@@ -94,7 +96,6 @@ void cog_init(cog_int config)
     cog_audio_init();
     cog_text_init();
     starttime = SDL_GetTicks();
-
     //init rng
     srand(2);
 }
@@ -139,32 +140,33 @@ void cog_update()
     now = SDL_GetTicks();
     timedelta = now - starttime;
 
-    cog_input_checkkeys();
-    cog_input_checkmouse();
-    cog_anim_update(timedelta);
-    cog_sprite_update(timedelta);
-
     //performance timing
     frameupdatecounter++;
     lastframetime = SDL_GetTicks() - starttime;
     starttime = SDL_GetTicks();
-#ifdef DEBUG
     //Useful logging every second.
     frametimecounter += lastframetime;
     if(frametimecounter >= 1000)
     {
+#ifdef DEBUG
         cog_debugf("nupdates <%d>, ndraws <%d>", frameupdatecounter, framedrawcounter);
+#endif //DEBUG
         frametimecounter = 0;
         framedrawcounter = 0;
         frameupdatecounter = 0;
     }
-#endif //DEBUG
+
+    cog_input_checkkeys();
+    cog_input_checkmouse();
+    cog_anim_update(timedelta);
+    cog_sprite_update(timedelta);
 }
 
 //This is to allow the user to control the mainloop
 void cog_loopstep()
 {
     cog_update();
+    framedrawcounter++;
     cog_graphics_render();
 }
 

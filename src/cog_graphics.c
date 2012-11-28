@@ -24,7 +24,6 @@ void cog_graphics_swrender();
 SDL_Surface* cog_graphics_load_image(const char* filename);
 
 static cog_renderer renderer;
-static cog_uint framedrawcounter;
 
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
@@ -322,6 +321,6 @@ cleanup:
 
 void cog_graphics_render()
 {
-    framedrawcounter++;
     cog_graphics_hwrender();
+
 }
