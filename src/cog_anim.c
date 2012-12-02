@@ -30,6 +30,7 @@ cog_anim_id cog_anim_add(char* animimg, cog_int nframes)
     anim->rot = 0;
     anim->xvel = 0;
     anim->yvel = 0;
+    anim->finished = 0;
 
     cog_float wanimframe = ((cog_float)1.0 / nframes);
     cog_float hanimframe = 1.0;
@@ -150,8 +151,7 @@ void cog_anim_update(cog_uint deltamillis)
                 }
                 else
                 {
-                    thisanim->paused = 0;
-                    cog_anim_remove(id);
+                    thisanim->finished = COG_TRUE;
                 }
             }
         }

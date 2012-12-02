@@ -14,7 +14,7 @@ typedef struct
     cog_text_id id;
     TTF_Font* font;
     cog_uint ptsize;
-    SDL_Color colour;
+    SDL_Color c;
     cog_float x;
     cog_float y;
     cog_float rot;

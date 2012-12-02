@@ -3,10 +3,8 @@
 
 #include "cog_types.h"
 
-#define COG_CONFIG_HWRENDER 0x00000001
-
 //main
-void cog_init(cog_int config);
+void cog_init();
 cog_bool cog_updateready();
 void cog_sleep(cog_uint millis);
 void cog_sleepuntilupdate();

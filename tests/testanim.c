@@ -32,7 +32,7 @@ void entity_update(entity* obj)
 
 int main(void)
 {
-    cog_init(COG_CONFIG_HWRENDER);
+    cog_init();
 
     entity myentity;
     entity_init(&myentity);

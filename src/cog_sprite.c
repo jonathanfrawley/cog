@@ -29,6 +29,7 @@ cog_sprite_id cog_sprite_add(char* img)
     sprite->xvel = 0.0f;
     sprite->yvel = 0.0f;
     cog_map_put(&sprites, sprite->id, (void*)sprite);
+    cog_list_append(&activesprites, (cog_dataptr)&(sprite->id));
     return sprite->id;
 }
 

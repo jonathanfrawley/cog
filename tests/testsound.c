@@ -3,7 +3,7 @@
 
 int main(void)
 {
-    cog_init(COG_CONFIG_HWRENDER);
+    cog_init();
     cog_snd_id snd = cog_snd_load("../media/testsnd.wav");
     cog_snd_play(snd);
 /*

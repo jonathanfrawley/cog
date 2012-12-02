@@ -4,7 +4,7 @@
 
 int main(void)
 {
-    cog_init(COG_CONFIG_HWRENDER);
+    cog_init();
     cog_text_id id = cog_text_add(" Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
     cog_text* text = cog_text_get(id);
     while(! cog_hasquit())

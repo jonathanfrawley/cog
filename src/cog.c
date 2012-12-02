@@ -58,7 +58,6 @@ void cog_input_checkmouse(void);
 void cog_input_checkkeys(void);
 
 //#global vars
-static cog_int configmask;
 static cog_list activesnds; //snds playing at the moment
 static cog_snd_id cog_sndcnt;
 static cog_map snds;
@@ -79,9 +78,8 @@ static cog_float mousex;
 static cog_float mousey;
 
 //implementations
-void cog_init(cog_int config)
+void cog_init(void)
 {
-    configmask = config;
     //Init globals
     cog_map_init(&snds);
     cog_list_init(&activesnds, sizeof(cog_sprite_id));

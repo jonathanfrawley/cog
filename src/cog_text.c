@@ -25,7 +25,7 @@ cog_text_id cog_text_add(char* str)
     text->texid = cog_graphics_upload_surface(textsurface);
     text->font = default_font;
     text->ptsize = default_ptsize;
-    text->colour = default_colour;
+    text->c = default_colour;
     text->x = 0;
     text->y = 0;
     text->rot = 0;

@@ -25,6 +25,7 @@ typedef struct
     cog_float rot;
     cog_float xvel;
     cog_float yvel;
+    cog_bool finished;
 } cog_anim;
 
 cog_anim_id cog_anim_add(char* animimg, cog_int nframes);
