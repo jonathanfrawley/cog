@@ -14,7 +14,6 @@ typedef struct cog_map_elem
 
 typedef struct cog_map
 {
-//    cog_map_elem** elems[COG_MAP_SIZE];
     cog_map_elem** elems;
 } cog_map;
 

@@ -322,5 +322,4 @@ cleanup:
 void cog_graphics_render()
 {
     cog_graphics_hwrender();
-
 }

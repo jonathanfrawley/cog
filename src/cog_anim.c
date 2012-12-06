@@ -21,7 +21,7 @@ cog_anim_id cog_anim_add(char* animimg, cog_int nframes)
     anim->looped = COG_FALSE;
     anim->currentframe = 0;
     anim->currentframe_millis = 0;
-    anim->paused = COG_TRUE;
+    anim->paused = COG_FALSE;
     anim->nframes = nframes;
     anim->x = 0;
     anim->y = 0;

@@ -193,6 +193,8 @@ void cog_platform_init(void)
 void cog_window_init(void)
 {
     //TODO:Get from yaml conf.
+    //int width = 1024;
+    //int height = 768;
     int width = 0;
     int height = 0;
     int bpp = 32;
