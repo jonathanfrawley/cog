@@ -82,6 +82,7 @@ void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...)
     for(cog_int i=frame0;i>=0;i=va_arg(ap, cog_int))
     {
         cog_list_append(&(anim->frames), (cog_dataptr)&frame0);
+//        cog_list_append(&(anim->frames), (cog_dataptr)&frame0);
     }
     va_end(ap);
 }
@@ -96,7 +97,7 @@ void cog_anim_draw(void)
     {
         //draw current sprite
         cog_anim* anim = cog_anim_get(*(cog_anim_id*)curr->data);
-        if(anim->paused)
+        if(anim->paused || anim->finished)
         {
             continue;
         }

@@ -20,7 +20,6 @@ void cog_graphics_read_file(char* buf, char* filename);
 //rendering
 void cog_graphics_render();
 void cog_graphics_hwrender();
-void cog_graphics_swrender();
 SDL_Surface* cog_graphics_load_image(const char* filename);
 
 static cog_renderer renderer;
@@ -103,11 +102,6 @@ void cog_graphics_hwrender()
     cog_text_draw();
 
     SDL_GL_SwapBuffers();
-}
-
-void cog_graphics_swrender()
-{
-    //TODO
 }
 
 SDL_Surface* cog_graphics_load_image(const char* filename)

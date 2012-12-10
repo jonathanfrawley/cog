@@ -193,10 +193,10 @@ void cog_platform_init(void)
 void cog_window_init(void)
 {
     //TODO:Get from yaml conf.
-    //int width = 1024;
-    //int height = 768;
-    int width = 0;
-    int height = 0;
+    int width = 1024;
+    int height = 768;
+    //int width = 0;
+    //int height = 0;
     int bpp = 32;
     int flags = SDL_OPENGL | SDL_DOUBLEBUF;
     if( (window.screen = SDL_SetVideoMode(width, height, bpp, flags)) == 0 )

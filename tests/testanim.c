@@ -2,6 +2,9 @@
 #include "cog_anim.h"
 #include "cog_math.h"
 
+static int current_x = 20;
+static int N_ENTITIES = 10;
+
 typedef struct entity
 {
     cog_anim_id anim;
@@ -13,10 +16,11 @@ void entity_init(entity* obj)
     cog_anim* anim = cog_anim_get(obj->anim);
     anim->transition_millis = 150;
     anim->looped = COG_TRUE;
-    anim->x = cog_screenw() * 0.5f;
+    anim->x = current_x;
+    current_x += 200;
     anim->y = cog_screenh() * 0.5f;
-    anim->w = 256;
-    anim->h = 256;
+    anim->w = 128;
+    anim->h = 128;
     anim->rot = 0;
     anim->paused = COG_FALSE;
     cog_anim_set_frames(obj->anim, 0, 1, 2);
@@ -34,12 +38,18 @@ int main(void)
 {
     cog_init();
 
-    entity myentity;
-    entity_init(&myentity);
+    entity myentity[N_ENTITIES];
+    for(int i=0;i<N_ENTITIES;i++) 
+    {
+        entity_init(&myentity[i]);
+    }
 
     while(! cog_hasquit())
     {
-        entity_update(&myentity);
+        for(int i=0;i<N_ENTITIES;i++) 
+        {
+            entity_update(&myentity[i]);
+        }
         cog_loopstep();
     }
 
