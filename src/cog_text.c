@@ -1,6 +1,7 @@
 #include "cog_text.h"
 
 #include "cog_core.h"
+#include "cog_log.h"
 #include "cog_graphics.h"
 #include "cog_list.h"
 #include "cog_map.h"

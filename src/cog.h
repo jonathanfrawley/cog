@@ -23,18 +23,13 @@ void cog_snd_play_music(cog_snd_id snd);
 void cog_snd_stop(cog_snd_id id);
 void cog_snd_stopall();
 
-//dimensions
+//default window functions
 cog_uint cog_screenw();
 cog_uint cog_screenh();
+void cog_toggle_fullscreen();
 
 //rng
 cog_uint cog_nextrand();
 
-//input
-void cog_input_blank();
-cog_bool cog_input_mouseleftjustpressed();
-cog_bool cog_input_mouserightjustpressed();
-cog_float cog_input_mousex();
-cog_float cog_input_mousey();
 
 #endif   // COG_H

@@ -5,6 +5,7 @@
 #include "cog.h"
 #include "cog_anim.h"
 #include "cog_core.h"
+#include "cog_log.h"
 #include "cog_list.h"
 #include "cog_math.h"
 #include "cog_sprite.h"

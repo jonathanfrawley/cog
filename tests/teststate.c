@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "cog_core.h"
+#include "cog_log.h"
 #include "cog_state.h"
 #include "cog_test.h"
 
