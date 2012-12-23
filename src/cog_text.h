@@ -7,6 +7,8 @@
 #include "cog_core.h"
 #include "cog_types.h"
 
+#define COG_TEXT_MAX 255
+
 /*-----------------------------------------------------------------------------
  *  Represents some text
  *-----------------------------------------------------------------------------*/
@@ -22,7 +24,7 @@ typedef struct
     cog_float w;
     cog_float h;
     GLuint texid;
-    char str[COG_MAX_TEXT];
+    char str[COG_TEXT_MAX];
 } cog_text;
 
 cog_text_id cog_text_add(char* text);
