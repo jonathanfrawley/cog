@@ -7,7 +7,7 @@
 #include "cog_sprite.h"
 #include "cog_text.h"
 
-#define COG_LAYER_MAX 4
+#define COG_LAYER_MAX 16
 
 typedef struct
 {
