@@ -1,6 +1,5 @@
 #include "cog_text.h"
 
-#include "cog_core.h"
 #include "cog_log.h"
 #include "cog_graphics.h"
 #include "cog_list.h"
@@ -32,6 +31,7 @@ cog_text_id cog_text_add(char* str)
     text->rot = 0;
     text->w = textsurface->w;
     text->h = textsurface->h;
+    strcpy(text->str, str);
     SDL_FreeSurface(textsurface);
     cog_map_put(&texts, text->id, (cog_dataptr)text);
     cog_list_append(&activetexts, (cog_dataptr)&(text->id));
@@ -41,6 +41,16 @@ cog_text_id cog_text_add(char* str)
 cog_text* cog_text_get(cog_text_id id)
 {
     return (cog_text*)cog_map_get(&texts, id);
+}
+
+void cog_text_refresh(cog_text_id id)
+{
+    cog_text* text = cog_map_get(&texts, id);
+
+    TTF_SetFontStyle(text->font, default_renderstyle);
+    SDL_Surface* text_surface = TTF_RenderText_Blended(text->font, text->str, text->c);
+    text->texid = cog_graphics_upload_surface(text_surface);
+    SDL_FreeSurface(text_surface);
 }
 
 void cog_text_remove(cog_text_id id)
@@ -59,6 +69,12 @@ void cog_text_remove(cog_text_id id)
 void cog_text_removeall(void)
 {
     cog_list_removeall(&activetexts);
+}
+
+void cog_text_set_str(cog_text_id id, char* str)
+{
+    cog_text* text = cog_text_get(id);
+    strcpy(text->str, str);
 }
 
 /*-----------------------------------------------------------------------------
@@ -85,7 +101,8 @@ void cog_text_draw(void)
 {
     COG_LIST_FOREACH(&activetexts)
     {
-        cog_text* text = cog_text_get(*(cog_text_id*)curr->data);
+        cog_text_id id = *(cog_text_id*)curr->data;
+        cog_text* text = cog_text_get(id);
         cog_graphics_draw_text(text);
     }
 }

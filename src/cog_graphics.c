@@ -129,7 +129,6 @@ SDL_Surface* cog_graphics_load_image(const char* filename)
 
 GLuint cog_graphics_upload_surface(SDL_Surface* image)
 {
-
     glPixelStorei(GL_UNPACK_ALIGNMENT,4);
 
     int w = image->w;
