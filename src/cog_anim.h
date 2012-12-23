@@ -4,12 +4,15 @@
 #include "cog_list.h"
 #include "cog_types.h"
 
+#define COG_ANIM_LAYER 2
+
 /*-----------------------------------------------------------------------------
  * Anims are a collection of sprites with a specific duration between them.
  *-----------------------------------------------------------------------------*/
 typedef struct
 {
     cog_anim_id id;
+    cog_uint layer;
     cog_uint transition_millis;
     cog_uint currentframe;
     cog_uint currentframe_millis;
@@ -41,7 +44,7 @@ void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...);
  *-----------------------------------------------------------------------------*/
 cog_float cog_anim_dist_anim(cog_anim_id id0, cog_anim_id id1);
 cog_float cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1);
-void cog_anim_draw(void);
+void cog_anim_draw_layer(cog_uint layer);
 void cog_anim_init();
 void cog_anim_update(cog_uint deltamillis);
 

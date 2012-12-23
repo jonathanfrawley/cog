@@ -20,6 +20,7 @@ cog_text_id cog_text_add(char* str)
 {
     cog_text* text = COG_STRUCT_MALLOC(cog_text);
     text->id = textcnt++;
+    text->layer = COG_TEXT_LAYER;
     TTF_SetFontStyle(default_font, default_renderstyle);
     SDL_Surface* textsurface = TTF_RenderText_Blended(default_font, str, default_colour);
     text->texid = cog_graphics_upload_surface(textsurface);
@@ -97,12 +98,15 @@ void cog_text_init(void)
     cog_list_init(&activetexts, sizeof(cog_text_id));
 }
 
-void cog_text_draw(void)
+void cog_text_draw_layer(cog_uint layer)
 {
     COG_LIST_FOREACH(&activetexts)
     {
         cog_text_id id = *(cog_text_id*)curr->data;
         cog_text* text = cog_text_get(id);
-        cog_graphics_draw_text(text);
+        if(text->layer == layer)
+        {
+            cog_graphics_draw_text(text);
+        }
     }
 }

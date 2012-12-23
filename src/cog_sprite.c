@@ -7,7 +7,7 @@
 #include "cog_map.h"
 #include "cog_math.h"
 
-static cog_list activesprites; //sprites drawn(active) at the moment
+static cog_list active_sprites; //sprites drawn(active) at the moment
 static cog_map sprites;
 static cog_sprite_id spritecnt;
 
@@ -16,6 +16,7 @@ cog_sprite_id cog_sprite_add(char* img)
     cog_sprite* sprite = COG_STRUCT_MALLOC(cog_sprite);
     sprite->id = spritecnt++;
     sprite->texid = cog_graphics_load_texture(img);
+    sprite->layer = COG_SPRITE_LAYER;
     sprite->x = 0;
     sprite->y = 0;
     sprite->w = 0;
@@ -29,7 +30,7 @@ cog_sprite_id cog_sprite_add(char* img)
     sprite->xvel = 0.0f;
     sprite->yvel = 0.0f;
     cog_map_put(&sprites, sprite->id, (void*)sprite);
-    cog_list_append(&activesprites, (cog_dataptr)&(sprite->id));
+    cog_list_append(&active_sprites, (cog_dataptr)&(sprite->id));
     return sprite->id;
 }
 
@@ -55,11 +56,11 @@ cog_sprite* cog_sprite_get(cog_sprite_id id)
 
 void cog_sprite_remove(cog_sprite_id id)
 {
-    COG_LIST_FOREACH(&activesprites)
+    COG_LIST_FOREACH(&active_sprites)
     {
         if(*((cog_sprite_id*)curr->data) == id)
         {
-            cog_list_remove(&activesprites, curr->data);
+            cog_list_remove(&active_sprites, curr->data);
             break;
         }
     }
@@ -68,7 +69,7 @@ void cog_sprite_remove(cog_sprite_id id)
 
 void cog_sprite_removeall(void)
 {
-    cog_list_removeall(&activesprites);
+    cog_list_removeall(&active_sprites);
 }
 
 /*-----------------------------------------------------------------------------
@@ -77,7 +78,7 @@ void cog_sprite_removeall(void)
 void cog_sprite_init(void)
 {
     cog_map_init(&sprites);
-    cog_list_init(&activesprites, sizeof(cog_sprite_id));
+    cog_list_init(&active_sprites, sizeof(cog_sprite_id));
 }
 
 cog_float cog_sprite_dist_anim(cog_sprite_id a, cog_anim_id b)
@@ -97,24 +98,27 @@ cog_float cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b)
         (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
 }
 
-void cog_sprite_draw(void)
+void cog_sprite_draw_layer(cog_uint layer)
 {
     //Draw sprites
-    COG_LIST_FOREACH(&activesprites)
+    COG_LIST_FOREACH(&active_sprites)
     {
-        //draw current sprite
-        cog_sprite* thissprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)curr->data));
-        cog_graphics_draw_sprite(thissprite);
+        //draw current sprite if it is on the correct layer
+        cog_sprite* curr_sprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)curr->data));
+        if(curr_sprite->layer == layer)
+        {
+            cog_graphics_draw_sprite(curr_sprite);
+        }
     }
 }
 
 void cog_sprite_update(cog_float timedelta)
 {
-    COG_LIST_FOREACH(&activesprites)
+    COG_LIST_FOREACH(&active_sprites)
     {
-        cog_sprite* thissprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)curr->data));
+        cog_sprite* curr_sprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)curr->data));
         //do physics update for current sprite
-        thissprite->x += timedelta * thissprite->xvel;
-        thissprite->y += timedelta * thissprite->yvel;
+        curr_sprite->x += timedelta * curr_sprite->xvel;
+        curr_sprite->y += timedelta * curr_sprite->yvel;
     }
 }

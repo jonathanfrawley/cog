@@ -17,6 +17,7 @@ cog_anim_id cog_anim_add(char* animimg, cog_int nframes)
 {
     cog_anim* anim = COG_STRUCT_MALLOC(cog_anim);
     anim->id = animcnt++;
+    anim->layer = COG_ANIM_LAYER;
     cog_list_init(&anim->frames, sizeof(cog_sprite));
     anim->transition_millis = 0;
     anim->looped = COG_FALSE;
@@ -138,14 +139,14 @@ cog_float cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1)
 
 }
 
-void cog_anim_draw(void)
+void cog_anim_draw_layer(cog_uint layer)
 {
     //Draw anims
     COG_LIST_FOREACH(&activeanims)
     {
         //draw current sprite
         cog_anim* anim = cog_anim_get(*(cog_anim_id*)curr->data);
-        if(anim->paused || anim->finished)
+        if(anim->paused || anim->finished || (anim->layer != layer))
         {
             continue;
         }

@@ -20,7 +20,6 @@ void cog_graphics_print_shader_error();
 void cog_graphics_read_file(char* buf, char* filename);
 //rendering
 void cog_graphics_render();
-void cog_graphics_hwrender();
 SDL_Surface* cog_graphics_load_image(const char* filename);
 
 static cog_renderer renderer;
@@ -91,18 +90,6 @@ void cog_graphics_draw_text(cog_text* text)
                 -1.0f*text->h);             // Bottom left
     glEnd();
     glPopMatrix();
-}
-
-void cog_graphics_hwrender()
-{
-    glClear( GL_COLOR_BUFFER_BIT );
-    glLoadIdentity();
-
-    cog_sprite_draw();
-    cog_anim_draw();
-    cog_text_draw();
-
-    SDL_GL_SwapBuffers();
 }
 
 SDL_Surface* cog_graphics_load_image(const char* filename)
@@ -315,5 +302,15 @@ cleanup:
 
 void cog_graphics_render()
 {
-    cog_graphics_hwrender();
+    glClear( GL_COLOR_BUFFER_BIT );
+    glLoadIdentity();
+
+    for(cog_int i;i<COG_LAYER_MAX;i++)
+    {
+        cog_sprite_draw_layer(i);
+        cog_anim_draw_layer(i);
+        cog_text_draw_layer(i);
+    }
+
+    SDL_GL_SwapBuffers();
 }

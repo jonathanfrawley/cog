@@ -5,12 +5,15 @@
 
 #include "cog_types.h"
 
+#define COG_SPRITE_LAYER 1
+
 /*-----------------------------------------------------------------------------
  *  Represents a 2D image to be drawn to the screen
  *-----------------------------------------------------------------------------*/
 typedef struct
 {
     cog_sprite_id id;
+    cog_uint layer;
     GLuint texid;
     //These coords and dimensions are for the whole sprite in the game world.
     cog_float x;
@@ -41,7 +44,7 @@ void cog_sprite_removeall(void);
 void cog_sprite_init(void);
 cog_float cog_sprite_dist_anim(cog_sprite_id a, cog_anim_id b);
 cog_float cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b);
-void cog_sprite_draw(void);
+void cog_sprite_draw_layer(cog_uint layer);
 void cog_sprite_update(cog_float timedelta);
 
 #endif   // COG_SPRITE_H
