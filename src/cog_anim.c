@@ -163,8 +163,6 @@ void cog_anim_draw(void)
         sprite->w = anim->w;
         sprite->h = anim->h;
         sprite->rot = anim->rot;
-        sprite->xvel = anim->xvel;
-        sprite->yvel = anim->yvel;
         cog_graphics_draw_sprite(sprite);
     }
 }
