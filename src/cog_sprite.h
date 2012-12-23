@@ -30,8 +30,7 @@ typedef struct
 } cog_sprite;
 
 cog_sprite_id cog_sprite_add(char* img);
-cog_float cog_sprite_anim_dist(cog_sprite_id a, cog_anim_id b);
-cog_float cog_sprite_dist(cog_sprite_id a, cog_sprite_id b);
+cog_bool cog_sprite_collides_sprite(cog_sprite_id id0, cog_sprite_id id1);
 cog_sprite* cog_sprite_get(cog_sprite_id);
 void cog_sprite_remove(cog_sprite_id id);
 void cog_sprite_removeall(void);
@@ -40,6 +39,8 @@ void cog_sprite_removeall(void);
  *  Internal
  *-----------------------------------------------------------------------------*/
 void cog_sprite_init(void);
+cog_float cog_sprite_dist_anim(cog_sprite_id a, cog_anim_id b);
+cog_float cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b);
 void cog_sprite_draw(void);
 void cog_sprite_update(cog_float timedelta);
 
