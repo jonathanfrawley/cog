@@ -37,7 +37,7 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
 
     //Translate
     glTranslatef(sprite->x,sprite->y, 0.0);
-    glRotatef( -cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f );
+    glRotatef( cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f );
 
     glBegin(GL_QUADS);                      // Draw A Quad
         glTexCoord2f(sprite->texx,
