@@ -44,7 +44,6 @@ typedef struct
 
 //#prototypes
 //##main
-void cog_platform_init(void);
 void cog_audio_init(void);
 cog_float cog_math_radtodeg(cog_float rad);
 
@@ -73,7 +72,6 @@ void cog_init(void)
     game.finished = 0;
     cog_sprite_init();
     cog_anim_init();
-    cog_platform_init();
     cog_window_init(&window);
     cog_graphics_init();
     cog_audio_init();
@@ -163,15 +161,6 @@ void cog_quit()
 cog_bool cog_hasquit()
 {
     return game.finished;
-}
-
-//platform
-void cog_platform_init(void)
-{
-    if( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
-    {
-        cog_errorf(SDL_GetError());
-    }
 }
 
 void cog_audio_init(void)

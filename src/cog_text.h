@@ -1,7 +1,11 @@
 #ifndef  COG_TEXT_H
 #define  COG_TEXT_H
 
+#if !defined(HAVE_GLES)
 #include <GL/glew.h>
+#else
+#include <GLES/gl.h>
+#endif
 #include <SDL/SDL_ttf.h>
 
 #include "cog_core.h"

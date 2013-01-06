@@ -1,7 +1,15 @@
 #ifndef  COG_GRAPHICS_H
 #define  COG_GRAPHICS_H
 
+// GLEW
+#if !defined(HAVE_GLES)
+//#include <GL/gl.h>
 #include <GL/glew.h>
+#else
+#include <GLES/gl.h>
+#include "eglport.h"
+#endif
+
 #include <SDL/SDL.h>
 
 #include "cog_sprite.h"

@@ -1,7 +1,11 @@
 #ifndef  COG_SPRITE_H
 #define  COG_SPRITE_H
 
+#if !defined(HAVE_GLES)
 #include <GL/glew.h>
+#else
+#include <GLES/gl.h>
+#endif
 
 #include "cog_types.h"
 
