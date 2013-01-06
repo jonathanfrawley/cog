@@ -1,5 +1,6 @@
-#include "cog_list.h"
 #include "cog_core.h"
+#include "cog_list.h"
+#include "cog_log.h"
 #include "cog_test.h"
 
 int main(void)

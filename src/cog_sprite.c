@@ -33,21 +33,19 @@ cog_sprite_id cog_sprite_add(char* img)
     return sprite->id;
 }
 
-cog_float cog_sprite_anim_dist(cog_sprite_id a, cog_anim_id b)
+cog_bool cog_sprite_collides_sprite(cog_sprite_id id0, cog_sprite_id id1)
 {
-    cog_sprite* asprite = cog_sprite_get(a);
-    cog_anim* banim = cog_anim_get(b);
-    cog_sprite* bsprite = (cog_sprite*)banim->frames.next->data;
-    return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
-        (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
-}
-
-cog_float cog_sprite_dist(cog_sprite_id a, cog_sprite_id b)
-{
-    cog_sprite* asprite = cog_sprite_get(a);
-    cog_sprite* bsprite = cog_sprite_get(b);
-    return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
-        (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
+    cog_sprite* sprite0 = cog_sprite_get(id0);
+    cog_sprite* sprite1 = cog_sprite_get(id1);
+    if(cog_sprite_dist_sprite(id0, id1) <
+            (sprite0->w + sprite1->w))
+    {
+        return COG_TRUE;
+    }
+    else
+    {
+        return COG_FALSE;
+    }
 }
 
 cog_sprite* cog_sprite_get(cog_sprite_id id)
@@ -80,6 +78,23 @@ void cog_sprite_init(void)
 {
     cog_map_init(&sprites);
     cog_list_init(&activesprites, sizeof(cog_sprite_id));
+}
+
+cog_float cog_sprite_dist_anim(cog_sprite_id a, cog_anim_id b)
+{
+    cog_sprite* asprite = cog_sprite_get(a);
+    cog_anim* banim = cog_anim_get(b);
+    cog_sprite* bsprite = (cog_sprite*)banim->frames.next->data;
+    return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
+        (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
+}
+
+cog_float cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b)
+{
+    cog_sprite* asprite = cog_sprite_get(a);
+    cog_sprite* bsprite = cog_sprite_get(b);
+    return cog_math_sqrt((asprite->x - bsprite->x) * (asprite->x - bsprite->x) +
+        (asprite->y - bsprite->y) * (asprite->y - bsprite->y));
 }
 
 void cog_sprite_draw(void)

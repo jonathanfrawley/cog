@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_events.h>
 #include <SDL/SDL_image.h>
 #include <AL/alut.h>
 #include <SDL/SDL_ttf.h>
@@ -12,11 +13,14 @@
 #include "cog_anim.h"
 #include "cog_core.h"
 #include "cog_graphics.h"
+#include "cog_input.h"
 #include "cog_list.h"
+#include "cog_log.h"
 #include "cog_map.h"
 #include "cog_math.h"
 #include "cog_sprite.h"
 #include "cog_text.h"
+#include "cog_window.h"
 
 //constants
 #define FRAMES_PER_SECOND 40
@@ -38,29 +42,17 @@ typedef struct
     ALuint source;
 } cog_snd;
 
-typedef struct
-{
-    SDL_Surface* screen;
-} cog_window;
-static cog_window window;
-
 //#prototypes
 //##main
 void cog_platform_init(void);
-void cog_window_init(void);
-void cog_window_togglefullscreen(void);
 void cog_audio_init(void);
 cog_float cog_math_radtodeg(cog_float rad);
-//##input
-//###mouse
-void cog_input_checkmouse(void);
-//##keys
-void cog_input_checkkeys(void);
 
 //#global vars
 static cog_list activesnds; //snds playing at the moment
 static cog_snd_id cog_sndcnt;
 static cog_map snds;
+static cog_window window;
 //##timing
 static cog_uint timedelta;
 static cog_uint starttime;
@@ -69,13 +61,6 @@ static cog_uint framedrawcounter;
 static cog_uint lastframetime;
 static cog_uint frametimecounter;
 static cog_uint frameupdatecounter;
-//##input
-static cog_bool mouseleftpressed;
-static cog_bool mouserightpressed;
-static cog_bool mouseleftjustpressed = 0;
-static cog_bool mouserightjustpressed;
-static cog_float mousex;
-static cog_float mousey;
 
 //implementations
 void cog_init(void)
@@ -89,7 +74,7 @@ void cog_init(void)
     cog_sprite_init();
     cog_anim_init();
     cog_platform_init();
-    cog_window_init();
+    cog_window_init(&window);
     cog_graphics_init();
     cog_audio_init();
     cog_text_init();
@@ -154,8 +139,8 @@ void cog_update()
         frameupdatecounter = 0;
     }
 
-    cog_input_checkkeys();
-    cog_input_checkmouse();
+    cog_input_check_keys();
+    cog_input_check_mouse();
     cog_anim_update(timedelta);
     cog_sprite_update(timedelta);
 }
@@ -187,29 +172,6 @@ void cog_platform_init(void)
     {
         cog_errorf(SDL_GetError());
     }
-}
-
-//window
-void cog_window_init(void)
-{
-    //TODO:Get from yaml conf.
-    int width = 1024;
-    int height = 768;
-    //int width = 0;
-    //int height = 0;
-    int bpp = 32;
-    int flags = SDL_OPENGL | SDL_DOUBLEBUF;
-    if( (window.screen = SDL_SetVideoMode(width, height, bpp, flags)) == 0 )
-    {
-        cog_errorf("cog_window_init failed when creating SDL window <%s> \n", SDL_GetError());
-    }
-
-    SDL_WM_SetCaption( "cog game", NULL );
-}
-
-void cog_window_togglefullscreen(void)
-{
-    SDL_WM_ToggleFullScreen(window.screen);
 }
 
 void cog_audio_init(void)
@@ -287,104 +249,7 @@ cog_uint cog_nextrand()
     return rand();
 }
 
-//#input
-//##mouse
-void cog_input_blank()
+void cog_toggle_fullscreen()
 {
-    mouseleftjustpressed = COG_FALSE;
-    mouserightjustpressed = COG_FALSE;
-}
-
-cog_bool cog_input_mouseleftjustpressed()
-{
-    cog_bool just_pressed = mouseleftjustpressed;
-    //Stop mouse from sticking
-    mouseleftjustpressed = COG_FALSE;
-    return just_pressed;
-}
-
-cog_bool cog_input_mouserightjustpressed()
-{
-    cog_bool just_pressed = mouserightjustpressed;
-    //Stop mouse from sticking
-    mouserightjustpressed = COG_FALSE;
-    return just_pressed;
-}
-
-cog_float cog_input_mousex()
-{
-    return mousex;
-}
-
-cog_float cog_input_mousey()
-{
-    return mousey;
-}
-
-void cog_input_checkmouse(void)
-{
-    cog_int x,y;
-    cog_uint state = SDL_GetMouseState(&x, &y);
-    mousex = (cog_float)x;
-    mousey = (cog_float)y;
-    if(SDL_BUTTON_LEFT == SDL_BUTTON(state))
-    {
-        if(!mouseleftpressed)
-        {
-            mouseleftjustpressed = COG_TRUE;
-        }
-        else
-        {
-            mouseleftjustpressed = COG_FALSE;
-        }
-        mouseleftpressed = COG_TRUE;
-    }
-    else
-    {
-        mouseleftpressed = COG_FALSE;
-    }
-    if(SDL_BUTTON_RIGHT == SDL_BUTTON(state))
-    {
-        if(!mouserightpressed)
-        {
-            mouserightjustpressed = COG_TRUE;
-        }
-        else
-        {
-            mouserightjustpressed = COG_FALSE;
-        }
-        mouserightpressed = COG_TRUE;
-    }
-    else
-    {
-        mouserightpressed = COG_FALSE;
-    }
-}
-
-//##keys
-void cog_input_checkkeys(void)
-{
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-        switch(event.type)
-        {
-            case SDL_QUIT:
-                cog_quit();
-                break;
-            case SDL_KEYDOWN:
-                switch(event.key.keysym.sym)
-                {
-                    case SDLK_ESCAPE:
-                        cog_quit();
-                        break;
-                    case SDLK_f:
-                        cog_window_togglefullscreen();
-                        break;
-                    default:
-                        cog_debugf("WARNING: Unhandled keypress <%d>", (event.key.keysym.sym));
-                        break;
-                }
-        }
-    }
+    cog_window_toggle_fullscreen(&window);
 }

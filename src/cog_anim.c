@@ -3,6 +3,7 @@
 #include "cog_core.h"
 #include "cog_graphics.h"
 #include "cog_map.h"
+#include "cog_math.h"
 #include "cog_sprite.h"
 
 static cog_anim_id animcnt;
@@ -51,6 +52,36 @@ cog_anim_id cog_anim_add(char* animimg, cog_int nframes)
     return anim->id;
 }
 
+cog_bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1)
+{
+    cog_anim* anim0 = cog_anim_get(id0);
+    cog_anim* anim1 = cog_anim_get(id1);
+    if(cog_anim_dist_anim(id0, id1) <
+            (anim0->w + anim1->w))
+    {
+        return COG_TRUE;
+    }
+    else
+    {
+        return COG_FALSE;
+    }
+}
+
+cog_bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1)
+{
+    cog_anim* anim0 = cog_anim_get(id0);
+    cog_sprite* sprite1 = cog_sprite_get(id1);
+    if(cog_anim_dist_sprite(id0, id1) <
+            (anim0->w + sprite1->w))
+    {
+        return COG_TRUE;
+    }
+    else
+    {
+        return COG_FALSE;
+    }
+}
+
 cog_anim* cog_anim_get(cog_anim_id id)
 {
     return (cog_anim*)cog_map_get(&anims, id);
@@ -90,6 +121,23 @@ void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...)
 /*-----------------------------------------------------------------------------
  *  Internal
  *-----------------------------------------------------------------------------*/
+cog_float cog_anim_dist_anim(cog_anim_id id0, cog_anim_id id1)
+{
+    cog_anim* anim0 = cog_anim_get(id0);
+    cog_anim* anim1 = cog_anim_get(id1);
+    return cog_math_sqrt((anim0->x - anim1->x) * (anim0->x - anim1->x) +
+        (anim0->y - anim1->y) * (anim0->y - anim1->y));
+}
+
+cog_float cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1)
+{
+    cog_anim* anim0 = cog_anim_get(id0);
+    cog_sprite* sprite1 = cog_sprite_get(id1);
+    return cog_math_sqrt((anim0->x - sprite1->x) * (anim0->x - sprite1->x) +
+        (anim0->y - sprite1->y) * (anim0->y - sprite1->y));
+
+}
+
 void cog_anim_draw(void)
 {
     //Draw anims
@@ -115,8 +163,6 @@ void cog_anim_draw(void)
         sprite->w = anim->w;
         sprite->h = anim->h;
         sprite->rot = anim->rot;
-        sprite->xvel = anim->xvel;
-        sprite->yvel = anim->yvel;
         cog_graphics_draw_sprite(sprite);
     }
 }

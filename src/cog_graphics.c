@@ -5,6 +5,7 @@
 #include "cog.h"
 #include "cog_anim.h"
 #include "cog_core.h"
+#include "cog_log.h"
 #include "cog_list.h"
 #include "cog_math.h"
 #include "cog_sprite.h"
@@ -128,7 +129,6 @@ SDL_Surface* cog_graphics_load_image(const char* filename)
 
 GLuint cog_graphics_upload_surface(SDL_Surface* image)
 {
-
     glPixelStorei(GL_UNPACK_ALIGNMENT,4);
 
     int w = image->w;

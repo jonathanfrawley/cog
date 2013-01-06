@@ -4,7 +4,10 @@
 #include <GL/glew.h>
 #include <SDL/SDL_ttf.h>
 
+#include "cog_core.h"
 #include "cog_types.h"
+
+#define COG_TEXT_MAX 255
 
 /*-----------------------------------------------------------------------------
  *  Represents some text
@@ -21,12 +24,15 @@ typedef struct
     cog_float w;
     cog_float h;
     GLuint texid;
+    char str[COG_TEXT_MAX];
 } cog_text;
 
 cog_text_id cog_text_add(char* text);
 cog_text* cog_text_get(cog_text_id id);
+void cog_text_refresh(cog_text_id id);
 void cog_text_remove(cog_text_id id);
 void cog_text_removeall(void);
+void cog_text_set_str(cog_text_id id, char* str);
 
 /*-----------------------------------------------------------------------------
  *  Internal
