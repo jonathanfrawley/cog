@@ -26,12 +26,9 @@
 #ifndef EGLPORT_H
 #define EGLPORT_H
 
-#include <string>
 #include <stdlib.h>
 #include <stdint.h>
 #include "EGL/egl.h"
-
-using namespace std;
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,7 +61,7 @@ void    EGL_SwapBuffers             ( void );
 // Internal API
 int8_t  ConfigureEGL                ( EGLConfig config );
 int8_t  FindAppropriateEGLConfigs   ( void );
-int8_t  CheckEGLErrors              ( const string& file, uint16_t line );
+int8_t  CheckEGLErrors              ( const char* file, uint16_t line );
 
 void    Platform_Open               ( void );
 void    Platform_Close              ( void );

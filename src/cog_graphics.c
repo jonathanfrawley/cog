@@ -11,10 +11,6 @@
 
 void cog_graphics_hwinit(void);
 void cog_graphics_swinit(void);
-//shaders
-int cog_graphics_init_shaders(void);
-GLuint cog_graphics_load_shader(char* filename, GLenum shadertype);
-void cog_graphics_print_shader_error();
 //file io
 void cog_graphics_read_file(char* buf, char* filename);
 //rendering
@@ -22,47 +18,12 @@ void cog_graphics_render();
 void cog_graphics_hwrender();
 SDL_Surface* cog_graphics_load_image(const char* filename);
 
-static cog_renderer renderer;
-
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
 void cog_graphics_draw_sprite(cog_sprite* sprite)
 {
-    // GLES
-    /*
-    glPushMatrix();
-    //Bind texture
-    //GLEW
-    //glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, sprite->texid);
-
-    //Translate
-    glTranslatef(sprite->x,sprite->y, 0.0);
-    glRotatef( -cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f );
-
-    glBegin(GL_QUADS);                      // Draw A Quad
-        glTexCoord2f(sprite->texx,
-                sprite->texy + sprite->texh);
-        glVertex2f(-1.0f*sprite->w,
-                1.0f*sprite->h);              // Top Left
-        glTexCoord2f(sprite->texx + sprite->texw,
-                sprite->texy + sprite->texh);
-        glVertex2f(1.0f*sprite->w,
-                1.0f*sprite->h);              // Top Right
-        glTexCoord2f(sprite->texx + sprite->texw,
-                sprite->texy);
-        glVertex2f(1.0f*sprite->w,
-                -1.0f*sprite->h);             // Bottom Right
-        glTexCoord2f(sprite->texx,
-                sprite->texy);
-        glVertex2f(-1.0f*sprite->w,
-                -1.0f*sprite->h);             // Bottom left
-    glEnd();
-    glPopMatrix();
-    */
-
     glPushMatrix();
     //Bind texture
     glActiveTexture(GL_TEXTURE0);
@@ -72,49 +33,25 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
     glTranslatef(sprite->x,sprite->y, 0.0);
     glRotatef( -cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f );
 
-#if !defined(HAVE_GLES)
-    glBegin(GL_QUADS);                      // Draw A Quad
-        glTexCoord2f(sprite->texx,
-                sprite->texy + sprite->texh);
-        glVertex2f(-1.0f*sprite->w,
-                1.0f*sprite->h);              // Top Left
-        glTexCoord2f(sprite->texx + sprite->texw,
-                sprite->texy + sprite->texh);
-        glVertex2f(1.0f*sprite->w,
-                1.0f*sprite->h);              // Top Right
-        glTexCoord2f(sprite->texx + sprite->texw,
-                sprite->texy);
-        glVertex2f(1.0f*sprite->w,
-                -1.0f*sprite->h);             // Bottom Right
-        glTexCoord2f(sprite->texx,
-                sprite->texy);
-        glVertex2f(-1.0f*sprite->w,
-                -1.0f*sprite->h);             // Bottom left
-    glEnd();
-#else
-    GLfloat vertices[] = {
+    GLfloat vertices[] = { 
         -1.0f*sprite->w,1.0f*sprite->h,
         1.0f*sprite->w,1.0f*sprite->h,
         1.0f*sprite->w,-1.0f*sprite->h,
         -1.0f*sprite->w,-1.0f*sprite->h
     };
-    GLfloat tex_coords[] = {
-        sprite->texx, sprite->texy + sprite->texh,
-        sprite->texx + sprite->texw, sprite->texy + sprite->texh,
-        sprite->texx + sprite->texw, sprite->texy,
-        sprite->texx, sprite->texy
-    };
+    GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
+    GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
+        3,1,2}; // second triangle (bottom left - top right - bottom right)
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(2, GL_FLOAT, 0, vertices);
-    glTexCoordPointer(2, GL_FLOAT, 0, tex_coords);
-    glDrawArrays(GL_TRIANGLE_FAN,0,4);
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#endif
 
     glPopMatrix();
 }
@@ -130,49 +67,26 @@ void cog_graphics_draw_text(cog_text* text)
     glTranslatef(text->x+text->w,text->y+text->h, 0.0);
     glRotatef( -cog_math_radtodeg(text->rot), 0.0f, 0.0f, 1.0f );
 
-#if !defined(HAVE_GLES)
-    glBegin(GL_QUADS);                      // Draw A Quad
-        glTexCoord2f(0.0f,
-                1.0f);
-        glVertex2f(-1.0f*text->w,
-                1.0f*text->h);              // Top Left
-        glTexCoord2f(1.0f,
-                1.0f);
-        glVertex2f(1.0f*text->w,
-                1.0f*text->h);              // Top Right
-        glTexCoord2f(1.0f,
-                0.0f);
-        glVertex2f(1.0f*text->w,
-                -1.0f*text->h);             // Bottom Right
-        glTexCoord2f(0.0f,
-                0.0f);
-        glVertex2f(-1.0f*text->w,
-                -1.0f*text->h);             // Bottom left
-    glEnd();
-#else
-    GLfloat vertices[] = {
+    GLfloat vertices[] = { 
         -1.0f*text->w,1.0f*text->h,
         1.0f*text->w,1.0f*text->h,
         1.0f*text->w,-1.0f*text->h,
         -1.0f*text->w,-1.0f*text->h
     };
-    GLfloat tex_coords[] = {
-        0,1,
-        1,1,
-        1,0,
-        0,0
-    };
+    GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
+    GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
+        3,1,2}; // second triangle (bottom left - top right - bottom right)
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(2, GL_FLOAT, 0, vertices);
-    glTexCoordPointer(2, GL_FLOAT, 0, tex_coords);
-    glDrawArrays(GL_TRIANGLE_FAN,0,4);
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#endif
+
     glPopMatrix();
 }
 
@@ -238,7 +152,6 @@ GLuint cog_graphics_upload_surface(SDL_Surface* image)
     if(!alphaimage)
     {
         fprintf(stderr, "cog_graphics_upload_surface : RGB surface creation failed.");
-        cog_graphics_print_shader_error(renderer.programid);
     }
     // Set up so that colorkey pixels become transparent :
     Uint32 colorkey = SDL_MapRGBA( alphaimage->format, rmask, gmask, bmask, amask );
@@ -290,99 +203,37 @@ void cog_graphics_init(void)
 
 void cog_graphics_hwinit(void)
 {
-    // GLEW
-/*
+#ifdef HAVE_GLES
+    //GLES
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+    glClearColor(0.3f,0.3f,0.5f,0.0f);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrthof(0, cog_screenw(), cog_screenh(), 0, -1, 1);
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+#else
+    // TODO: GLEW: Not sure if absolutely necessary.
     glewInit();
     if(!GLEW_VERSION_2_1)
     {
         //TODO: Revert to software rendering if not available.
         perror("Error: OpenGL 2.1 not available, bailing out.");
     }
-    */
 
     //GLES
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glClearColor(0.3f,0.3f,0.5f,0.0f);
-    glMatrixMode( GL_PROJECTION );
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrthof( 0, cog_screenw(), cog_screenh(), 0, -1, 1 );
+    glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-
-    if(! cog_graphics_init_shaders())
-    {
-        perror("Error creating shaders");
-    }
-}
-
-int cog_graphics_init_shaders(void)
-{
-    // GLEW
-    /*
-    renderer.vertid = cog_graphics_load_shader("../src/simple2d.vert", GL_VERTEX_SHADER);
-    renderer.fragid = cog_graphics_load_shader("../src/simple2d.frag", GL_FRAGMENT_SHADER);
-    if((renderer.vertid == 0) || (renderer.fragid == 0))
-    {
-        return 0;
-    }
-    renderer.programid = glCreateProgram();
-    glAttachShader(renderer.programid, renderer.vertid);
-    glAttachShader(renderer.programid, renderer.fragid);
-    glLinkProgram(renderer.programid);
-    int linkedstatus;
-    glGetProgramiv(renderer.programid, GL_LINK_STATUS, &linkedstatus);
-    if(! linkedstatus)
-    {
-        cog_graphics_print_shader_error(renderer.programid);
-        return 0;
-    }
-    else
-    {
-        glUseProgram(renderer.programid);
-        return 1;
-    }
-    */
-    return 0; //XXX: Temp
-}
-
-GLuint cog_graphics_load_shader(char* filename, GLenum shadertype)
-{
-    char filebuf[COG_MAX_FILE_BUF];
-    memset(filebuf,0,COG_MAX_FILE_BUF);
-    cog_graphics_read_file(filebuf, filename);
-    //GLEW
-    /*
-    GLuint id = glCreateShader(shadertype);
-    char* buf = &(filebuf[0]);
-    glShaderSource(id, 1, (const GLchar **)&buf, 0);
-    glCompileShader(id);
-    int compilestatus;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &compilestatus);
-    if(! compilestatus)
-    {
-        cog_graphics_print_shader_error(id);
-        return 0;
-    }
-    else
-    {
-        return id;
-    }
-    */
-    return 0; //XXX: TEMP
-}
-
-void cog_graphics_print_shader_error(int shaderid)
-{
-    // Doesn't work on GLES
-    /*
-    int maxlength;
-    glGetShaderiv(shaderid, GL_INFO_LOG_LENGTH, &maxlength);
-    char* errorbuf = (char*)malloc(sizeof(char)*maxlength);
-    glGetShaderInfoLog(shaderid, maxlength, &maxlength, errorbuf);
-    perror(errorbuf);
-    */
+#endif
 }
 
 void cog_graphics_read_file(char* buf, char* filename)
