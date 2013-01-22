@@ -3,8 +3,8 @@
 
 // GLEW
 #if !defined(HAVE_GLES)
-//#include <GL/gl.h>
-#include <GL/glew.h>
+#include <GL/gl.h>
+//#include <GL/glew.h>
 #else
 #include <GLES/gl.h>
 #include "eglport.h"

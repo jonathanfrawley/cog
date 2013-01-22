@@ -2,7 +2,8 @@
 #define  COG_SPRITE_H
 
 #if !defined(HAVE_GLES)
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#include <GL/gl.h>
 #else
 #include <GLES/gl.h>
 #endif

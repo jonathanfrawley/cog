@@ -39,7 +39,12 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
         1.0f*sprite->w,-1.0f*sprite->h,
         -1.0f*sprite->w,-1.0f*sprite->h
     };
-    GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
+    GLfloat tex[] = {
+        sprite->texx, sprite->texy + sprite->texh,
+        sprite->texx + sprite->texw, sprite->texy + sprite->texh,
+        sprite->texx + sprite->texw, sprite->texy,
+        sprite->texx, sprite->texy};
+
     GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
         3,1,2}; // second triangle (bottom left - top right - bottom right)
 
@@ -154,10 +159,10 @@ GLuint cog_graphics_upload_surface(SDL_Surface* image)
         fprintf(stderr, "cog_graphics_upload_surface : RGB surface creation failed.");
     }
     // Set up so that colorkey pixels become transparent :
-    Uint32 colorkey = SDL_MapRGBA( alphaimage->format, rmask, gmask, bmask, amask );
-    SDL_FillRect( alphaimage, 0, colorkey );
-    colorkey = SDL_MapRGBA( image->format, rmask, gmask, bmask, amask);
-    SDL_SetColorKey( image, SDL_SRCCOLORKEY, colorkey );
+    Uint32 colorkey = SDL_MapRGBA(alphaimage->format, rmask, gmask, bmask, amask);
+    SDL_FillRect(alphaimage, 0, colorkey);
+    colorkey = SDL_MapRGBA(image->format, rmask, gmask, bmask, amask);
+    SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey);
     SDL_Rect area;
     SDL_SetAlpha(image, 0, amask); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
     // Copy the surface into the GL texture image :
@@ -165,14 +170,14 @@ GLuint cog_graphics_upload_surface(SDL_Surface* image)
     area.y = 0;
     area.w = image->w;
     area.h = image->h;
-    SDL_BlitSurface( image, &area, alphaimage, &area );
+    SDL_BlitSurface(image, &area, alphaimage, &area);
     // Create an OpenGL texture for the image
     GLuint textureID;
-    glGenTextures( 1, &textureID );
-    glBindTexture( GL_TEXTURE_2D, textureID );
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
     // Prepare the filtering of the texture image
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     // Map the alpha surface to the texture
     glTexImage2D( GL_TEXTURE_2D,
             0,
@@ -216,6 +221,7 @@ void cog_graphics_hwinit(void)
     glLoadIdentity();
 #else
     // TODO: GLEW: Not sure if absolutely necessary.
+    /*
     glewInit();
     if(!GLEW_VERSION_2_1)
     {
@@ -224,15 +230,21 @@ void cog_graphics_hwinit(void)
     }
 
     //GLES
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+    glClearColor(0.3f,0.3f,0.5f,0.0f);
+    //glMatrixMode(GL_PROJECTION);
+    //glLoadIdentity();
+    glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    */
+    glClearColor(0.3f,0.3f,0.5f,0.0f);
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glClearColor(0.3f,0.3f,0.5f,0.0f);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
+
 #endif
 }
 

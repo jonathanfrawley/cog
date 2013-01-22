@@ -32,6 +32,7 @@ typedef struct
     int finished;
 } cog_game;
 static cog_game game;
+
 /**
  * All sprites have a texture id and texture coords.
  **/
