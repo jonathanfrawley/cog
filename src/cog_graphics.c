@@ -24,16 +24,18 @@ SDL_Surface* cog_graphics_load_image(const char* filename);
  *-----------------------------------------------------------------------------*/
 void cog_graphics_draw_sprite(cog_sprite* sprite)
 {
-    glPushMatrix();
+//    glEnable(GL_TEXTURE_2D);
+//    glPushMatrix();
     //Bind texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, sprite->texid);
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D, sprite->texid);
 
     //Translate
-    glTranslatef(sprite->x,sprite->y, 0.0);
-    glRotatef( -cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f );
+//    glTranslatef(sprite->x,sprite->y, 0.0);
+//    glRotatef(-cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f);
 
-    GLfloat vertices[] = { 
+    /*
+    GLfloat vertices[] = {
         -1.0f*sprite->w,1.0f*sprite->h,
         1.0f*sprite->w,1.0f*sprite->h,
         1.0f*sprite->w,-1.0f*sprite->h,
@@ -44,6 +46,88 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
         sprite->texx + sprite->texw, sprite->texy + sprite->texh,
         sprite->texx + sprite->texw, sprite->texy,
         sprite->texx, sprite->texy};
+        */
+
+    cog_debugf("x is : %f", sprite->x);
+    cog_debugf("y is : %f", sprite->y);
+    cog_debugf("w is : %f", sprite->w);
+    cog_debugf("h is : %f", sprite->h);
+    glPushMatrix();
+    glEnable(GL_TEXTURE_2D);
+    glLoadIdentity();
+    glRotatef(-cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f);
+    //glTranslatef(sprite->x, sprite->y, 0.0);
+    float X = sprite->x;
+    float Y = sprite->y;
+    float Z = 0.0f;
+    float W = sprite->w;
+    float H = sprite->h;
+    GLfloat vertices[] = { 
+        X,  Y+H, 0, //top left corner
+        X+W,  Y+H, 0, //top right corner
+        X+W, Y, 0, // bottom right rocner
+        X, Y, 0}; //bottom left corner
+    /*
+    GLfloat vertices[] = {
+        -1.0f*sprite->w, 1.0f*sprite->h,
+        1.0f*sprite->w, 1.0f*sprite->h,
+        1.0f*sprite->w, -1.0f*sprite->h,
+        -1.0f*sprite->w, -1.0f*sprite->h
+    };
+    */
+    //GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
+    GLfloat tex[] = {
+        sprite->texx, sprite->texy + sprite->texh,
+        sprite->texx + sprite->texw, sprite->texy + sprite->texh,
+        sprite->texx + sprite->texw, sprite->texy,
+        sprite->texx, sprite->texy};
+    GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
+        3,1,2}; // second triangle (bottom left - top right - bottom right)
+
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    /*
+    glPushMatrix();
+    glClear( GL_COLOR_BUFFER_BIT );
+    glLoadIdentity();
+    float X = 100.f;
+    float Y = 100.f;
+    float Z = 0.0f;
+    float W = 1000.0f;
+    float H = 1000.0f;
+    GLfloat vertices[] = { 
+        X,  Y+H, 0, //top left corner
+        X+W,  Y+H, 0, //top right corner
+        X+W, Y, 0, // bottom right rocner
+        X, Y, 0}; //bottom left corner
+    GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
+    GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
+        3,1,2}; // second triangle (bottom left - top right - bottom right)
+
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glPopMatrix();
+    */
+
+    /*
 
     GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
         3,1,2}; // second triangle (bottom left - top right - bottom right)
@@ -59,10 +143,13 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glPopMatrix();
+    */
+//    glDisable(GL_TEXTURE_2D);
 }
 
 void cog_graphics_draw_text(cog_text* text)
 {
+    glEnable(GL_TEXTURE_2D);
     glPushMatrix();
     //Bind texture
     glActiveTexture(GL_TEXTURE0);
@@ -70,7 +157,7 @@ void cog_graphics_draw_text(cog_text* text)
 
     //Translate
     glTranslatef(text->x+text->w,text->y+text->h, 0.0);
-    glRotatef( -cog_math_radtodeg(text->rot), 0.0f, 0.0f, 1.0f );
+    glRotatef(-cog_math_radtodeg(text->rot), 0.0f, 0.0f, 1.0f);
 
     GLfloat vertices[] = { 
         -1.0f*text->w,1.0f*text->h,
@@ -93,6 +180,7 @@ void cog_graphics_draw_text(cog_text* text)
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
 }
 
 void cog_graphics_hwrender()
@@ -103,6 +191,15 @@ void cog_graphics_hwrender()
     cog_sprite_draw();
     cog_anim_draw();
     cog_text_draw();
+
+    glBegin(GL_TRIANGLES);
+
+    glVertex3f(100,0,0);
+    glVertex3f(0,100,0);
+    glVertex3f(100,100,0);
+
+    glEnd();
+
 
 #if !defined(HAVE_GLES)
     SDL_GL_SwapBuffers();
@@ -179,18 +276,17 @@ GLuint cog_graphics_upload_surface(SDL_Surface* image)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     // Map the alpha surface to the texture
-    glTexImage2D( GL_TEXTURE_2D,
+    glTexImage2D(GL_TEXTURE_2D,
             0,
-            GL_RGBA,
+            GL_RGBA8,
             w,
             h,
             0,
             GL_RGBA,
             GL_UNSIGNED_BYTE,
-            alphaimage->pixels );
+            alphaimage->pixels);
     SDL_FreeSurface(alphaimage);
     return textureID;
-    //return 0;
 }
 
 GLuint cog_graphics_load_texture(char* filename)
@@ -210,41 +306,27 @@ void cog_graphics_hwinit(void)
 {
 #ifdef HAVE_GLES
     //GLES
-    glEnable (GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glClearColor(0.3f,0.3f,0.5f,0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrthof(0, cog_screenw(), cog_screenh(), 0, -1, 1);
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
-#else
-    // TODO: GLEW: Not sure if absolutely necessary.
-    /*
-    glewInit();
-    if(!GLEW_VERSION_2_1)
-    {
-        //TODO: Revert to software rendering if not available.
-        perror("Error: OpenGL 2.1 not available, bailing out.");
-    }
-
-    //GLES
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glClearColor(0.3f,0.3f,0.5f,0.0f);
-    //glMatrixMode(GL_PROJECTION);
-    //glLoadIdentity();
-    glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    */
+#else
+    //GLES
     glClearColor(0.3f,0.3f,0.5f,0.0f);
-    glEnable (GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
+    //glOrtho(0, cog_screenw(), 0, cog_screenh(), -1, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_TEXTURE_2D);
 #endif
 }
 

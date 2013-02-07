@@ -38,6 +38,7 @@ cog_anim_id cog_anim_add(char* animimg, cog_int nframes)
     //Load nimages sprites in, with offset dependant on frame number.
     for(int i=0;i<nframes;i++)
     {
+        cog_sprite_add(animimg);
         cog_sprite_id sid = cog_sprite_add(animimg);
         cog_sprite* sprite = cog_sprite_get(sid);
         sprite->texx = i*wanimframe;

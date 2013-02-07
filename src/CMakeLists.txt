@@ -15,7 +15,8 @@ endif ()
 
 find_package(ALUT REQUIRED)
 find_package(OpenAL REQUIRED)
-add_definitions(-std=c99 -Werror -Wall)
+#add_definitions(-std=c99 -Werror -Wall)
+add_definitions(-std=c99 -Wall)
 
 set(CMAKE_BUILD_TYPE Debug)
 
