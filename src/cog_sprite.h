@@ -2,8 +2,7 @@
 #define  COG_SPRITE_H
 
 #if !defined(HAVE_GLES)
-//#include <GL/glew.h>
-#include <GL/gl.h>
+#include <GL/glew.h>
 #else
 #include <GLES/gl.h>
 #endif
@@ -30,6 +29,7 @@ typedef struct
 } cog_sprite;
 
 cog_sprite_id cog_sprite_add(char* img);
+cog_sprite_id cog_sprite_add_inactive(char* img);
 cog_bool cog_sprite_collides_sprite(cog_sprite_id id0, cog_sprite_id id1);
 cog_sprite* cog_sprite_get(cog_sprite_id);
 void cog_sprite_remove(cog_sprite_id id);

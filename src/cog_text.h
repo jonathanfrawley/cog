@@ -2,8 +2,7 @@
 #define  COG_TEXT_H
 
 #if !defined(HAVE_GLES)
-//#include <GL/glew.h>
-#include <GL/gl.h>
+#include <GL/glew.h>
 #else
 #include <GLES/gl.h>
 #endif

@@ -4,7 +4,8 @@
 
 void cog_window_init(cog_window* window)
 {
-    if( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
+    //if( SDL_Init(SDL_INIT_EVERYTHING) != 0 )
+    if(SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         cog_errorf(SDL_GetError());
     }

@@ -13,6 +13,14 @@ static cog_sprite_id spritecnt;
 
 cog_sprite_id cog_sprite_add(char* img)
 {
+    cog_sprite_id id = cog_sprite_add_inactive(img);
+    cog_sprite* sprite = cog_sprite_get(id);
+    cog_list_append(&activesprites, (cog_dataptr)&(sprite->id));
+    return id;
+}
+
+cog_sprite_id cog_sprite_add_inactive(char* img)
+{
     cog_sprite* sprite = COG_STRUCT_MALLOC(cog_sprite);
     sprite->id = spritecnt++;
     sprite->texid = cog_graphics_load_texture(img);
@@ -29,7 +37,6 @@ cog_sprite_id cog_sprite_add(char* img)
     sprite->vel.x = 0.0f;
     sprite->vel.y = 0.0f;
     cog_map_put(&sprites, sprite->id, (void*)sprite);
-    cog_list_append(&activesprites, (cog_dataptr)&(sprite->id));
     return sprite->id;
 }
 
@@ -102,6 +109,7 @@ void cog_sprite_draw(void)
     //Draw sprites
     COG_LIST_FOREACH(&activesprites)
     {
+        cog_errorf("blah");
         //draw current sprite
         cog_sprite* thissprite = (cog_sprite*)cog_map_get(&sprites,*((cog_sprite_id*)curr->data));
         cog_graphics_draw_sprite(thissprite);
