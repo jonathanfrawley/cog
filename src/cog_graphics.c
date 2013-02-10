@@ -413,13 +413,15 @@ void cog_graphics_hwinit(void)
 {
 #ifdef HAVE_GLES
     //GLES
+    cog_graphics_init_shaders();
+    glUseProgram(shader_program);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glClearColor(0.3f,0.3f,0.5f,0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrthof(0, cog_screenw(), cog_screenh(), 0, -1, 1);
+    glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 #else
@@ -432,9 +434,9 @@ void cog_graphics_hwinit(void)
     glUseProgram(shader_program);
     //GLES
     glClearColor(0.3f,0.3f,0.5f,0.0f);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
+    //glMatrixMode(GL_PROJECTION);
+    //glLoadIdentity();
+    //glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glEnable(GL_BLEND);
