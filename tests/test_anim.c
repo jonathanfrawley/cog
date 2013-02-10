@@ -17,11 +17,11 @@ void entity_init(entity* obj)
     cog_anim* anim = cog_anim_get(obj->anim);
     anim->transition_millis = 150;
     anim->looped = COG_TRUE;
-    anim->x = current_x;
+    anim->pos.x = current_x;
     current_x += 200;
-    anim->y = 0;
-    anim->w = 128;
-    anim->h = 128;
+    anim->pos.y = 0;
+    anim->dim.w = 128;
+    anim->dim.h = 128;
     anim->rot = 0;
     anim->paused = COG_FALSE;
     //cog_anim_set_frames(obj->anim, 0);
@@ -32,7 +32,7 @@ void entity_update(entity* obj)
 {
     //Do some simple movement
     cog_anim* anim = cog_anim_get(obj->anim);
-    anim->x += 0.001;
+    anim->pos.x += 0.001;
     anim->rot += (COG_PI * 0.001);
 }
 

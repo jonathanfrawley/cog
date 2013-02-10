@@ -42,26 +42,22 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
         -1.0f*sprite->w,-1.0f*sprite->h
     };
     GLfloat tex[] = {
-        sprite->texx, sprite->texy + sprite->texh,
-        sprite->texx + sprite->texw, sprite->texy + sprite->texh,
-        sprite->texx + sprite->texw, sprite->texy,
-        sprite->texx, sprite->texy};
+        sprite->tex_pos.x, sprite->tex_pos.y + sprite->tex_dim.h,
+        sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y + sprite->tex_dim.h,
+        sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y,
+        sprite->tex_pos.x, sprite->tex_pos.y};
         */
 
-    cog_debugf("x is : %f", sprite->x);
-    cog_debugf("y is : %f", sprite->y);
-    cog_debugf("w is : %f", sprite->w);
-    cog_debugf("h is : %f", sprite->h);
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glLoadIdentity();
     glRotatef(-cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f);
     //glTranslatef(sprite->x, sprite->y, 0.0);
-    float X = sprite->x;
-    float Y = sprite->y;
+    float X = sprite->pos.x;
+    float Y = sprite->pos.y;
     float Z = 0.0f;
-    float W = sprite->w;
-    float H = sprite->h;
+    float W = sprite->dim.w;
+    float H = sprite->dim.h;
     GLfloat vertices[] = { 
         X,  Y+H, 0, //top left corner
         X+W,  Y+H, 0, //top right corner
@@ -77,10 +73,10 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
     */
     //GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
     GLfloat tex[] = {
-        sprite->texx, sprite->texy + sprite->texh,
-        sprite->texx + sprite->texw, sprite->texy + sprite->texh,
-        sprite->texx + sprite->texw, sprite->texy,
-        sprite->texx, sprite->texy};
+        sprite->tex_pos.x, sprite->tex_pos.y + sprite->tex_dim.h,
+        sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y + sprite->tex_dim.h,
+        sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y,
+        sprite->tex_pos.x, sprite->tex_pos.y};
     GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
         3,1,2}; // second triangle (bottom left - top right - bottom right)
 

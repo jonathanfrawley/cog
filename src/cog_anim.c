@@ -8,48 +8,47 @@
 
 static cog_anim_id animcnt;
 static cog_map anims;
-static cog_list activeanims; //anims drawn(active) at the moment
+static cog_list active_anims; //anims drawn(active) at the moment
 
 /*-----------------------------------------------------------------------------
  * Assumes animation is a single 1D animation frame.
  *-----------------------------------------------------------------------------*/
-cog_anim_id cog_anim_add(char* animimg, cog_int nframes)
+cog_anim_id cog_anim_add(char* img, cog_int n_frames)
 {
     cog_anim* anim = COG_STRUCT_MALLOC(cog_anim);
     anim->id = animcnt++;
     cog_list_init(&anim->frames, sizeof(cog_sprite));
     anim->transition_millis = 0;
     anim->looped = COG_FALSE;
-    anim->currentframe = 0;
-    anim->currentframe_millis = 0;
+    anim->current_frame = 0;
+    anim->current_frame_millis = 0;
     anim->paused = COG_FALSE;
-    anim->nframes = nframes;
-    anim->x = 0;
-    anim->y = 0;
-    anim->w = 0;
-    anim->h = 0;
+    anim->n_frames = n_frames;
+    anim->pos.x = 0;
+    anim->pos.y = 0;
+    anim->dim.w = 0;
+    anim->dim.h = 0;
     anim->rot = 0;
-    anim->xvel = 0;
-    anim->yvel = 0;
+    anim->vel.x = 0;
+    anim->vel.y = 0;
     anim->finished = 0;
 
-    cog_float wanimframe = ((cog_float)1.0 / nframes);
-    cog_float hanimframe = 1.0;
+    cog_float w_frame = ((cog_float)1.0f / n_frames);
+    cog_float h_frame = 1.0f;
     //Load nimages sprites in, with offset dependant on frame number.
-    for(int i=0;i<nframes;i++)
+    for(int i=0;i<n_frames;i++)
     {
-        cog_sprite_add(animimg);
-        cog_sprite_id sid = cog_sprite_add(animimg);
+        cog_sprite_add(img);
+        cog_sprite_id sid = cog_sprite_add(img);
         cog_sprite* sprite = cog_sprite_get(sid);
-        sprite->texx = i*wanimframe;
-        sprite->texy = 0.0f;
-        sprite->texw = wanimframe;
-        sprite->texh = hanimframe;
+        sprite->tex_pos.x = i*w_frame;
+        sprite->tex_pos.y = 0.0f;
+        sprite->tex_dim.w = w_frame;
+        sprite->tex_dim.h = h_frame;
         cog_list_append(&(anim->frames), sprite);
     }
     cog_map_put(&anims, anim->id, (void*)anim);
-    cog_list_append(&activeanims, (cog_dataptr)&(anim->id));
-
+    cog_list_append(&active_anims, (cog_dataptr)&(anim->id));
     return anim->id;
 }
 
@@ -58,7 +57,7 @@ cog_bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1)
     cog_anim* anim0 = cog_anim_get(id0);
     cog_anim* anim1 = cog_anim_get(id1);
     if(cog_anim_dist_anim(id0, id1) <
-            (anim0->w + anim1->w))
+            (anim0->dim.w + anim1->dim.w))
     {
         return COG_TRUE;
     }
@@ -73,7 +72,7 @@ cog_bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1)
     cog_anim* anim0 = cog_anim_get(id0);
     cog_sprite* sprite1 = cog_sprite_get(id1);
     if(cog_anim_dist_sprite(id0, id1) <
-            (anim0->w + sprite1->w))
+            (anim0->dim.w + sprite1->dim.w))
     {
         return COG_TRUE;
     }
@@ -90,11 +89,11 @@ cog_anim* cog_anim_get(cog_anim_id id)
 
 void cog_anim_remove(cog_anim_id id)
 {
-    COG_LIST_FOREACH(&activeanims)
+    COG_LIST_FOREACH(&active_anims)
     {
         if(*((cog_anim_id*)curr->data) == id)
         {
-            cog_list_remove(&activeanims, curr->data);
+            cog_list_remove(&active_anims, curr->data);
             break;
         }
     }
@@ -103,7 +102,7 @@ void cog_anim_remove(cog_anim_id id)
 
 void cog_anim_removeall(void)
 {
-    cog_list_removeall(&activeanims);
+    cog_list_removeall(&active_anims);
 }
 
 void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...)
@@ -126,23 +125,23 @@ cog_float cog_anim_dist_anim(cog_anim_id id0, cog_anim_id id1)
 {
     cog_anim* anim0 = cog_anim_get(id0);
     cog_anim* anim1 = cog_anim_get(id1);
-    return cog_math_sqrt((anim0->x - anim1->x) * (anim0->x - anim1->x) +
-        (anim0->y - anim1->y) * (anim0->y - anim1->y));
+    return cog_math_sqrt((anim0->pos.x - anim1->pos.x) * (anim0->pos.x - anim1->pos.x) +
+        (anim0->pos.y - anim1->pos.y) * (anim0->pos.y - anim1->pos.y));
 }
 
 cog_float cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1)
 {
     cog_anim* anim0 = cog_anim_get(id0);
     cog_sprite* sprite1 = cog_sprite_get(id1);
-    return cog_math_sqrt((anim0->x - sprite1->x) * (anim0->x - sprite1->x) +
-        (anim0->y - sprite1->y) * (anim0->y - sprite1->y));
+    return cog_math_sqrt((anim0->pos.x - sprite1->pos.x) * (anim0->pos.x - sprite1->pos.x) +
+        (anim0->pos.y - sprite1->pos.y) * (anim0->pos.y - sprite1->pos.y));
 
 }
 
 void cog_anim_draw(void)
 {
     //Draw anims
-    COG_LIST_FOREACH(&activeanims)
+    COG_LIST_FOREACH(&active_anims)
     {
         //draw current sprite
         cog_anim* anim = cog_anim_get(*(cog_anim_id*)curr->data);
@@ -153,16 +152,16 @@ void cog_anim_draw(void)
         //find active frame to render
         cog_list* frame = (anim->frames.next);
         cog_uint i=0;
-        while(i<anim->currentframe)
+        while(i<anim->current_frame)
         {
             frame = frame->next;
             i++;
         }
         cog_sprite* sprite = frame->data;
-        sprite->x = anim->x;
-        sprite->y = anim->y;
-        sprite->w = anim->w;
-        sprite->h = anim->h;
+        sprite->pos.x = anim->pos.x;
+        sprite->pos.y = anim->pos.y;
+        sprite->dim.w = anim->dim.w;
+        sprite->dim.h = anim->dim.h;
         sprite->rot = anim->rot;
         cog_graphics_draw_sprite(sprite);
     }
@@ -171,45 +170,45 @@ void cog_anim_draw(void)
 void cog_anim_init()
 {
     cog_map_init(&anims);
-    cog_list_init(&activeanims, sizeof(cog_sprite_id));
+    cog_list_init(&active_anims, sizeof(cog_sprite_id));
 }
 
-void cog_anim_update(cog_uint deltamillis)
+void cog_anim_update(cog_uint delta_millis)
 {
-    COG_LIST_FOREACH(&activeanims)
+    COG_LIST_FOREACH(&active_anims)
     {
         //Draw current sprite
         cog_anim_id id = *((cog_anim_id*)curr->data);
-        cog_anim* thisanim = (cog_anim*)cog_map_get(&anims,id);
+        cog_anim* this_anim = (cog_anim*)cog_map_get(&anims,id);
 
-        if(thisanim->paused)
+        if(this_anim->paused)
         {
             continue;
         }
-        thisanim->currentframe_millis += deltamillis;
-        if(thisanim->currentframe_millis >= thisanim->transition_millis)
+        this_anim->current_frame_millis += delta_millis;
+        if(this_anim->current_frame_millis >= this_anim->transition_millis)
         {
-            thisanim->currentframe++;
-            thisanim->currentframe_millis = thisanim->currentframe_millis - thisanim->transition_millis; //Diff
-            if(thisanim->currentframe >= thisanim->nframes)
+            this_anim->current_frame++;
+            this_anim->current_frame_millis = this_anim->current_frame_millis - this_anim->transition_millis; //Diff
+            if(this_anim->current_frame >= this_anim->n_frames)
             {
-                if(thisanim->looped)
+                if(this_anim->looped)
                 {
-                    thisanim->currentframe = 0;
+                    this_anim->current_frame = 0;
                 }
                 else
                 {
-                    thisanim->finished = COG_TRUE;
+                    this_anim->finished = COG_TRUE;
                 }
             }
         }
     }
 
     //Do physics
-    COG_LIST_FOREACH(&activeanims)
+    COG_LIST_FOREACH(&active_anims)
     {
-        cog_anim* thisanim = cog_anim_get(*(cog_anim_id*)curr->data);
-        thisanim->x += deltamillis * thisanim->xvel;
-        thisanim->y += deltamillis * thisanim->yvel;
+        cog_anim* this_anim = cog_anim_get(*(cog_anim_id*)curr->data);
+        this_anim->pos.x += delta_millis * this_anim->vel.x;
+        this_anim->pos.y += delta_millis * this_anim->vel.y;
     }
 }

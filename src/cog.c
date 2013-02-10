@@ -3,12 +3,12 @@
 #include <math.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <AL/alut.h>
+#include <GL/glew.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_events.h>
 #include <SDL/SDL_image.h>
-#include <AL/alut.h>
 #include <SDL/SDL_ttf.h>
-#include <GL/glew.h>
 
 #include "cog_anim.h"
 #include "cog_core.h"
