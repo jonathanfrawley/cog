@@ -9,8 +9,8 @@ int main(void)
     cog_text* text = cog_text_get(id);
     while(! cog_hasquit())
     {
-        text->x += 0.1;
-        text->y += 0.1;
+        text->pos.x += 0.1;
+        text->pos.y += 0.1;
         text->rot += (COG_PI * 0.005);
         cog_loopstep();
     }

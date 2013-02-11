@@ -17,9 +17,9 @@ void entity_init(entity* obj)
     anim->transition_millis = 150;
     anim->looped = COG_TRUE;
     //anim->pos.x = 0.0;
-    anim->pos.x = 0.0;
-    //current_x += 200;
-    anim->pos.y = 0.0;
+    anim->pos.x = 200.0;
+    current_x += 200;
+    anim->pos.y = 200.0;
     anim->dim.w = 128;
     anim->dim.h = 128;
     anim->rot = 0;

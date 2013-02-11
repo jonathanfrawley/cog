@@ -22,11 +22,9 @@ typedef struct
     TTF_Font* font;
     cog_uint ptsize;
     SDL_Color c;
-    cog_float x;
-    cog_float y;
+    cog_pos2 pos;
     cog_float rot;
-    cog_float w;
-    cog_float h;
+    cog_dim2 dim;
     GLuint texid;
     char str[COG_TEXT_MAX];
 } cog_text;

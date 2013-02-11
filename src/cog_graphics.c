@@ -6,12 +6,10 @@
 #include "cog_anim.h"
 #include "cog_core.h"
 #include "cog_list.h"
-#include "cog_log.h"
 #include "cog_math.h"
 #include "cog_sprite.h"
 
 void cog_graphics_hwinit(void);
-void cog_graphics_print_shader_error(int shaderid, char* type);
 void cog_graphics_swinit(void);
 //file io
 void cog_graphics_read_file(char* buf, char* filename);
@@ -20,158 +18,25 @@ void cog_graphics_render();
 void cog_graphics_hwrender();
 SDL_Surface* cog_graphics_load_image(const char* filename);
 
-static char vertex_shader_str[] = ""
-"attribute vec4 position;\n"
-"attribute vec2 tex_coord;\n"
-//"uniform mat4 modelview;\n"
-//"uniform mat4 projection;\n"
-"uniform mat4 transformation;\n"
-"varying vec2 tex_coord_var;\n"
-"void main()\n"
-"{\n"
-    //"vec4 p = modelview * position;\n"
-    //"gl_Position = projection * p;\n"
-    "gl_Position = transformation * position;\n"
-    "tex_coord_var = tex_coord;\n"
-"}\n";
-
-static char fragment_shader_str[] = ""
-"uniform sampler2D texture;\n"
-"varying vec2 tex_coord_var;\n"
-"void main()\n"
-"{\n"
-    "gl_FragColor = texture2D(texture, tex_coord_var);\n"
-"}\n";
-
-GLuint vertex_shader;
-GLuint fragment_shader;
-GLuint shader_program;
-// uniforms
-//GLuint modelview_uniform;
-//GLuint projection_uniform;
-GLuint transformation_uniform;
-GLuint texture_uniform;
-// attributes
-GLuint position_attrib;
-GLuint tex_coord_attrib;
-
-static void cog_graphics_init_shaders(void)
-{
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER); 
-    char* buf = &(vertex_shader_str[0]);
-    glShaderSource(vertex_shader, 1, (const GLchar**)&buf, NULL);
-    buf = &(fragment_shader_str[0]);
-    glShaderSource(fragment_shader, 1, (const GLchar**)&buf, NULL);
-    glCompileShader(vertex_shader);
-    cog_graphics_print_shader_error(vertex_shader, "Vertex");
-    glCompileShader(fragment_shader);
-    cog_graphics_print_shader_error(fragment_shader, "Fragment");
-    shader_program = glCreateProgram();
-    glAttachShader(shader_program, vertex_shader);
-    glAttachShader(shader_program, fragment_shader);
-    glLinkProgram(shader_program);
-    int link_status;
-    glGetProgramiv(shader_program, GL_LINK_STATUS, &link_status);
-    if(! link_status)
-    {
-        cog_graphics_print_shader_error(shader_program, "Program");
-    }
-    //Set uniforms
-    //modelview_uniform = glGetUniformLocation(shader_program, "modelview");
-    //projection_uniform = glGetUniformLocation(shader_program, "projection");
-    transformation_uniform = glGetUniformLocation(shader_program, "transformation");
-    texture_uniform = glGetUniformLocation(shader_program, "texture");
-    position_attrib = glGetAttribLocation(shader_program, "position");
-    tex_coord_attrib = glGetAttribLocation(shader_program, "tex_coord");
-}
-
-
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
 void cog_graphics_draw_sprite(cog_sprite* sprite)
 {
-//    glEnable(GL_TEXTURE_2D);
-//    glPushMatrix();
-    //Bind texture
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, sprite->texid);
-
-    //Translate
-//    glTranslatef(sprite->x,sprite->y, 0.0);
-//    glRotatef(-cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f);
-
-    /*
-    GLfloat vertices[] = {
-        -1.0f*sprite->w,1.0f*sprite->h,
-        1.0f*sprite->w,1.0f*sprite->h,
-        1.0f*sprite->w,-1.0f*sprite->h,
-        -1.0f*sprite->w,-1.0f*sprite->h
-    };
-    GLfloat tex[] = {
-        sprite->tex_pos.x, sprite->tex_pos.y + sprite->tex_dim.h,
-        sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y + sprite->tex_dim.h,
-        sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y,
-        sprite->tex_pos.x, sprite->tex_pos.y};
-        */
-
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glLoadIdentity();
-    //glRotatef(-cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f);
-    //glTranslatef(sprite->x, sprite->y, 0.0);
-
-    glBindTexture(GL_TEXTURE_2D, sprite->texid);
-    glUniform1i(texture_uniform, 0);
-
-/*
-    GLfloat transformation_matrix[] = {
-        1.0f, 0.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 1.0f, 1.0f,
-        0.0f, 0.0f, 0.0f, 1.0f,
-//        -0.5f, -0.5f, 0.0f, 1.0f,
-    };
-*/
-    GLfloat transformation_matrix[] = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        sprite->pos.x, sprite->pos.y, 0.0f, 1.0f,
-//        -0.5f, -0.5f, 0.0f, 1.0f,
-    };
-    glUniformMatrix4fv(transformation_uniform, 1, GL_FALSE, transformation_matrix);
-
-    //float X = sprite->pos.x;
-    //float Y = sprite->pos.y;
-    float X = 0.0f;
-    float Y = 0.0f;
-    float Z = 0.0f;
-    //float Z = 0.0f;
-    //float W = sprite->dim.w / 10.0f;
-    //float H = sprite->dim.h / 10.0f;
-    float W = 1.0f;
-    float H = 1.0f;
-    cog_debugf("x is %f\n", X);
-    cog_debugf("y is %f\n", Y);
-    cog_debugf("w is %f\n", W);
-    cog_debugf("h is %f\n", H);
-    GLfloat vertices[] = { 
-        X,  Y+H, Z, //top left corner
-        X+W,  Y+H, Z, //top right corner
-        X+W, Y, Z, // bottom right rocner
-        X, Y, Z}; //bottom left corner
-    /*
+    glTranslatef(sprite->pos.x, sprite->pos.y, 0.0);
+    glRotatef(-cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f);
+    float W = sprite->dim.w;
+    float H = sprite->dim.h;
     GLfloat vertices[] = {
-        -1.0f*sprite->w, 1.0f*sprite->h,
-        1.0f*sprite->w, 1.0f*sprite->h,
-        1.0f*sprite->w, -1.0f*sprite->h,
-        -1.0f*sprite->w, -1.0f*sprite->h
+        -1.0f*W, 1.0f*H, 0,
+        1.0f*W, 1.0f*H, 0,
+        1.0f*W, -1.0f*H, 0,
+        -1.0f*W, -1.0f*H, 0,
     };
-    */
-    //GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
     GLfloat tex[] = {
         sprite->tex_pos.x, sprite->tex_pos.y + sprite->tex_dim.h,
         sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y + sprite->tex_dim.h,
@@ -179,135 +44,53 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
         sprite->tex_pos.x, sprite->tex_pos.y};
     GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
         3,1,2}; // second triangle (bottom left - top right - bottom right)
-
-
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-
-    // positions
-    glEnableVertexAttribArray(position_attrib);
-    //glVertexPointer(4, GL_FLOAT, 0, vertices);
-    glVertexAttribPointer(position_attrib, 3, GL_FLOAT, GL_FALSE, 0, vertices);
- 
-    // enable and send vertex texture coordinate attribute data
-    //TEXTURES
-    //glTexCoordPointer(2, GL_FLOAT, 0, tex);
-    glEnableVertexAttribArray(tex_coord_attrib);
-    glVertexAttribPointer(tex_coord_attrib, 2, GL_FLOAT, GL_FALSE, 0, tex);
-
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisable(GL_TEXTURE_2D);
     glPopMatrix();
-    /*
-    glPushMatrix();
-    glClear( GL_COLOR_BUFFER_BIT );
-    glLoadIdentity();
-    float X = 100.f;
-    float Y = 100.f;
-    float Z = 0.0f;
-    float W = 1000.0f;
-    float H = 1000.0f;
-    GLfloat vertices[] = { 
-        X,  Y+H, 0, //top left corner
-        X+W,  Y+H, 0, //top right corner
-        X+W, Y, 0, // bottom right rocner
-        X, Y, 0}; //bottom left corner
-    GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
-    GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
-        3,1,2}; // second triangle (bottom left - top right - bottom right)
-
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glTexCoordPointer(2, GL_FLOAT, 0, tex);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glPopMatrix();
-    */
-
-    /*
-
-    GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
-        3,1,2}; // second triangle (bottom left - top right - bottom right)
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glTexCoordPointer(2, GL_FLOAT, 0, tex);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glPopMatrix();
-    */
-//    glDisable(GL_TEXTURE_2D);
 }
 
 void cog_graphics_draw_text(cog_text* text)
 {
-    glEnable(GL_TEXTURE_2D);
     glPushMatrix();
-    //Bind texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, text->texid);
-
-    //Translate
-    glTranslatef(text->x+text->w,text->y+text->h, 0.0);
+    glEnable(GL_TEXTURE_2D);
+    glLoadIdentity();
+    glTranslatef(text->pos.x+text->dim.w,text->pos.y+text->dim.h, 0.0);
     glRotatef(-cog_math_radtodeg(text->rot), 0.0f, 0.0f, 1.0f);
-
-    GLfloat vertices[] = { 
-        -1.0f*text->w,1.0f*text->h,
-        1.0f*text->w,1.0f*text->h,
-        1.0f*text->w,-1.0f*text->h,
-        -1.0f*text->w,-1.0f*text->h
+    float W = text->dim.w;
+    float H = text->dim.h;
+    GLfloat vertices[] = {
+        -1.0f*W, 1.0f*H, 0,
+        1.0f*W, 1.0f*H, 0,
+        1.0f*W, -1.0f*H, 0,
+        -1.0f*W, -1.0f*H, 0,
     };
     GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
     GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
         3,1,2}; // second triangle (bottom left - top right - bottom right)
-
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
     glVertexPointer(3, GL_FLOAT, 0, vertices);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glPopMatrix();
     glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
 }
 
 void cog_graphics_hwrender()
 {
     glClear( GL_COLOR_BUFFER_BIT );
     glLoadIdentity();
-
     cog_sprite_draw();
     cog_anim_draw();
     cog_text_draw();
-
-/*
-    glBegin(GL_TRIANGLES);
-
-    glVertex3f(100,0,0);
-    glVertex3f(0,100,0);
-    glVertex3f(100,100,0);
-
-    glEnd();
-*/
-
 #if !defined(HAVE_GLES)
     SDL_GL_SwapBuffers();
 #else
@@ -423,33 +206,18 @@ void cog_graphics_hwinit(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 #else
-    glewInit();
-    if(!GLEW_VERSION_2_1)
-    {
-        cog_errorf("Error: OpenGL 2.1 not available, bailing out.");
-    }
-    cog_graphics_init_shaders();
-    glUseProgram(shader_program);
     //GLES
     glClearColor(0.3f,0.3f,0.5f,0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
+    //glOrtho(0, cog_screenw(), 0, cog_screenh(), -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_TEXTURE_2D);
 #endif
-}
-
-void cog_graphics_print_shader_error(int shaderid, char* type)
-{
-    int maxlength;
-    glGetShaderiv(shaderid, GL_INFO_LOG_LENGTH, &maxlength);
-    char* errorbuf = (char*)malloc(sizeof(char)*maxlength);
-    glGetShaderInfoLog(shaderid, maxlength, &maxlength, errorbuf);
-    cog_debugf("Shader %s compilation:", type);
-    perror(errorbuf);
 }
 
 void cog_graphics_read_file(char* buf, char* filename)
