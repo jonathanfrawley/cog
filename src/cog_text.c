@@ -27,11 +27,11 @@ cog_text_id cog_text_add(char* str)
     text->font = default_font;
     text->ptsize = default_ptsize;
     text->c = default_colour;
-    text->x = 0;
-    text->y = 0;
+    text->pos.x = 0;
+    text->pos.y = 0;
     text->rot = 0;
-    text->w = textsurface->w;
-    text->h = textsurface->h;
+    text->dim.w = textsurface->w;
+    text->dim.h = textsurface->h;
     strcpy(text->str, str);
     SDL_FreeSurface(textsurface);
     cog_map_put(&texts, text->id, (cog_dataptr)text);

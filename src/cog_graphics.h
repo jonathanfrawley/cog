@@ -1,22 +1,22 @@
 #ifndef  COG_GRAPHICS_H
 #define  COG_GRAPHICS_H
 
+// GLEW
+#if !defined(HAVE_GLES)
+//#include <GL/gl.h>
 #include <GL/glew.h>
+#else
+#include <GL/gl.h>
+#include <GLES/gl.h>
+#include "eglport.h"
+#endif
+
 #include <SDL/SDL.h>
 
 #include "cog_sprite.h"
 #include "cog_text.h"
 
 #define COG_LAYER_MAX 16
-
-typedef struct
-{
-    GLuint vertid;
-    GLuint fragid;
-    GLuint vertbuffid;
-    GLuint vertorderbuffid;
-    GLuint programid;
-} cog_renderer;
 
 void cog_graphics_render();
 

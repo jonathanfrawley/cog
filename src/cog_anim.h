@@ -14,24 +14,21 @@ typedef struct
     cog_anim_id id;
     cog_uint layer;
     cog_uint transition_millis;
-    cog_uint currentframe;
-    cog_uint currentframe_millis;
+    cog_uint current_frame;
+    cog_uint current_frame_millis;
     cog_bool looped;
     cog_list frames;
-    cog_uint nframes;
+    cog_uint n_frames;
     cog_bool paused;
     //For convenience
-    cog_float x;
-    cog_float y;
-    cog_float w;
-    cog_float h;
+    cog_pos2 pos;
+    cog_dim2 dim;
     cog_float rot;
-    cog_float xvel;
-    cog_float yvel;
+    cog_vec2 vel;
     cog_bool finished;
 } cog_anim;
 
-cog_anim_id cog_anim_add(char* animimg, cog_int nframes);
+cog_anim_id cog_anim_add(char* anim_img, cog_int n_frames);
 cog_bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1);
 cog_bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1);
 cog_anim* cog_anim_get(cog_anim_id);

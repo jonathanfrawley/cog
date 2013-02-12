@@ -2,6 +2,9 @@
 #define  COG_WINDOW_H
 
 #include <SDL/SDL.h>
+#if defined(HAVE_GLES)
+#include "eglport.h"
+#endif
 
 typedef struct cog_window
 {

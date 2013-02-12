@@ -1,7 +1,11 @@
 #ifndef  COG_TEXT_H
 #define  COG_TEXT_H
 
+#if !defined(HAVE_GLES)
 #include <GL/glew.h>
+#else
+#include <GLES/gl.h>
+#endif
 #include <SDL/SDL_ttf.h>
 
 #include "cog_core.h"
@@ -20,11 +24,9 @@ typedef struct
     TTF_Font* font;
     cog_uint ptsize;
     SDL_Color c;
-    cog_float x;
-    cog_float y;
+    cog_pos2 pos;
     cog_float rot;
-    cog_float w;
-    cog_float h;
+    cog_dim2 dim;
     GLuint texid;
     char str[COG_TEXT_MAX];
 } cog_text;
