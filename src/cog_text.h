@@ -20,14 +20,14 @@
 typedef struct
 {
     cog_text_id id;
+    GLuint tex_id;
     cog_uint layer;
     TTF_Font* font;
-    cog_uint ptsize;
+    cog_uint pt_size;
     SDL_Color c;
     cog_pos2 pos;
     cog_float rot;
     cog_dim2 dim;
-    GLuint texid;
     char str[COG_TEXT_MAX];
 } cog_text;
 

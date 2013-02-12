@@ -25,9 +25,10 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
 {
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     glLoadIdentity();
     glTranslatef(sprite->pos.x, sprite->pos.y, 0.0);
-    glRotatef(-cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f);
+    glRotatef(cog_math_radtodeg(sprite->rot), 0.0f, 0.0f, 1.0f);
     float W = sprite->dim.w;
     float H = sprite->dim.h;
     GLfloat vertices[] = {
@@ -58,9 +59,10 @@ void cog_graphics_draw_text(cog_text* text)
 {
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, text->tex_id);
     glLoadIdentity();
     glTranslatef(text->pos.x+text->dim.w,text->pos.y+text->dim.h, 0.0);
-    glRotatef(-cog_math_radtodeg(text->rot), 0.0f, 0.0f, 1.0f);
+    glRotatef(cog_math_radtodeg(text->rot), 0.0f, 0.0f, 1.0f);
     float W = text->dim.w;
     float H = text->dim.h;
     GLfloat vertices[] = {

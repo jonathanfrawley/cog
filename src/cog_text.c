@@ -4,6 +4,7 @@
 #include "cog_graphics.h"
 #include "cog_list.h"
 #include "cog_map.h"
+#include "cog_math.h"
 
 static cog_list activetexts; //text drawn(active) at the moment
 static cog_map texts;
@@ -13,7 +14,7 @@ static TTF_Font* default_font;
 //TODO:Add option to set these.
 static SDL_Color default_colour = {255, 255, 255, 0};
 static const char* default_path = "../media/font/04B_03__.ttf"; 
-static cog_uint default_ptsize = 8;
+static cog_uint default_pt_size = 8;
 static cog_int default_renderstyle = TTF_STYLE_NORMAL;
 
 cog_text_id cog_text_add(char* str)
@@ -23,13 +24,13 @@ cog_text_id cog_text_add(char* str)
     text->layer = COG_TEXT_LAYER;
     TTF_SetFontStyle(default_font, default_renderstyle);
     SDL_Surface* textsurface = TTF_RenderText_Blended(default_font, str, default_colour);
-    text->texid = cog_graphics_upload_surface(textsurface);
+    text->tex_id = cog_graphics_upload_surface(textsurface);
     text->font = default_font;
-    text->ptsize = default_ptsize;
+    text->pt_size = default_pt_size;
     text->c = default_colour;
     text->pos.x = 0;
     text->pos.y = 0;
-    text->rot = 0;
+    text->rot = COG_PI;
     text->dim.w = textsurface->w;
     text->dim.h = textsurface->h;
     strcpy(text->str, str);
@@ -50,7 +51,7 @@ void cog_text_refresh(cog_text_id id)
 
     TTF_SetFontStyle(text->font, default_renderstyle);
     SDL_Surface* text_surface = TTF_RenderText_Blended(text->font, text->str, text->c);
-    text->texid = cog_graphics_upload_surface(text_surface);
+    text->tex_id = cog_graphics_upload_surface(text_surface);
     SDL_FreeSurface(text_surface);
 }
 
@@ -88,11 +89,11 @@ void cog_text_init(void)
         cog_errorf("Couldn't initialize TTF: %s\n", SDL_GetError());
     }
 
-    default_font = TTF_OpenFont(default_path, default_ptsize);
+    default_font = TTF_OpenFont(default_path, default_pt_size);
     if(default_font == COG_NULL)
     {
         cog_errorf("Couldn't load %d pt font from %s: %s\n",
-                default_ptsize, default_path, SDL_GetError());
+                default_pt_size, default_path, SDL_GetError());
     }
     cog_map_init(&texts);
     cog_list_init(&activetexts, sizeof(cog_text_id));

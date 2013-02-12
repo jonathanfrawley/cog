@@ -23,7 +23,7 @@ cog_sprite_id cog_sprite_add_inactive(char* img)
 {
     cog_sprite* sprite = COG_STRUCT_MALLOC(cog_sprite);
     sprite->id = spritecnt++;
-    sprite->texid = cog_graphics_load_texture(img);
+    sprite->tex_id = cog_graphics_load_texture(img);
     sprite->layer = COG_SPRITE_LAYER;
     sprite->pos.x = 0;
     sprite->pos.y = 0;

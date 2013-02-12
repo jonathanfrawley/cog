@@ -18,7 +18,7 @@ typedef struct
 {
     cog_sprite_id id;
     cog_uint layer;
-    GLuint texid;
+    GLuint tex_id;
     //These coords and dimensions are for the whole sprite in the game world.
     cog_pos2 pos;
     cog_dim2 dim;
