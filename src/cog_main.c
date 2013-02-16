@@ -40,7 +40,7 @@ cog_float cog_math_radtodeg(cog_float rad);
 //#global vars
 static cog_window window;
 //##timing
-static cog_uint timedelta;
+static cog_uint delta_millis;
 static cog_uint starttime;
 static cog_uint now;
 static cog_uint framedrawcounter;
@@ -80,8 +80,8 @@ void cog_mainloop()
 cog_bool cog_updateready()
 {
     now = SDL_GetTicks();
-    timedelta = now - starttime;
-    return (timedelta > FRAME_TIME);
+    delta_millis = now - starttime;
+    return (delta_millis > FRAME_TIME);
 }
 
 void cog_sleep(cog_uint millis)
@@ -92,17 +92,17 @@ void cog_sleep(cog_uint millis)
 void cog_sleepuntilupdate()
 {
     now = SDL_GetTicks();
-    timedelta = now - starttime;
-    if(timedelta<FRAME_TIME)
+    delta_millis = now - starttime;
+    if(delta_millis<FRAME_TIME)
     {
-        cog_sleep(FRAME_TIME-timedelta);
+        cog_sleep(FRAME_TIME-delta_millis);
     }
 }
 
 void cog_update()
 {
     now = SDL_GetTicks();
-    timedelta = now - starttime;
+    delta_millis = now - starttime;
 
     //performance timing
     frameupdatecounter++;
@@ -122,8 +122,8 @@ void cog_update()
 
     cog_input_check_keys();
     cog_input_check_mouse();
-    cog_anim_update(timedelta);
-    cog_sprite_update(timedelta);
+    cog_anim_update(delta_millis);
+    cog_sprite_update(delta_millis);
 }
 
 //This is to allow the user to control the mainloop
@@ -146,11 +146,10 @@ cog_bool cog_hasquit()
     return game.finished;
 }
 
-cog_uint cog_gettimedelta()
+cog_uint cog_time_delta_millis()
 {
-    return timedelta;
+    return delta_millis;
 }
-
 
 cog_uint cog_screenw()
 {

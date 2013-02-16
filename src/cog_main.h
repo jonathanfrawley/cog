@@ -12,7 +12,7 @@ void cog_update();
 void cog_loopstep();
 void cog_quit();
 cog_bool cog_hasquit();
-cog_uint cog_gettimedelta();
+cog_uint cog_time_delta_millis();
 
 //default window functions
 cog_uint cog_screenw();

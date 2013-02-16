@@ -66,6 +66,11 @@ SDLKey cog_input_key_code(void)
 
 cog_bool cog_input_mouse_left_pressed()
 {
+    return mouse_left_pressed;
+}
+
+cog_bool cog_input_mouse_left_just_pressed()
+{
     cog_bool just_pressed = mouse_left_just_pressed;
     //Stop mouse from sticking
     mouse_left_just_pressed = COG_FALSE;
@@ -73,6 +78,11 @@ cog_bool cog_input_mouse_left_pressed()
 }
 
 cog_bool cog_input_mouse_right_pressed()
+{
+    return mouse_right_pressed;
+}
+
+cog_bool cog_input_mouse_right_just_pressed()
 {
     cog_bool just_pressed = mouse_right_just_pressed;
     //Stop mouse from sticking
