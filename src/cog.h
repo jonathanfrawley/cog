@@ -1,35 +1,21 @@
 #ifndef  COG_H
 #define  COG_H
 
+#include "cog_anim.h"
+#include "cog_core.h"
+#include "cog_graphics.h"
+#include "cog_input.h"
+#include "cog_list.h"
+#include "cog_log.h"
+#include "cog_map.h"
+#include "cog_main.h"
+#include "cog_math.h"
+#include "cog_snd.h"
+#include "cog_sprite.h"
+#include "cog_state.h"
+#include "cog_test.h"
+#include "cog_text.h"
 #include "cog_types.h"
-
-//main
-void cog_init();
-cog_bool cog_updateready();
-void cog_sleep(cog_uint millis);
-void cog_sleepuntilupdate();
-void cog_mainloop();
-void cog_update();
-void cog_loopstep();
-void cog_quit();
-cog_bool cog_hasquit();
-cog_uint cog_gettimedelta();
-
-//sound
-cog_snd_id cog_snd_load(char* fname);
-void cog_snd_play(cog_snd_id id);
-void cog_snd_play_sfx(cog_snd_id snd);
-void cog_snd_play_music(cog_snd_id snd);
-void cog_snd_stop(cog_snd_id id);
-void cog_snd_stopall();
-
-//default window functions
-cog_uint cog_screenw();
-cog_uint cog_screenh();
-void cog_toggle_fullscreen();
-
-//rng
-cog_uint cog_nextrand();
-
+#include "cog_window.h"
 
 #endif   // COG_H
