@@ -7,6 +7,8 @@
 #include "cog_log.h"
 #include "cog_window.h"
 
+static cog_uint MY_SDL_BUTTON_RIGHT_MASK = 8;
+
 static cog_bool mouse_left_pressed;
 static cog_bool mouse_right_pressed;
 static cog_bool mouse_left_just_pressed = 0;
@@ -122,7 +124,7 @@ void cog_input_check_mouse(void)
     {
         mouse_left_pressed = COG_FALSE;
     }
-    if(SDL_BUTTON_RIGHT == SDL_BUTTON(state))
+    if(MY_SDL_BUTTON_RIGHT_MASK == SDL_BUTTON(state))
     {
         if(!mouse_right_pressed)
         {
