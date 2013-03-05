@@ -11,7 +11,7 @@ void cog_map_init(cog_map* map)
     int i;
     //dynamically allocate pointers
     map->elems = (cog_map_elem**)(cog_malloc(sizeof(cog_map_elem*) * COG_MAP_SIZE));
-    for(i=0;i<COG_MAP_SIZE;i++)
+    for(i=0; i<COG_MAP_SIZE; i++)
     {
         map->elems[i] = COG_NULL;
     }

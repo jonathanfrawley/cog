@@ -3,7 +3,7 @@
 #include "cog_math.h"
 
 static int current_x = 20;
-static int N_ENTITIES = 1;
+static const int N_ENTITIES = 1;
 
 typedef struct entity
 {
@@ -29,7 +29,7 @@ void entity_init(entity* obj)
 
 void entity_update(entity* obj)
 {
-    //Do some simple movement
+    // Do some simple movement
     cog_anim* anim = cog_anim_get(obj->anim);
     //anim->pos.x += 0.001;
     anim->pos.y += 0.001;
@@ -54,7 +54,6 @@ int main(void)
         }
         cog_loopstep();
     }
-    //cog_mainloop();
 
     return 0;
 }

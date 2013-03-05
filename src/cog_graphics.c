@@ -128,9 +128,10 @@ GLuint cog_graphics_upload_surface(SDL_Surface* image)
     SDL_Surface* alphaimage = SDL_CreateRGBSurface(SDL_SWSURFACE,
             image->w,image->h,32,
             rmask,gmask,bmask,amask);
-    if(!alphaimage)
+    if(alphaimage == COG_NULL)
     {
-        fprintf(stderr, "cog_graphics_upload_surface : RGB surface creation failed.");
+        cog_errorf("cog_graphics_upload_surface : RGB surface creation failed.");
+        return -1;
     }
     // Set up so that colorkey pixels become transparent :
     Uint32 colorkey = SDL_MapRGBA(alphaimage->format, rmask, gmask, bmask, amask);
@@ -243,7 +244,7 @@ void cog_graphics_render()
     glClear( GL_COLOR_BUFFER_BIT );
     glLoadIdentity();
 
-    for(cog_int i;i<COG_LAYER_MAX;i++)
+    for(cog_int i=0;i<COG_LAYER_MAX;i++)
     {
         cog_sprite_draw_layer(i);
         cog_anim_draw_layer(i);
