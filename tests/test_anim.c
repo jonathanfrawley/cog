@@ -5,15 +5,13 @@
 static int current_x = 20;
 static const int N_ENTITIES = 1;
 
-typedef struct entity
-{
+typedef struct entity {
     cog_anim_id anim;
 } entity;
 
-void entity_init(entity* obj)
-{
+void entity_init(entity * obj) {
     obj->anim = cog_anim_add("../media/kitten_anim.png", 3);
-    cog_anim* anim = cog_anim_get(obj->anim);
+    cog_anim *anim = cog_anim_get(obj->anim);
     anim->transition_millis = 150;
     anim->looped = COG_TRUE;
     //anim->pos.x = 0.0;
@@ -27,29 +25,24 @@ void entity_init(entity* obj)
     cog_anim_set_frames(obj->anim, 0, 1, 2);
 }
 
-void entity_update(entity* obj)
-{
+void entity_update(entity * obj) {
     // Do some simple movement
-    cog_anim* anim = cog_anim_get(obj->anim);
+    cog_anim *anim = cog_anim_get(obj->anim);
     //anim->pos.x += 0.001;
     anim->pos.y += 0.001;
     anim->rot += (COG_PI * 0.001);
 }
 
-int main(void)
-{
+int main(void) {
     cog_init();
 
     entity myentity[N_ENTITIES];
-    for(int i=0;i<N_ENTITIES;i++) 
-    {
+    for(int i = 0; i < N_ENTITIES; i++) {
         entity_init(&myentity[i]);
     }
 
-    while(! cog_hasquit())
-    {
-        for(int i=0;i<N_ENTITIES;i++) 
-        {
+    while(!cog_hasquit()) {
+        for(int i = 0; i < N_ENTITIES; i++) {
             entity_update(&myentity[i]);
         }
         cog_loopstep();

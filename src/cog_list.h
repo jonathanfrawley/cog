@@ -16,11 +16,10 @@
             curr2->data!=COG_LIST_ENDSENTINAL; \
             curr2=next2,next2=next2->next)
 
-typedef struct cog_list
-{
-    struct cog_list* next;
+typedef struct cog_list {
+    struct cog_list *next;
     cog_dataptr data;
-    cog_uint size; //size of data member
+    cog_uint size;              //size of data member
 } cog_list;
 
 //List structure:
@@ -34,33 +33,33 @@ typedef struct cog_list
 // All data members are alloced and dealloced by the list data structure.
 // Do not rely on these data values lying around for reference elsewhere.
 
-cog_list* cog_list_alloc(cog_uint size);
+cog_list *cog_list_alloc(cog_uint size);
 
-void cog_list_init(cog_list* list, cog_uint size);
+void cog_list_init(cog_list * list, cog_uint size);
 
 //----------------------------------------------------------------------
 //  Adds data to this list. List will handle freeing data.
 //----------------------------------------------------------------------
-void cog_list_append(cog_list* list, cog_dataptr data);
+void cog_list_append(cog_list * list, cog_dataptr data);
 
 //----------------------------------------------------------------------
 //  Removes elem w/ data == data in this list.
 //----------------------------------------------------------------------
-void cog_list_remove(cog_list* list, cog_dataptr data);
+void cog_list_remove(cog_list * list, cog_dataptr data);
 
 //----------------------------------------------------------------------
 //  Empties list and frees data.
 //----------------------------------------------------------------------
-void cog_list_removeall(cog_list* list);
+void cog_list_removeall(cog_list * list);
 
 //----------------------------------------------------------------------
 //  Returns: Length of list.
 //----------------------------------------------------------------------
-cog_uint cog_list_len(cog_list* list);
+cog_uint cog_list_len(cog_list * list);
 
 //----------------------------------------------------------------------
 //  Pops the front element of the list and returns it.
 //----------------------------------------------------------------------
-cog_dataptr cog_list_pop(cog_list* list);
+cog_dataptr cog_list_pop(cog_list * list);
 
-#endif   // COG_LIST_H
+#endif // COG_LIST_H

@@ -14,8 +14,7 @@
 /*-----------------------------------------------------------------------------
  *  Represents a 2D image to be drawn to the screen
  *-----------------------------------------------------------------------------*/
-typedef struct
-{
+typedef struct {
     cog_sprite_id id;
     cog_uint layer;
     GLuint tex_id;
@@ -31,10 +30,10 @@ typedef struct
     cog_vec2 vel;
 } cog_sprite;
 
-cog_sprite_id cog_sprite_add(char* img);
-cog_sprite_id cog_sprite_add_inactive(char* img);
+cog_sprite_id cog_sprite_add(char *img);
+cog_sprite_id cog_sprite_add_inactive(char *img);
 cog_bool cog_sprite_collides_sprite(cog_sprite_id id0, cog_sprite_id id1);
-cog_sprite* cog_sprite_get(cog_sprite_id);
+cog_sprite *cog_sprite_get(cog_sprite_id);
 void cog_sprite_remove(cog_sprite_id id);
 void cog_sprite_removeall(void);
 
@@ -47,4 +46,4 @@ cog_float cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b);
 void cog_sprite_draw_layer(cog_uint layer);
 void cog_sprite_update(cog_float timedelta);
 
-#endif   // COG_SPRITE_H
+#endif // COG_SPRITE_H

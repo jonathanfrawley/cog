@@ -12,17 +12,16 @@
 void cog_graphics_hwinit(void);
 void cog_graphics_swinit(void);
 //file io
-void cog_graphics_read_file(char* buf, char* filename);
+void cog_graphics_read_file(char *buf, char *filename);
 //rendering
 void cog_graphics_render();
-SDL_Surface* cog_graphics_load_image(const char* filename);
+SDL_Surface *cog_graphics_load_image(const char *filename);
 
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
-void cog_graphics_draw_sprite(cog_sprite* sprite)
-{
+void cog_graphics_draw_sprite(cog_sprite * sprite) {
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
@@ -32,18 +31,21 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
     float W = sprite->dim.w;
     float H = sprite->dim.h;
     GLfloat vertices[] = {
-        -1.0f*W, 1.0f*H, 0,
-        1.0f*W, 1.0f*H, 0,
-        1.0f*W, -1.0f*H, 0,
-        -1.0f*W, -1.0f*H, 0,
+        -1.0f * W, 1.0f * H, 0,
+        1.0f * W, 1.0f * H, 0,
+        1.0f * W, -1.0f * H, 0,
+        -1.0f * W, -1.0f * H, 0,
     };
     GLfloat tex[] = {
         sprite->tex_pos.x, sprite->tex_pos.y + sprite->tex_dim.h,
-        sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y + sprite->tex_dim.h,
+        sprite->tex_pos.x + sprite->tex_dim.w,
+        sprite->tex_pos.y + sprite->tex_dim.h,
         sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y,
-        sprite->tex_pos.x, sprite->tex_pos.y};
-    GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
-        3,1,2}; // second triangle (bottom left - top right - bottom right)
+        sprite->tex_pos.x, sprite->tex_pos.y
+    };
+    GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
+        3, 1, 2
+    };                          // second triangle (bottom left - top right - bottom right)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -55,25 +57,25 @@ void cog_graphics_draw_sprite(cog_sprite* sprite)
     glPopMatrix();
 }
 
-void cog_graphics_draw_text(cog_text* text)
-{
+void cog_graphics_draw_text(cog_text * text) {
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, text->tex_id);
     glLoadIdentity();
-    glTranslatef(text->pos.x+text->dim.w,text->pos.y+text->dim.h, 0.0);
+    glTranslatef(text->pos.x + text->dim.w, text->pos.y + text->dim.h, 0.0);
     glRotatef(cog_math_radians_to_degrees(text->rot), 0.0f, 0.0f, 1.0f);
     float W = text->dim.w;
     float H = text->dim.h;
     GLfloat vertices[] = {
-        -1.0f*W, 1.0f*H, 0,
-        1.0f*W, 1.0f*H, 0,
-        1.0f*W, -1.0f*H, 0,
-        -1.0f*W, -1.0f*H, 0,
+        -1.0f * W, 1.0f * H, 0,
+        1.0f * W, 1.0f * H, 0,
+        1.0f * W, -1.0f * H, 0,
+        -1.0f * W, -1.0f * H, 0,
     };
-    GLfloat tex[] = {1,0, 0,0, 0,1, 1,1};
-    GLubyte indices[] = {3,0,1, // first triangle (bottom left - top left - top right)
-        3,1,2}; // second triangle (bottom left - top right - bottom right)
+    GLfloat tex[] = { 1, 0, 0, 0, 0, 1, 1, 1 };
+    GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
+        3, 1, 2
+    };                          // second triangle (bottom left - top right - bottom right)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -85,21 +87,19 @@ void cog_graphics_draw_text(cog_text* text)
     glPopMatrix();
 }
 
-SDL_Surface* cog_graphics_load_image(const char* filename)
-{
+SDL_Surface *cog_graphics_load_image(const char *filename) {
     //Loads an image and returns an SDL_Surface.
-    SDL_Surface* tempsurface;
-    SDL_Surface* result;
+    SDL_Surface *tempsurface;
+    SDL_Surface *result;
 
     tempsurface = IMG_Load(filename);
-    if(!tempsurface)
-    {
-        fprintf(stderr, "Cannot load image file <%s> : <%s>", filename, SDL_GetError());
+    if(!tempsurface) {
+        fprintf(stderr, "Cannot load image file <%s> : <%s>", filename,
+                SDL_GetError());
         return 0;
     }
 
-    if((result = SDL_DisplayFormatAlpha(tempsurface))==NULL)
-    {
+    if((result = SDL_DisplayFormatAlpha(tempsurface)) == NULL) {
         perror(SDL_GetError());
     }
     SDL_FreeSurface(tempsurface);
@@ -107,9 +107,8 @@ SDL_Surface* cog_graphics_load_image(const char* filename)
     return result;
 }
 
-GLuint cog_graphics_upload_surface(SDL_Surface* image)
-{
-    glPixelStorei(GL_UNPACK_ALIGNMENT,4);
+GLuint cog_graphics_upload_surface(SDL_Surface * image) {
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
     int w = image->w;
     int h = image->h;
@@ -125,21 +124,23 @@ GLuint cog_graphics_upload_surface(SDL_Surface* image)
     int amask = 0xff000000;
 #endif
     // Create the target alpha surface with correct color component ordering
-    SDL_Surface* alphaimage = SDL_CreateRGBSurface(SDL_SWSURFACE,
-            image->w,image->h,32,
-            rmask,gmask,bmask,amask);
-    if(alphaimage == COG_NULL)
-    {
-        cog_errorf("cog_graphics_upload_surface : RGB surface creation failed.");
+    SDL_Surface *alphaimage = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                                   image->w, image->h, 32,
+                                                   rmask, gmask, bmask,
+                                                   amask);
+    if(alphaimage == COG_NULL) {
+        cog_errorf
+            ("cog_graphics_upload_surface : RGB surface creation failed.");
         return -1;
     }
     // Set up so that colorkey pixels become transparent :
-    Uint32 colorkey = SDL_MapRGBA(alphaimage->format, rmask, gmask, bmask, amask);
+    Uint32 colorkey =
+        SDL_MapRGBA(alphaimage->format, rmask, gmask, bmask, amask);
     SDL_FillRect(alphaimage, 0, colorkey);
     colorkey = SDL_MapRGBA(image->format, rmask, gmask, bmask, amask);
     SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey);
     SDL_Rect area;
-    SDL_SetAlpha(image, 0, amask); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
+    SDL_SetAlpha(image, 0, amask);      //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
     // Copy the surface into the GL texture image :
     area.x = 0;
     area.y = 0;
@@ -155,33 +156,25 @@ GLuint cog_graphics_upload_surface(SDL_Surface* image)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     // Map the alpha surface to the texture
     glTexImage2D(GL_TEXTURE_2D,
-            0,
-            GL_RGBA8,
-            w,
-            h,
-            0,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
-            alphaimage->pixels);
+                 0,
+                 GL_RGBA8,
+                 w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, alphaimage->pixels);
     SDL_FreeSurface(alphaimage);
     return textureID;
 }
 
-GLuint cog_graphics_load_texture(char* filename)
-{
-    SDL_Surface* image = cog_graphics_load_image(filename);
+GLuint cog_graphics_load_texture(char *filename) {
+    SDL_Surface *image = cog_graphics_load_image(filename);
     GLuint texture = cog_graphics_upload_surface(image);
     SDL_FreeSurface(image);
     return texture;
 }
 
-void cog_graphics_init(void)
-{
+void cog_graphics_init(void) {
     cog_graphics_hwinit();
 }
 
-void cog_graphics_hwinit(void)
-{
+void cog_graphics_hwinit(void) {
 #ifdef HAVE_GLES
     //GLES
     cog_graphics_init_shaders();
@@ -189,7 +182,7 @@ void cog_graphics_hwinit(void)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glClearColor(0.3f,0.3f,0.5f,0.0f);
+    glClearColor(0.3f, 0.3f, 0.5f, 0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
@@ -197,7 +190,7 @@ void cog_graphics_hwinit(void)
     glLoadIdentity();
 #else
     //GLES
-    glClearColor(0.3f,0.3f,0.5f,0.0f);
+    glClearColor(0.3f, 0.3f, 0.5f, 0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
@@ -209,43 +202,37 @@ void cog_graphics_hwinit(void)
 #endif
 }
 
-void cog_graphics_read_file(char* buf, char* filename)
-{
+void cog_graphics_read_file(char *buf, char *filename) {
     FILE *fp;
-    fp=fopen(filename, "r");
-    if(fp==0)
-    {
+    fp = fopen(filename, "r");
+    if(fp == 0) {
         fprintf(stderr, "Can't open file %s", filename);
         perror("Exiting");
     }
-    fseek (fp , 0 , SEEK_END);
+    fseek(fp, 0, SEEK_END);
     int filesize = ftell(fp);
     rewind(fp);
-    if(filesize>COG_MAX_FILE_BUF)
-    {
+    if(filesize > COG_MAX_FILE_BUF) {
         perror("File too big to be read in");
         goto cleanup;
     }
     int amountread = fread(buf,
-            sizeof(char),
-            COG_MAX_FILE_BUF,
-            fp);
-    if(amountread!=filesize)
-    {
+                           sizeof(char),
+                           COG_MAX_FILE_BUF,
+                           fp);
+    if(amountread != filesize) {
         perror("Error reading in file.");
         goto cleanup;
     }
-cleanup:
+  cleanup:
     fclose(fp);
 }
 
-void cog_graphics_render()
-{
-    glClear( GL_COLOR_BUFFER_BIT );
+void cog_graphics_render() {
+    glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
-    for(cog_int i=0;i<COG_LAYER_MAX;i++)
-    {
+    for(cog_int i = 0; i < COG_LAYER_MAX; i++) {
         cog_sprite_draw_layer(i);
         cog_anim_draw_layer(i);
         cog_text_draw_layer(i);

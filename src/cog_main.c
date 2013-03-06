@@ -27,8 +27,7 @@
 static cog_uint FRAME_TIME = 1000 / FRAMES_PER_SECOND;
 
 //data structures
-typedef struct
-{
+typedef struct {
     int finished;
 } cog_game;
 static cog_game game;
@@ -49,8 +48,7 @@ static cog_uint frametimecounter;
 static cog_uint frameupdatecounter;
 
 //implementations
-void cog_init(void)
-{
+void cog_init(void) {
     //Init cog
     game.finished = 0;
     cog_snd_init();
@@ -65,10 +63,8 @@ void cog_init(void)
 }
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
-void cog_mainloop()
-{
-    while(!game.finished)
-    {
+void cog_mainloop() {
+    while(!game.finished) {
         cog_loopstep();
     }
 }
@@ -77,30 +73,25 @@ void cog_mainloop()
  * This will be return true when the user should call another
  * cog_update()
  * */
-cog_bool cog_updateready()
-{
+cog_bool cog_updateready() {
     now = SDL_GetTicks();
     delta_millis = now - starttime;
     return (delta_millis > FRAME_TIME);
 }
 
-void cog_sleep(cog_uint millis)
-{
+void cog_sleep(cog_uint millis) {
     SDL_Delay(millis);
 }
 
-void cog_sleepuntilupdate()
-{
+void cog_sleepuntilupdate() {
     now = SDL_GetTicks();
     delta_millis = now - starttime;
-    if(delta_millis<FRAME_TIME)
-    {
-        cog_sleep(FRAME_TIME-delta_millis);
+    if(delta_millis < FRAME_TIME) {
+        cog_sleep(FRAME_TIME - delta_millis);
     }
 }
 
-void cog_update()
-{
+void cog_update() {
     now = SDL_GetTicks();
     delta_millis = now - starttime;
 
@@ -110,10 +101,10 @@ void cog_update()
     starttime = SDL_GetTicks();
     //Useful logging every second.
     frametimecounter += lastframetime;
-    if(frametimecounter >= 1000)
-    {
+    if(frametimecounter >= 1000) {
 #ifdef DEBUG
-        cog_debugf("nupdates <%d>, ndraws <%d>", frameupdatecounter, framedrawcounter);
+        cog_debugf("nupdates <%d>, ndraws <%d>", frameupdatecounter,
+                   framedrawcounter);
 #endif //DEBUG
         frametimecounter = 0;
         framedrawcounter = 0;
@@ -127,47 +118,38 @@ void cog_update()
 }
 
 //This is to allow the user to control the mainloop
-void cog_loopstep()
-{
+void cog_loopstep() {
     cog_update();
     framedrawcounter++;
     cog_graphics_render();
 }
 
-void cog_quit()
-{
+void cog_quit() {
     game.finished = 1;
     //TODO:Add more cleanup here.
     alutExit();
 }
 
-cog_bool cog_hasquit()
-{
+cog_bool cog_hasquit() {
     return game.finished;
 }
 
-cog_uint cog_time_delta_millis()
-{
+cog_uint cog_time_delta_millis() {
     return delta_millis;
 }
 
-cog_uint cog_screenw()
-{
+cog_uint cog_screenw() {
     return window.screen->w;
 }
 
-cog_uint cog_screenh()
-{
+cog_uint cog_screenh() {
     return window.screen->h;
 }
 
-cog_uint cog_nextrand()
-{
+cog_uint cog_nextrand() {
     return rand();
 }
 
-void cog_toggle_fullscreen()
-{
+void cog_toggle_fullscreen() {
     cog_window_toggle_fullscreen(&window);
 }
-

@@ -1,8 +1,6 @@
 #include "cog.h"
 
-
-int main(void)
-{
+int main(void) {
     cog_init();
     cog_snd_id snd = cog_snd_load("../media/testsnd.wav");
     cog_snd_play(snd);
@@ -15,4 +13,3 @@ int main(void)
     cog_sleep(15 * 1000);
     cog_quit();
 }
-

@@ -18,4 +18,4 @@
 #include "cog_types.h"
 #include "cog_window.h"
 
-#endif   // COG_H
+#endif // COG_H

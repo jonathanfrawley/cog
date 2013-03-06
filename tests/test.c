@@ -1,7 +1,6 @@
 #include "cog.h"
 
-int main(void)
-{
+int main(void) {
     cog_init();
     cog_mainloop();
     cog_quit();

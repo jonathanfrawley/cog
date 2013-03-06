@@ -22,4 +22,4 @@ void cog_toggle_fullscreen();
 //rng
 cog_uint cog_nextrand();
 
-#endif   // COG_MAIN_H
+#endif // COG_MAIN_H

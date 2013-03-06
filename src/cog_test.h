@@ -7,4 +7,4 @@
 
 void cog_test(cog_string testname, cog_bool condition);
 
-#endif   // COG_TEST_H
+#endif // COG_TEST_H

@@ -2,16 +2,13 @@
 
 #include "cog_log.h"
 
-void cog_window_init(cog_window* window)
-{
+void cog_window_init(cog_window * window) {
     //if( SDL_Init(SDL_INIT_EVERYTHING) != 0 )
-    if(SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
+    if(SDL_Init(SDL_INIT_VIDEO) != 0) {
         cog_errorf(SDL_GetError());
     }
 #if defined(HAVE_GLES)
-    if(EGL_Open())
-    {
+    if(EGL_Open()) {
         cog_errorf("Failed initialising EGL");
     }
 #endif
@@ -30,19 +27,17 @@ void cog_window_init(cog_window* window)
     int bpp = 0;
     int flags = SDL_SWSURFACE | SDL_FULLSCREEN;
 #endif
-    if( (window->screen = SDL_SetVideoMode(width, height, bpp, flags)) == 0 )
-    {
-        cog_errorf("cog_window_init failed when creating SDL window <%s> \n", SDL_GetError());
+    if((window->screen = SDL_SetVideoMode(width, height, bpp, flags)) == 0) {
+        cog_errorf("cog_window_init failed when creating SDL window <%s> \n",
+                   SDL_GetError());
     }
-
 #if defined(HAVE_GLES)
     EGL_Init();
 #endif
 
-    SDL_WM_SetCaption( "cog game", NULL );
+    SDL_WM_SetCaption("cog game", NULL);
 }
 
-void cog_window_toggle_fullscreen(cog_window* window)
-{
+void cog_window_toggle_fullscreen(cog_window * window) {
     SDL_WM_ToggleFullScreen(window->screen);
 }
