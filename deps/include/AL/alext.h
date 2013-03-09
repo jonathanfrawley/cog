@@ -112,9 +112,9 @@ extern "C" {
 
 #ifndef AL_EXT_STATIC_BUFFER
 #define AL_EXT_STATIC_BUFFER 1
-typedef ALvoid (AL_APIENTRY*PFNALBUFFERDATASTATICPROC)(const ALint,ALenum,ALvoid*,ALsizei,ALsizei);
+    typedef ALvoid(AL_APIENTRY* PFNALBUFFERDATASTATICPROC)(const ALint,ALenum,ALvoid*,ALsizei,ALsizei);
 #ifdef AL_ALEXT_PROTOTYPES
-AL_API ALvoid AL_APIENTRY alBufferDataStatic(const ALint buffer, ALenum format, ALvoid *data, ALsizei len, ALsizei freq);
+    AL_API ALvoid AL_APIENTRY alBufferDataStatic(const ALint buffer, ALenum format, ALvoid* data, ALsizei len, ALsizei freq);
 #endif
 #endif
 
@@ -130,11 +130,11 @@ AL_API ALvoid AL_APIENTRY alBufferDataStatic(const ALint buffer, ALenum format, 
 
 #ifndef ALC_EXT_thread_local_context
 #define ALC_EXT_thread_local_context 1
-typedef ALCboolean  (ALC_APIENTRY*PFNALCSETTHREADCONTEXTPROC)(ALCcontext *context);
-typedef ALCcontext* (ALC_APIENTRY*PFNALCGETTHREADCONTEXTPROC)(void);
+    typedef ALCboolean(ALC_APIENTRY* PFNALCSETTHREADCONTEXTPROC)(ALCcontext* context);
+    typedef ALCcontext* (ALC_APIENTRY* PFNALCGETTHREADCONTEXTPROC)(void);
 #ifdef AL_ALEXT_PROTOTYPES
-ALC_API ALCboolean  ALC_APIENTRY alcSetThreadContext(ALCcontext *context);
-ALC_API ALCcontext* ALC_APIENTRY alcGetThreadContext(void);
+    ALC_API ALCboolean  ALC_APIENTRY alcSetThreadContext(ALCcontext* context);
+    ALC_API ALCcontext* ALC_APIENTRY alcGetThreadContext(void);
 #endif
 #endif
 
@@ -147,9 +147,9 @@ ALC_API ALCcontext* ALC_APIENTRY alcGetThreadContext(void);
 #define AL_SOFT_buffer_sub_data 1
 #define AL_BYTE_RW_OFFSETS_SOFT                  0x1031
 #define AL_SAMPLE_RW_OFFSETS_SOFT                0x1032
-typedef ALvoid (AL_APIENTRY*PFNALBUFFERSUBDATASOFTPROC)(ALuint,ALenum,const ALvoid*,ALsizei,ALsizei);
+    typedef ALvoid(AL_APIENTRY* PFNALBUFFERSUBDATASOFTPROC)(ALuint,ALenum,const ALvoid*,ALsizei,ALsizei);
 #ifdef AL_ALEXT_PROTOTYPES
-AL_API ALvoid AL_APIENTRY alBufferSubDataSOFT(ALuint buffer,ALenum format,const ALvoid *data,ALsizei offset,ALsizei length);
+    AL_API ALvoid AL_APIENTRY alBufferSubDataSOFT(ALuint buffer,ALenum format,const ALvoid* data,ALsizei offset,ALsizei length);
 #endif
 #endif
 

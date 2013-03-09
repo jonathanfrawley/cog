@@ -28,12 +28,12 @@ void cog_input_check_keys(void) {
     SDL_Event event;
     key_just_pressed = COG_FALSE;
     while(SDL_PollEvent(&event)) {
-        switch (event.type) {
+        switch(event.type) {
         case SDL_QUIT:
             cog_quit();
             break;
         case SDL_KEYDOWN:
-            switch (event.key.keysym.sym) {
+            switch(event.key.keysym.sym) {
             case SDLK_ESCAPE:
                 cog_quit();
                 break;

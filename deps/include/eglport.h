@@ -40,9 +40,9 @@ extern "C" {
     //#warning Using RAW EGL mode USE_EGL_RAW
 #elif !defined(USE_EGL_RAW) && defined(USE_EGL_SDL)
     //#warning Using SDL EGL mode USE_EGL_SDL
-#else	// default configuration
-    #define USE_EGL_SDL 1
-    #define USE_GLES1 1
+#else   // default configuration
+#define USE_EGL_SDL 1
+#define USE_GLES1 1
 #endif
 // GLES Version
 //  USE_GLES1
@@ -53,19 +53,19 @@ extern "C" {
 //  CAANOO
 
 // External API
-void    EGL_Close                   ( void );
-int8_t  EGL_Open                    ( void );
-int8_t  EGL_Init                    ( void );
-void    EGL_SwapBuffers             ( void );
+    void    EGL_Close(void);
+    int8_t  EGL_Open(void);
+    int8_t  EGL_Init(void);
+    void    EGL_SwapBuffers(void);
 
 // Internal API
-int8_t  ConfigureEGL                ( EGLConfig config );
-int8_t  FindAppropriateEGLConfigs   ( void );
-int8_t  CheckEGLErrors              ( const char* file, uint16_t line );
+    int8_t  ConfigureEGL(EGLConfig config);
+    int8_t  FindAppropriateEGLConfigs(void);
+    int8_t  CheckEGLErrors(const char* file, uint16_t line);
 
-void    Platform_Open               ( void );
-void    Platform_Close              ( void );
-void    Platform_VSync              ( void );
+    void    Platform_Open(void);
+    void    Platform_Close(void);
+    void    Platform_VSync(void);
 
 #if defined(DEBUG)
 #define GET_EGLERROR(X)                                     \
