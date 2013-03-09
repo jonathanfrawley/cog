@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 
-void cog_errorf(const char *logMsg, ...) {
+void cog_errorf(const char* logMsg, ...) {
     va_list ap;
     va_start(ap, logMsg);
     char buf[COG_MAX_BUF];
@@ -14,7 +14,7 @@ void cog_errorf(const char *logMsg, ...) {
     assert(0);
 }
 
-void cog_debugf(const char *logMsg, ...) {
+void cog_debugf(const char* logMsg, ...) {
     va_list ap;
     va_start(ap, logMsg);
     char buf[COG_MAX_BUF];
@@ -22,7 +22,7 @@ void cog_debugf(const char *logMsg, ...) {
     printf("DEBUG: %s \n", buf);
 }
 
-void cog_infof(const char *logMsg, ...) {
+void cog_infof(const char* logMsg, ...) {
     va_list ap;
     va_start(ap, logMsg);
     char buf[COG_MAX_BUF];

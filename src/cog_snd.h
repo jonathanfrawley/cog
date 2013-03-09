@@ -12,7 +12,7 @@ typedef struct {
 } cog_snd;
 
 void cog_snd_init(void);
-cog_snd_id cog_snd_load(char *fname);
+cog_snd_id cog_snd_load(char* fname);
 void cog_snd_play(cog_snd_id id);
 void cog_snd_play_sfx(cog_snd_id snd);
 void cog_snd_play_music(cog_snd_id snd);

@@ -47,7 +47,6 @@ void cog_input_check_keys(void) {
                            (event.key.keysym.sym));
                 break;
             }
-
         }
     }
 }

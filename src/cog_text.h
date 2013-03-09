@@ -21,7 +21,7 @@ typedef struct {
     cog_text_id id;
     GLuint tex_id;
     cog_uint layer;
-    TTF_Font *font;
+    TTF_Font* font;
     cog_uint pt_size;
     SDL_Color c;
     cog_pos2 pos;
@@ -30,12 +30,12 @@ typedef struct {
     char str[COG_TEXT_MAX];
 } cog_text;
 
-cog_text_id cog_text_add(char *text);
-cog_text *cog_text_get(cog_text_id id);
+cog_text_id cog_text_add(char* text);
+cog_text* cog_text_get(cog_text_id id);
 void cog_text_refresh(cog_text_id id);
 void cog_text_remove(cog_text_id id);
 void cog_text_removeall(void);
-void cog_text_set_str(cog_text_id id, char *str);
+void cog_text_set_str(cog_text_id id, char* str);
 
 /*-----------------------------------------------------------------------------
  *  Internal

@@ -24,9 +24,9 @@ void cog_graphics_render();
  *  Internal
  *-----------------------------------------------------------------------------*/
 void cog_graphics_init(void);
-void cog_graphics_draw_sprite(cog_sprite * sprite);
-void cog_graphics_draw_text(cog_text * text);
-GLuint cog_graphics_load_texture(char *filename);
-GLuint cog_graphics_upload_surface(SDL_Surface * image);
+void cog_graphics_draw_sprite(cog_sprite* sprite);
+void cog_graphics_draw_text(cog_text* text);
+GLuint cog_graphics_load_texture(char* filename);
+GLuint cog_graphics_upload_surface(SDL_Surface* image);
 
 #endif // COG_GRAPHICS_H

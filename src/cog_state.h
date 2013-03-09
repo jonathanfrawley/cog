@@ -22,7 +22,7 @@ typedef struct cog_state_transition {
      * Transition function called when the event occurs while in this state.
      * It returns the new state's type.
      * */
-      cog_state(*transition_fn) (void);
+    cog_state(*transition_fn) (void);
 } cog_state_transition;
 
 typedef struct cog_state_fsm {
@@ -31,30 +31,30 @@ typedef struct cog_state_fsm {
     cog_list events;
 } cog_state_fsm;
 
-cog_state_fsm *cog_state_fsm_alloc(void);
-void cog_state_fsm_init(cog_state_fsm * fsm);
+cog_state_fsm* cog_state_fsm_alloc(void);
+void cog_state_fsm_init(cog_state_fsm* fsm);
 /* *
  * Add a single transition.
  * */
-void cog_state_fsm_add_transition(cog_state_fsm * fsm,
-                                  cog_state_transition * transition);
+void cog_state_fsm_add_transition(cog_state_fsm* fsm,
+                                  cog_state_transition* transition);
 /* *
  * Add an array of transitions.
  * */
-void cog_state_fsm_add_transitions(cog_state_fsm * fsm,
-                                   cog_state_transition * transitions,
+void cog_state_fsm_add_transitions(cog_state_fsm* fsm,
+                                   cog_state_transition* transitions,
                                    cog_uint size);
 /* *
  * Process any new events and transition the state of the fsm accordingly.
  * */
-void cog_state_fsm_update(cog_state_fsm * fsm);
+void cog_state_fsm_update(cog_state_fsm* fsm);
 /* *
  * Push an event which will cause a transition in the cog_state_fsm when it reaches the front of the fifo.
  * */
-void cog_state_fsm_push_event(cog_state_fsm * fsm, cog_event event);
+void cog_state_fsm_push_event(cog_state_fsm* fsm, cog_event event);
 /* *
  * Set the current state of the FSM.
  * */
-void cog_state_fsm_set_state(cog_state_fsm * fsm, cog_state state);
+void cog_state_fsm_set_state(cog_state_fsm* fsm, cog_state state);
 
 #endif // COG_STATE_H

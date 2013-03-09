@@ -94,7 +94,6 @@ void cog_sleepuntilupdate() {
 void cog_update() {
     now = SDL_GetTicks();
     delta_millis = now - starttime;
-
     //performance timing
     frameupdatecounter++;
     lastframetime = SDL_GetTicks() - starttime;
@@ -110,7 +109,6 @@ void cog_update() {
         framedrawcounter = 0;
         frameupdatecounter = 0;
     }
-
     cog_input_check_keys();
     cog_input_check_mouse();
     cog_anim_update(delta_millis);

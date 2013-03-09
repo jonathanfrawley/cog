@@ -27,10 +27,10 @@ typedef struct {
     cog_bool finished;
 } cog_anim;
 
-cog_anim_id cog_anim_add(char *anim_img, cog_int n_frames);
+cog_anim_id cog_anim_add(char* anim_img, cog_int n_frames);
 cog_bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1);
 cog_bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1);
-cog_anim *cog_anim_get(cog_anim_id);
+cog_anim* cog_anim_get(cog_anim_id);
 void cog_anim_remove(cog_anim_id id);
 void cog_anim_removeall(void);
 void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...);

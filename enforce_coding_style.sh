@@ -8,6 +8,7 @@ do
         # I don't like the -cs option (space after casts)
         # but indent doesn't recognise user types so we 
         # should be consistent.
-        indent -cs -br -ce -brf -i4 -nsai -nsaw -nsaf -npcs -nut -sob -npsl -nss $file -o $file
+        #indent -cs -br -ce -brf -i4 -nsai -nsaw -nsaf -npcs -nut -sob -npsl -nss $file -o $file
+        astyle --style=java --delete-empty-lines --add-brackets --convert-tabs --align-pointer=type --lineend=linux --suffix=none $file
     done
 done
