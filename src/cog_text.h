@@ -28,6 +28,7 @@ typedef struct {
     cog_float rot;
     cog_dim2 dim;
     char str[COG_TEXT_MAX];
+    cog_float alpha;
 } cog_text;
 
 cog_text_id cog_text_add(char* text);

@@ -34,6 +34,7 @@ cog_text_id cog_text_add(char* str) {
     text->rot = COG_PI;
     text->dim.w = textsurface->w;
     text->dim.h = textsurface->h;
+    text->alpha = 1.0f;
     strcpy(text->str, str);
     SDL_FreeSurface(textsurface);
     cog_map_put(&texts, text->id, (cog_dataptr) text);
