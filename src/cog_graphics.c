@@ -64,6 +64,7 @@ void cog_graphics_draw_text(cog_text* text) {
     glLoadIdentity();
     glTranslatef(text->pos.x + text->dim.w, text->pos.y + text->dim.h, 0.0);
     glRotatef(cog_math_radians_to_degrees(text->rot), 0.0f, 0.0f, 1.0f);
+    glColor4f(1.0, 1.0, 1.0, text->alpha);
     float W = text->dim.w;
     float H = text->dim.h;
     GLfloat vertices[] = {
@@ -84,6 +85,8 @@ void cog_graphics_draw_text(cog_text* text) {
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisable(GL_TEXTURE_2D);
+    //Restore alpha to normal
+    glColor4f(1.0, 1.0, 1.0, 1.0);
     glPopMatrix();
 }
 
@@ -119,14 +122,14 @@ GLuint cog_graphics_upload_surface(SDL_Surface* image) {
     int bmask = 0x00ff0000;
     int amask = 0xff000000;
 #endif
-    // Create the target alpha surface with correct color component ordering
+    // Create the target alpha surface with correct colour component ordering
     SDL_Surface* alphaimage = SDL_CreateRGBSurface(SDL_SWSURFACE,
                               image->w, image->h, 32,
                               rmask, gmask, bmask,
                               amask);
     if(alphaimage == COG_NULL) {
-        cog_errorf
-        ("cog_graphics_upload_surface : RGB surface creation failed.");
+        cog_errorf("cog_graphics_upload_surface : "
+                   "RGB surface creation failed.");
         return -1;
     }
     // Set up so that colorkey pixels become transparent :
