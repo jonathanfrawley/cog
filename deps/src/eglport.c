@@ -297,48 +297,48 @@ int8_t CheckEGLErrors(const char* file, uint16_t line) {
     error = eglGetError();
     if(error != EGL_SUCCESS && error != 0) {
         switch(error) {
-        case EGL_NOT_INITIALIZED:
-            errortext = "EGL_NOT_INITIALIZED";
-            break;
-        case EGL_BAD_ACCESS:
-            errortext = "EGL_BAD_ACCESS";
-            break;
-        case EGL_BAD_ALLOC:
-            errortext = "EGL_BAD_ALLOC";
-            break;
-        case EGL_BAD_ATTRIBUTE:
-            errortext = "EGL_BAD_ATTRIBUTE";
-            break;
-        case EGL_BAD_CONTEXT:
-            errortext = "EGL_BAD_CONTEXT";
-            break;
-        case EGL_BAD_CONFIG:
-            errortext = "EGL_BAD_CONFIG";
-            break;
-        case EGL_BAD_CURRENT_SURFACE:
-            errortext = "EGL_BAD_CURRENT_SURFACE";
-            break;
-        case EGL_BAD_DISPLAY:
-            errortext = "EGL_BAD_DISPLAY";
-            break;
-        case EGL_BAD_SURFACE:
-            errortext = "EGL_BAD_SURFACE";
-            break;
-        case EGL_BAD_MATCH:
-            errortext = "EGL_BAD_MATCH";
-            break;
-        case EGL_BAD_PARAMETER:
-            errortext = "EGL_BAD_PARAMETER";
-            break;
-        case EGL_BAD_NATIVE_PIXMAP:
-            errortext = "EGL_BAD_NATIVE_PIXMAP";
-            break;
-        case EGL_BAD_NATIVE_WINDOW:
-            errortext = "EGL_BAD_NATIVE_WINDOW";
-            break;
-        default:
-            errortext = "Unknown EGL Error";
-            break;
+            case EGL_NOT_INITIALIZED:
+                errortext = "EGL_NOT_INITIALIZED";
+                break;
+            case EGL_BAD_ACCESS:
+                errortext = "EGL_BAD_ACCESS";
+                break;
+            case EGL_BAD_ALLOC:
+                errortext = "EGL_BAD_ALLOC";
+                break;
+            case EGL_BAD_ATTRIBUTE:
+                errortext = "EGL_BAD_ATTRIBUTE";
+                break;
+            case EGL_BAD_CONTEXT:
+                errortext = "EGL_BAD_CONTEXT";
+                break;
+            case EGL_BAD_CONFIG:
+                errortext = "EGL_BAD_CONFIG";
+                break;
+            case EGL_BAD_CURRENT_SURFACE:
+                errortext = "EGL_BAD_CURRENT_SURFACE";
+                break;
+            case EGL_BAD_DISPLAY:
+                errortext = "EGL_BAD_DISPLAY";
+                break;
+            case EGL_BAD_SURFACE:
+                errortext = "EGL_BAD_SURFACE";
+                break;
+            case EGL_BAD_MATCH:
+                errortext = "EGL_BAD_MATCH";
+                break;
+            case EGL_BAD_PARAMETER:
+                errortext = "EGL_BAD_PARAMETER";
+                break;
+            case EGL_BAD_NATIVE_PIXMAP:
+                errortext = "EGL_BAD_NATIVE_PIXMAP";
+                break;
+            case EGL_BAD_NATIVE_WINDOW:
+                errortext = "EGL_BAD_NATIVE_WINDOW";
+                break;
+            default:
+                errortext = "Unknown EGL Error";
+                break;
         }
         printf("ERROR: EGL Error detected in file %s at line %d: %s (0x%X)\n", file, line, errortext, error);
         return 1;
