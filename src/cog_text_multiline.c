@@ -8,7 +8,7 @@
 
 // TODO: Keep track of multiline strings.
 static cog_text_multiline_id text_multiline_cnt;
-static cog_float padding = 100.0f;
+static cog_float padding = 10.0f;
 
 cog_text_multiline_id cog_text_multiline_add(cog_string str, 
         cog_float top_left_x, 
@@ -24,7 +24,7 @@ cog_text_multiline_id cog_text_multiline_add(cog_string str,
         cog_text* text = cog_text_get(text_id);
         // This is the important bit, move the line down on the y.
         // Add a bit of padding as it can look bad otherwise.
-        text->pos.y = (((cog_float)line_no) * text->dim.h) + padding;
+        text->pos.y = (((cog_float)line_no) * text->dim.h) + (((cog_float)line_no) * padding);
         cog_list_append(text_list, (cog_dataptr) &text_id);
         line = strtok(NULL, "\n");
         line_no++;
