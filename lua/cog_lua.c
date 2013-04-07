@@ -19,7 +19,7 @@ static int cogl_quit(lua_State* L) {
     return 0;
 }
 
-int luaopen_libcogl(lua_State *L) {
+int luaopen_libcogl(lua_State* L) {
     lua_register(L, "cogl_init", cogl_init);
     lua_register(L, "cogl_mainloop", cogl_mainloop);
     lua_register(L, "cogl_quit", cogl_quit);

@@ -9,7 +9,7 @@ typedef struct {
     cog_list* text_ids;
 } cog_text_multiline;
 
-cog_text_multiline_id cog_text_multiline_add(cog_string str, 
+cog_text_multiline_id cog_text_multiline_add(cog_string str,
         cog_pos2 pos);
 
 #endif   // COG_TEXT_MULTILINE_H
