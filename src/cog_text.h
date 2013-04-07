@@ -31,12 +31,12 @@ typedef struct {
     cog_float alpha;
 } cog_text;
 
-cog_text_id cog_text_add(char* text);
+cog_text_id cog_text_add(cog_string text);
 cog_text* cog_text_get(cog_text_id id);
 void cog_text_refresh(cog_text_id id);
 void cog_text_remove(cog_text_id id);
 void cog_text_removeall(void);
-void cog_text_set_str(cog_text_id id, char* str);
+void cog_text_set_str(cog_text_id id, cog_string str);
 
 /*-----------------------------------------------------------------------------
  *  Internal

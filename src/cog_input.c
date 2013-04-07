@@ -115,3 +115,13 @@ void cog_input_check_mouse(void) {
         mouse_right_pressed = COG_FALSE;
     }
 }
+
+cog_bool cog_input_space_pressed() {
+    if(cog_input_key_pressed()) {
+        SDLKey key = cog_input_key_code();
+        if(key == SDLK_SPACE) {
+            return COG_TRUE;
+        }
+    }
+    return COG_FALSE;
+}

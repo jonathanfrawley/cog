@@ -151,3 +151,19 @@ cog_uint cog_nextrand() {
 void cog_toggle_fullscreen() {
     cog_window_toggle_fullscreen(&window);
 }
+
+void cog_clear() {
+    cog_sprite_removeall();
+    cog_anim_removeall();
+    cog_text_removeall();
+    cog_snd_stopall();
+}
+
+void cog_set_background(char* img) {
+    cog_sprite_id id = cog_sprite_add(img);
+    cog_sprite* sprite = cog_sprite_get(id);
+    sprite->pos.x = cog_screenw() * 0.5;
+    sprite->pos.y = cog_screenh() * 0.5;
+    sprite->dim.w = cog_screenw() * 0.5;
+    sprite->dim.h = cog_screenh() * 0.5;
+}

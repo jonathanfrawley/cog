@@ -14,11 +14,11 @@ static TTF_Font* default_font;
 //TODO:Add option to set these.
 static SDL_Color default_colour = { 255, 255, 255, 0 };
 
-static const char* default_path = "../media/font/04B_03__.ttf";
+static const cog_string default_path = "../media/font/04B_03__.ttf";
 static cog_uint default_pt_size = 8;
 static cog_int default_renderstyle = TTF_STYLE_NORMAL;
 
-cog_text_id cog_text_add(char* str) {
+cog_text_id cog_text_add(cog_string str) {
     cog_text* text = COG_STRUCT_MALLOC(cog_text);
     text->id = textcnt++;
     text->layer = COG_TEXT_LAYER;
@@ -69,7 +69,7 @@ void cog_text_removeall(void) {
     cog_list_removeall(&activetexts);
 }
 
-void cog_text_set_str(cog_text_id id, char* str) {
+void cog_text_set_str(cog_text_id id, cog_string str) {
     cog_text* text = cog_text_get(id);
     strcpy(text->str, str);
 }

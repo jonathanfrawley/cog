@@ -60,4 +60,6 @@ cog_float cog_input_mouse_x();
  *-----------------------------------------------------------------------------*/
 cog_float cog_input_mouse_y();
 
+cog_bool cog_input_space_pressed();
+
 #endif // COG_INPUT_H

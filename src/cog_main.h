@@ -22,4 +22,10 @@ void cog_toggle_fullscreen();
 //rng
 cog_uint cog_nextrand();
 
+// Remove all sprites, sounds and anims.
+void cog_clear();
+
+//Set background image.
+void cog_set_background(char* img);
+
 #endif // COG_MAIN_H
