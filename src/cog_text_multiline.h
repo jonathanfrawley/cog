@@ -10,7 +10,6 @@ typedef struct {
 } cog_text_multiline;
 
 cog_text_multiline_id cog_text_multiline_add(cog_string str, 
-        cog_float top_left_x, 
-        cog_float top_left_y);
+        cog_pos2 pos);
 
 #endif   // COG_TEXT_MULTILINE_H

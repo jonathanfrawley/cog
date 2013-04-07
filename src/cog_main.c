@@ -167,3 +167,10 @@ void cog_set_background(char* img) {
     sprite->dim.w = cog_screenw() * 0.5;
     sprite->dim.h = cog_screenh() * 0.5;
 }
+
+cog_pos2 cog_screen_coords(cog_float x, cog_float y) {
+    cog_pos2 pos;
+    pos.x = x * cog_screenw();
+    pos.y = y * cog_screenh();
+    return pos;
+}

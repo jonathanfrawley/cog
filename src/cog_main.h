@@ -28,4 +28,7 @@ void cog_clear();
 //Set background image.
 void cog_set_background(char* img);
 
+// Convert from screen space 0.0 -> 1.0 to cog coords.
+cog_pos2 cog_screen_coords(cog_float x, cog_float y);
+
 #endif // COG_MAIN_H
