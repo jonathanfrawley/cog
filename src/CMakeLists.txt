@@ -12,6 +12,7 @@ if(PLATFORM_BUILD STREQUAL Pandora)
     find_package(OpenGLES REQUIRED)
     find_package(EGL REQUIRED)
 endif ()
+find_package(LUA_LIBRARY)
 
 find_package(ALUT REQUIRED)
 find_package(OpenAL REQUIRED)
@@ -21,10 +22,10 @@ add_definitions(-std=c99 -Wall)
 set(CMAKE_BUILD_TYPE Debug)
 
 file(GLOB srcs *.c)
+file(GLOB lua_srcs ../lua/*.c)
 add_library(cog ${srcs})
-# GLES
-#target_link_libraries(cog ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} m ${ALUT_LIBRARY} ${OPENAL_LIBRARY})
-#target_link_libraries(cog m ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY})
+add_library(cogl SHARED ${srcs} ${lua_srcs})
+
 if(PLATFORM_BUILD STREQUAL Pandora)
     #Add 3rd party libs
     file(GLOB lib_srcs ../deps/src/*.c)
@@ -33,9 +34,11 @@ if(PLATFORM_BUILD STREQUAL Pandora)
     add_library(cog ${srcs})
     MESSAGE("Building for Pandora...")
     target_link_libraries(cog m ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${OPENGLES_LIBRARIES} ${EGL_LIBRARIES} ${OPENGL_LIBRARY})
+    target_link_libraries(cogl m ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${OPENGLES_LIBRARIES} ${EGL_LIBRARIES} ${OPENGL_LIBRARY} ${LUA_LIBRARIES})
 else()
     MESSAGE("Building for native platform...")
     target_link_libraries(cog m ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${OPENGLES_LIBRARIES} ${EGL_LIBRARIES} ${GLEW_LIBRARY} ${OPENGL_LIBRARY})
+    target_link_libraries(cogl m ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${OPENGLES_LIBRARIES} ${EGL_LIBRARIES} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${LUA_LIBRARIES})
 endif()
 
 #GLES (#ifdef out)
