@@ -4,3 +4,4 @@ SDL_ttf,2.0.11,http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.11.tar
 openal-soft,1.13,http://connect.creativelabs.com/openal/Downloads/openal-soft-1.13.tbz2
 glew,1.9.0,http://downloads.sourceforge.net/project/glew/glew/1.9.0/glew-1.9.0.tgz?r=http%3A%2F%2Fglew.sourceforge.net%2F&ts=1366898746&use_mirror=switch
 freealut,1.1.0,http://connect.creativelabs.com/openal/Downloads/ALUT/freealut-1.1.0-src.zip
+libpng,1.6.1,http://downloads.sourceforge.net/project/libpng/libpng16/older-releases/1.6.1/libpng-1.6.1.tar.xz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Flibpng%2Ffiles%2F&ts=1366914482&use_mirror=freefr
