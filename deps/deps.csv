@@ -1,0 +1,6 @@
+SDL,1.2.15,http://www.libsdl.org/release/SDL-1.2.15.tar.gz
+SDL_image,1.2.15,http://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.12.tar.gz
+SDL_ttf,2.0.11,http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.11.tar.gz
+openal-soft,1.13,http://connect.creativelabs.com/openal/Downloads/openal-soft-1.13.tbz2
+glew,1.9.0,http://downloads.sourceforge.net/project/glew/glew/1.9.0/glew-1.9.0.tgz?r=http%3A%2F%2Fglew.sourceforge.net%2F&ts=1366898746&use_mirror=switch
+freealut,1.1.0,http://connect.creativelabs.com/openal/Downloads/ALUT/freealut-1.1.0-src.zip
