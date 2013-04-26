@@ -48,81 +48,91 @@ def extract_all(dl_dir):
     os.chdir(cwd)
 
 
-def standard_build(build_dir, include_dir, lib_dir, lib_name):
+def standard_build(build_dir, include_dir, lib_dir, lib_name, install_root):
     cwd = os.getcwd()
     os.chdir(build_dir)
-    subprocess.call(["./configure", 'CPPFLAGS="-I%s"' % include_dir, 'LDFLAGS="-L"%s' % lib_dir], shell=True)
+    subprocess.call(['./configure --prefix=%s CPPFLAGS="-I%s" LDFLAGS="-L%s"' % (install_root, include_dir, lib_dir)], shell=True)
     subprocess.call(["make"])
+    subprocess.call(["make", "install"])
+    '''
     subprocess.call(["cp", ".libs/%s" % lib_name, lib_dir])
     for include_file in filter(lambda a: a.endswith(".h"), os.listdir(".")):
         subprocess.call(["cp", "%s" % include_file, include_dir])
+    '''
     os.chdir(cwd)
 
 
-def build_sdl(build_dir, include_dir, lib_dir):
+def build_sdl(build_dir, include_dir, lib_dir, install_root):
     cwd = os.getcwd()
     os.chdir(build_dir)
-    subprocess.call(["./configure"])
+    subprocess.call(["./configure", "--prefix=%s" % install_root])
     subprocess.call(["make"])
-    subprocess.call(["cp", "build/.libs/libSDL.so", lib_dir])
-    for include_file in os.listdir("include"):
-        subprocess.call(["cp", "include/%s" % include_file, include_dir])
+    subprocess.call(["make", "install"])
+    #subprocess.call(["cp", "build/.libs/libSDL.so", lib_dir])
+    #for include_file in os.listdir("include"):
+    #    subprocess.call(["cp", "include/%s" % include_file, include_dir])
     os.chdir(cwd)
 
 
-def build_png(build_dir, include_dir, lib_dir):
+def build_png(build_dir, include_dir, lib_dir, install_root):
     cwd = os.getcwd()
     os.chdir(build_dir)
-    subprocess.call(["./configure"])
+    subprocess.call(["./configure", "--prefix=%s" % install_root])
     subprocess.call(["make"])
-    subprocess.call(["cp", ".libs/libpng16.so", lib_dir])
+    subprocess.call(["make", "install"])
+    '''
+    subprocess.call(["cp", ".libs/libpng.so", lib_dir])
     for include_file in filter(lambda a: a.endswith(".h"), os.listdir(".")):
         subprocess.call(["cp", "%s" % include_file, include_dir])
+    '''
     os.chdir(cwd)
 
 
-def build_sdl_image(build_dir, include_dir, lib_dir):
-    standard_build(build_dir, include_dir, lib_dir, "libSDL_image.so")
+def build_sdl_image(build_dir, include_dir, lib_dir, install_root):
+    standard_build(build_dir, include_dir, lib_dir, "libSDL_image.so", install_root)
 
 
-def build_sdl_ttf(build_dir, include_dir, lib_dir):
-    standard_build(build_dir, include_dir, lib_dir, "libSDL_ttf.so")
+def build_sdl_ttf(build_dir, include_dir, lib_dir, install_root):
+    standard_build(build_dir, include_dir, lib_dir, "libSDL_ttf.so", install_root)
 
 
-def build_freealut(build_dir, include_dir, lib_dir):
+def build_freealut(build_dir, include_dir, lib_dir, install_root):
     cwd = os.getcwd()
     os.chdir(build_dir)
     subprocess.call(["chmod", "+x", "autogen.sh"])
     subprocess.call(["/bin/bash", "./autogen.sh"])
-    subprocess.call(["./configure"])
+    subprocess.call(["./configure", "--prefix=%s" % install_root])
     subprocess.call(["make"])
+    subprocess.call(["make", "install"])
+    '''
     subprocess.call(["cp", "src/.libs/libalut.so", lib_dir])
     for include_file in os.listdir("include"):
         subprocess.call(["cp", "-rf", "include/%s" % include_file, include_dir])
+    '''
     os.chdir(cwd)
 
 
-def build_glew(build_dir, include_dir, lib_dir):
+def build_glew(build_dir, include_dir, lib_dir, install_root):
     cwd = os.getcwd()
     os.chdir(build_dir)
     subprocess.call(["make"])
-    subprocess.call(["cp", "lib/libGLEW.so", lib_dir])
-    subprocess.call(["cp", "lib/libGLEWmx.so", lib_dir])
-    for include_file in os.listdir("include"):
-        subprocess.call(["cp", "-rf", "include/%s" % include_file, include_dir])
+    subprocess.call(["make", "install", "GLEW_DEST=%s" % install_root])
     os.chdir(cwd)
 
 
-def build_openal(build_dir, include_dir, lib_dir):
+def build_openal(build_dir, include_dir, lib_dir, install_root):
     cwd = os.getcwd()
     os.chdir(os.path.join(build_dir, "build"))
-    subprocess.call(["cmake", "../"])
+    subprocess.call(["cmake", "../", "-DCMAKE_INSTALL_PREFIX:PATH=%s" % install_root])
     subprocess.call(["make"])
+    subprocess.call(["make", "install"])
+    '''
     # Back to source dir
     os.chdir(os.path.join("../"))
     subprocess.call(["cp", "build/libopenal.so", lib_dir])
     for include_file in os.listdir("include"):
         subprocess.call(["cp", "-rf", "include/%s" % include_file, include_dir])
+    '''
     os.chdir(cwd)
 
 
@@ -141,11 +151,13 @@ os.mkdir(include_dir)
 
 relative_lib_dir = "../../%s" % lib_dir
 relative_include_dir = "../../%s" % include_dir
+absolute_install_dir = os.path.abspath("./")  # Assume script called from "deps" dir
 
-build_sdl(os.path.join(dl_dir, "SDL-1.2.15",), relative_include_dir, relative_lib_dir)
-build_png(os.path.join(dl_dir, "libpng-1.6.1",), relative_include_dir, relative_lib_dir)
-build_sdl_image(os.path.join(dl_dir, "SDL_image-1.2.12"), relative_include_dir, relative_lib_dir)
-build_sdl_ttf(os.path.join(dl_dir, "SDL_ttf-2.0.11"), relative_include_dir, relative_lib_dir)
-build_glew(os.path.join(dl_dir, "glew-1.9.0"), relative_include_dir, relative_lib_dir)
-build_openal(os.path.join(dl_dir, "openal-soft-1.13"), relative_include_dir, relative_lib_dir)
-build_freealut(os.path.join(dl_dir, "freealut-1.1.0-src"), relative_include_dir, relative_lib_dir)
+# TODO: Remove lib and include dirs.
+build_png(os.path.join(dl_dir, "libpng-1.2.50",), relative_include_dir, relative_lib_dir, absolute_install_dir)
+build_sdl(os.path.join(dl_dir, "SDL-1.2.15",), relative_include_dir, relative_lib_dir, absolute_install_dir)
+build_sdl_image(os.path.join(dl_dir, "SDL_image-1.2.12"), relative_include_dir, relative_lib_dir, absolute_install_dir)
+build_sdl_ttf(os.path.join(dl_dir, "SDL_ttf-2.0.11"), relative_include_dir, relative_lib_dir, absolute_install_dir)
+build_glew(os.path.join(dl_dir, "glew-1.9.0"), relative_include_dir, relative_lib_dir, absolute_install_dir)
+build_openal(os.path.join(dl_dir, "openal-soft-1.13"), relative_include_dir, relative_lib_dir, absolute_install_dir)
+build_freealut(os.path.join(dl_dir, "freealut-1.1.0-src"), relative_include_dir, relative_lib_dir, absolute_install_dir)

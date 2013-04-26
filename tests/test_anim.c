@@ -10,7 +10,7 @@ typedef struct entity {
 } entity;
 
 void entity_init(entity* obj) {
-    obj->anim = cog_anim_add("../media/kitten_anim.png", 3);
+    obj->anim = cog_anim_add("media/kitten_anim.png", 3);
     cog_anim* anim = cog_anim_get(obj->anim);
     anim->transition_millis = 150;
     anim->looped = COG_TRUE;

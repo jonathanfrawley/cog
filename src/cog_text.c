@@ -14,7 +14,7 @@ static TTF_Font* default_font;
 //TODO:Add option to set these.
 static SDL_Color default_colour = { 255, 255, 255, 0 };
 
-static const cog_string default_path = "../media/font/04B_03__.ttf";
+static const cog_string default_path = "media/font/04B_03__.ttf";
 static cog_uint default_pt_size = 8;
 static cog_int default_renderstyle = TTF_STYLE_NORMAL;
 

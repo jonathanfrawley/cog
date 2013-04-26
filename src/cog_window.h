@@ -1,7 +1,7 @@
 #ifndef  COG_WINDOW_H
 #define  COG_WINDOW_H
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #if defined(HAVE_GLES)
 #include "eglport.h"
 #endif
