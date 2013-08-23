@@ -12,7 +12,7 @@ if(PLATFORM_BUILD STREQUAL Pandora)
     find_package(OpenGLES REQUIRED)
     find_package(EGL REQUIRED)
 endif ()
-find_package(LUA_LIBRARY)
+find_package(Lua51)
 
 find_package(ALUT REQUIRED)
 find_package(OpenAL REQUIRED)
@@ -22,9 +22,11 @@ add_definitions(-std=c99 -Wall)
 set(CMAKE_BUILD_TYPE Debug)
 
 file(GLOB srcs *.c)
-file(GLOB lua_srcs ../lua/*.c)
 add_library(cog ${srcs})
-add_library(cogl SHARED ${srcs} ${lua_srcs})
+if(LUA51_FOUND)
+    file(GLOB lua_srcs ../lua/*.c)
+    add_library(cogl SHARED ${srcs} ${lua_srcs})
+endif()
 
 if(PLATFORM_BUILD STREQUAL Pandora)
     #Add 3rd party libs

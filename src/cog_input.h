@@ -1,7 +1,7 @@
 #ifndef  COG_INPUT_H
 #define  COG_INPUT_H
 
-#include <SDL_keyboard.h>
+#include <SDL/SDL_keyboard.h>
 
 #include "cog_types.h"
 
