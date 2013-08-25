@@ -17,6 +17,7 @@ typedef int cog_bool;
 typedef void* cog_dataptr;
 typedef unsigned cog_uint;
 typedef unsigned char cog_uint8;
+typedef char cog_char;
 typedef int cog_int;
 typedef char* cog_string;
 
