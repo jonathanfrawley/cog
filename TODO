@@ -8,6 +8,7 @@ XXX) Function to take animation frame seq in.
 5) Particle Effects [MAYBE]
 6) Port lls to use it.
 7) Software renderer (Meh, not sure if this will be needed/possible due to opengl being so much more powerful with rotations and somewhat, but leave in stubs for functions at the moment)
+8) test for input.
 
 Done Tasks cog
 ==============

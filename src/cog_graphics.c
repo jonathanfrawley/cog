@@ -181,15 +181,14 @@ void cog_graphics_hwinit(void) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glClearColor(0.3f, 0.3f, 0.5f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 #else
-    //GLES
-    glClearColor(0.3f, 0.3f, 0.5f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);

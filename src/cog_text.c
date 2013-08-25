@@ -52,6 +52,8 @@ void cog_text_refresh(cog_text_id id) {
     SDL_Surface* text_surface =
         TTF_RenderText_Blended(text->font, text->str, text->c);
     text->tex_id = cog_graphics_upload_surface(text_surface);
+    text->dim.w = text_surface->w;
+    text->dim.h = text_surface->h;
     SDL_FreeSurface(text_surface);
 }
 
