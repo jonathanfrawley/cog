@@ -37,9 +37,6 @@ void cog_input_check_keys(void) {
                     case SDLK_ESCAPE:
                         cog_quit();
                         break;
-                    case SDLK_f:
-                        cog_toggle_fullscreen();
-                        break;
                     default:
                         key_pressed = event.key.keysym.sym;
                         key_just_pressed = COG_TRUE;
