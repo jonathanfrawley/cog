@@ -153,10 +153,15 @@ void cog_toggle_fullscreen() {
 }
 
 void cog_clear() {
+    //TODO: init should probably do a clearall anyway?
     cog_sprite_removeall();
+    cog_sprite_init();
     cog_anim_removeall();
+    cog_anim_init();
     cog_text_removeall();
+    cog_text_init();
     cog_snd_stopall();
+    cog_snd_init();
 }
 
 void cog_set_background(char* img) {

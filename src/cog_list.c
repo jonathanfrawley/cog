@@ -53,7 +53,6 @@ void cog_list_removeall(cog_list* list) {
         cog_free(curr->data);
         cog_free(curr);
     }
-    cog_list_init(list, list->size);
 }
 
 cog_uint cog_list_len(cog_list* list) {

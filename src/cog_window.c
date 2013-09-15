@@ -14,10 +14,8 @@ void cog_window_init(cog_window* window) {
 #endif
     //TODO:Get from yaml conf.
 #if !defined(HAVE_GLES)
-    int width = 1024;
-    int height = 768;
-    //int width = 0;
-    //int height = 0;
+    int width = 800;
+    int height = 600;
     int bpp = 32;
     int flags = SDL_OPENGL | SDL_DOUBLEBUF;
 #else
