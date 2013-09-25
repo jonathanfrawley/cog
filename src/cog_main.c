@@ -4,10 +4,10 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <GL/glew.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_events.h>
-#include <SDL/SDL_image.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "cog_anim.h"
 #include "cog_core.h"

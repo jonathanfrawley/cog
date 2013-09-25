@@ -6,7 +6,7 @@
 #else
 #include <GLES/gl.h>
 #endif
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "cog_core.h"
 #include "cog_types.h"

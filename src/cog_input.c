@@ -1,6 +1,6 @@
 #include "cog_input.h"
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "cog.h"
 #include "cog_core.h"

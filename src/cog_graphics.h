@@ -11,7 +11,7 @@
 #include "eglport.h"
 #endif
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "cog_sprite.h"
 #include "cog_text.h"
