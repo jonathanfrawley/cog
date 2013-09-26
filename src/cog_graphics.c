@@ -178,12 +178,11 @@ GLuint cog_graphics_load_texture(char* filename) {
 
 void cog_graphics_init(void) {
     cog_graphics_hwinit();
-    //cog_graphics_hw_set_viewport(cog_screenw(), cog_screenh());
+    cog_graphics_hw_set_viewport(cog_screenw(), cog_screenh());
 }
 
 void cog_graphics_hw_set_viewport(cog_int w, cog_int h) {
     /*  Height / width ration */
-/*
     GLfloat ratio;
     ratio = (GLfloat)w / (GLfloat)h;
     glViewport(0, 0, (GLsizei)w, (GLsizei)h );
@@ -192,7 +191,6 @@ void cog_graphics_hw_set_viewport(cog_int w, cog_int h) {
     gluPerspective( 45.0f, ratio, 0.1f, 100.0f );
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-*/
 }
 
 void cog_graphics_hwinit(void) {
@@ -210,6 +208,7 @@ void cog_graphics_hwinit(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 #else
+/*
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -219,14 +218,13 @@ void cog_graphics_hwinit(void) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glEnable(GL_TEXTURE_2D);
-    /*
+*/
     glShadeModel( GL_SMOOTH );
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
     glClearDepth( 1.0f );
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LEQUAL );
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-    */
 #endif
 }
 
@@ -257,8 +255,10 @@ cleanup:
 }
 
 void cog_graphics_render() {
+/*
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
+*/
 
     //PASTE
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -285,12 +285,13 @@ void cog_graphics_render() {
     //PASTE
 
 
-
+/*
     for(cog_int i = 0; i < COG_LAYER_MAX; i++) {
         cog_sprite_draw_layer(i);
         cog_anim_draw_layer(i);
         cog_text_draw_layer(i);
     }
+*/
 #if defined(HAVE_GLES)
     EGL_SwapBuffers();
 #endif

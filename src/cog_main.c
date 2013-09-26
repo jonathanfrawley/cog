@@ -145,8 +145,6 @@ cog_uint cog_screenw() {
 }
 
 cog_uint cog_screenh() {
-    //return window.screen->h;
-    //return 600;
     cog_int w, h;
     SDL_GetWindowSize(window.screen, &w, &h);
     return h;

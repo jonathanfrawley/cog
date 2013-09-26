@@ -40,7 +40,7 @@ void cog_window_init(cog_window* window) {
 }
 
 void cog_window_update(cog_window* window) {
-    SDL_GL_SwapWindow(window->screen);
+    //SDL_GL_SwapWindow(window->screen);
     SDL_RenderPresent(window->renderer);
 }
 
