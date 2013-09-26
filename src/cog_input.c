@@ -15,7 +15,7 @@ static cog_bool mouse_left_just_pressed = 0;
 static cog_bool mouse_right_just_pressed;
 static cog_float mouse_x;
 static cog_float mouse_y;
-static SDLKey key_pressed;
+static SDL_Keycode key_pressed;
 static cog_uint key_just_pressed;
 
 void cog_input_blank() {
@@ -52,7 +52,7 @@ cog_bool cog_input_key_pressed(void) {
     return key_just_pressed;
 }
 
-SDLKey cog_input_key_code(void) {
+SDL_Keycode cog_input_key_code(void) {
     return key_pressed;
 }
 
@@ -115,7 +115,7 @@ void cog_input_check_mouse(void) {
 
 cog_bool cog_input_space_pressed() {
     if(cog_input_key_pressed()) {
-        SDLKey key = cog_input_key_code();
+        SDL_Keycode key = cog_input_key_code();
         if(key == SDLK_SPACE) {
             return COG_TRUE;
         }

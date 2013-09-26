@@ -7,13 +7,25 @@
 #endif
 
 typedef struct cog_window {
-    SDL_Surface* screen;
+    SDL_Window* screen;
+    SDL_Renderer* renderer;
+    SDL_GLContext glcontext;
 } cog_window;
 
 /*-----------------------------------------------------------------------------
  *  Initialise a window.
  *-----------------------------------------------------------------------------*/
 void cog_window_init(cog_window* window);
+
+/*-----------------------------------------------------------------------------
+ *  Main update.
+ *-----------------------------------------------------------------------------*/
+void cog_window_update(cog_window* window);
+
+/*-----------------------------------------------------------------------------
+ *  Shuts things down gracefully
+ *-----------------------------------------------------------------------------*/
+void cog_window_quit(cog_window* window);
 
 /*-----------------------------------------------------------------------------
  *  Toggle fullscreen on the window.

@@ -120,10 +120,12 @@ void cog_loopstep() {
     cog_update();
     framedrawcounter++;
     cog_graphics_render();
+    cog_window_update(&window);
 }
 
 void cog_quit() {
     game.finished = 1;
+    cog_window_quit(&window);
     //TODO:Add more cleanup here.
     alutExit();
 }
@@ -137,11 +139,17 @@ cog_uint cog_time_delta_millis() {
 }
 
 cog_uint cog_screenw() {
-    return window.screen->w;
+    cog_int w, h;
+    SDL_GetWindowSize(window.screen, &w, &h);
+    return w;
 }
 
 cog_uint cog_screenh() {
-    return window.screen->h;
+    //return window.screen->h;
+    //return 600;
+    cog_int w, h;
+    SDL_GetWindowSize(window.screen, &w, &h);
+    return h;
 }
 
 cog_uint cog_nextrand() {

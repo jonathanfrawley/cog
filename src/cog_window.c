@@ -16,24 +16,38 @@ void cog_window_init(cog_window* window) {
 #if !defined(HAVE_GLES)
     int width = 800;
     int height = 600;
-    int bpp = 32;
-    int flags = SDL_OPENGL | SDL_DOUBLEBUF;
+    int flags = SDL_WINDOW_OPENGL;
 #else
-    int width = 800;
+    /*
+    int width = 640;
     int height = 480;
-    int bpp = 0;
     int flags = SDL_SWSURFACE | SDL_FULLSCREEN;
+    */
 #endif
-    if((window->screen = SDL_SetVideoMode(width, height, bpp, flags)) == 0) {
+    if((window->screen = SDL_CreateWindow("cog game",
+                                       SDL_WINDOWPOS_UNDEFINED,
+                                       SDL_WINDOWPOS_UNDEFINED,
+                                       width, height,
+                                       flags)) == 0) {
         cog_errorf("cog_window_init failed when creating SDL window <%s> \n",
                    SDL_GetError());
     }
+    SDL_CreateWindowAndRenderer(width, height, flags, &window->screen, &window->renderer);
+    window->glcontext = SDL_GL_CreateContext(window->screen);
 #if defined(HAVE_GLES)
     EGL_Init();
 #endif
-    SDL_WM_SetCaption("cog game", NULL);
+}
+
+void cog_window_update(cog_window* window) {
+    SDL_GL_SwapWindow(window->screen);
+    SDL_RenderPresent(window->renderer);
+}
+
+void cog_window_quit(cog_window* window) {
+    SDL_GL_DeleteContext(window->glcontext);  
 }
 
 void cog_window_toggle_fullscreen(cog_window* window) {
-    SDL_WM_ToggleFullScreen(window->screen);
+    SDL_SetWindowFullscreen(window->screen, 0);
 }

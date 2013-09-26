@@ -28,7 +28,7 @@ cog_bool cog_input_key_pressed(void);
 /*-----------------------------------------------------------------------------
  *  Key code pressed.
  *-----------------------------------------------------------------------------*/
-SDLKey cog_input_key_code(void);
+SDL_Keycode cog_input_key_code(void);
 
 /*-----------------------------------------------------------------------------
  *  Mouse left was pressed in the last main loop.
