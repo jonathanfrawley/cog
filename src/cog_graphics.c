@@ -1,6 +1,7 @@
 #include "cog_graphics.h"
 
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_video.h>
 
 #include "cog.h"
 #include "cog_anim.h"
@@ -93,7 +94,6 @@ void cog_graphics_draw_text(cog_text* text) {
 
 SDL_Surface* cog_graphics_load_image(const char* filename) {
     //Loads an image and returns an SDL_Surface.
-    /*
     SDL_Surface* tempsurface;
     SDL_Surface* result;
     tempsurface = IMG_Load(filename);
@@ -107,9 +107,8 @@ SDL_Surface* cog_graphics_load_image(const char* filename) {
     }
     SDL_FreeSurface(tempsurface);
     return result;
-    */
     //TODO: Get transparency working
-    return IMG_Load(filename);
+    //return IMG_Load(filename);
 }
 
 GLuint cog_graphics_upload_surface(SDL_Surface* image) {
@@ -146,7 +145,7 @@ GLuint cog_graphics_upload_surface(SDL_Surface* image) {
     SDL_Rect area;
     //SDL_SetAlpha(image, 0, amask);      //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
     //TODO: This function has been updated for SDL2.
-    SDL_SetSurfaceAlphaMod(image, amask);
+    //SDL_SetSurfaceAlphaMod(image, amask);
     // Copy the surface into the GL texture image :
     area.x = 0;
     area.y = 0;
@@ -178,7 +177,7 @@ GLuint cog_graphics_load_texture(char* filename) {
 
 void cog_graphics_init(void) {
     cog_graphics_hwinit();
-    cog_graphics_hw_set_viewport(cog_screenw(), cog_screenh());
+//    cog_graphics_hw_set_viewport(cog_screenw(), cog_screenh());
 }
 
 void cog_graphics_hw_set_viewport(cog_int w, cog_int h) {
@@ -208,7 +207,6 @@ void cog_graphics_hwinit(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 #else
-/*
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -217,14 +215,15 @@ void cog_graphics_hwinit(void) {
     glLoadIdentity();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+/*
     //glEnable(GL_TEXTURE_2D);
-*/
     glShadeModel( GL_SMOOTH );
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
     glClearDepth( 1.0f );
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LEQUAL );
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+*/
 #endif
 }
 
@@ -255,43 +254,37 @@ cleanup:
 }
 
 void cog_graphics_render() {
-/*
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-*/
 
     //PASTE
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    /* Move Left 1.5 Units And Into The Screen 6.0 */
     glLoadIdentity();
     glTranslatef( -1.5f, 0.0f, -6.0f );
 
-    glBegin( GL_TRIANGLES ); /* Drawing Using Triangles */
-    glVertex3f( 0.0f, 1.0f, 0.0f ); /* Top */
-    glVertex3f( -1.0f, -1.0f, 0.0f ); /* Bottom Left */
-    glVertex3f( 1.0f, -1.0f, 0.0f ); /* Bottom Right */
-    glEnd( ); /* Finished Drawing The Triangle */
+    glBegin( GL_TRIANGLES ); 
+    glVertex3f( 0.0f, 1.0f, 0.0f ); 
+    glVertex3f( -1.0f, -1.0f, 0.0f ); 
+    glVertex3f( 1.0f, -1.0f, 0.0f ); 
+    glEnd( );
 
-    /* Move Right 3 Units */
     glTranslatef( 3.0f, 0.0f, 0.0f );
 
-    glBegin( GL_QUADS ); /* Draw A Quad */
-    glVertex3f( -1.0f, 1.0f, 0.0f ); /* Top Left */
-    glVertex3f( 1.0f, 1.0f, 0.0f ); /* Top Right */
-    glVertex3f( 1.0f, -1.0f, 0.0f ); /* Bottom Right */
-    glVertex3f( -1.0f, -1.0f, 0.0f ); /* Bottom Left */
-    glEnd( ); /* Done Drawing The Quad */
+    glBegin( GL_QUADS );
+    glVertex3f( -1.0f, 1.0f, 0.0f );
+    glVertex3f( 1.0f, 1.0f, 0.0f );
+    glVertex3f( 1.0f, -1.0f, 0.0f ); 
+    glVertex3f( -1.0f, -1.0f, 0.0f );
+    glEnd( ); 
     //PASTE
 
 
-/*
     for(cog_int i = 0; i < COG_LAYER_MAX; i++) {
         cog_sprite_draw_layer(i);
         cog_anim_draw_layer(i);
         cog_text_draw_layer(i);
     }
-*/
 #if defined(HAVE_GLES)
     EGL_SwapBuffers();
 #endif
