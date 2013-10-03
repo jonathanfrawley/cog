@@ -8,7 +8,6 @@
 
 typedef struct cog_window {
     SDL_Window* screen;
-    SDL_Renderer* renderer;
     SDL_GLContext glcontext;
 } cog_window;
 
