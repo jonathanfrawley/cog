@@ -7,8 +7,9 @@
 #endif
 
 typedef struct cog_window {
-    SDL_Window* screen;
+    SDL_Window* window;
     SDL_GLContext glcontext;
+    SDL_Surface* screen_surface;
 } cog_window;
 
 /*-----------------------------------------------------------------------------

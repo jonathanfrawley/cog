@@ -15,10 +15,11 @@
 
 #include "cog_sprite.h"
 #include "cog_text.h"
+#include "cog_window.h"
 
 #define COG_LAYER_MAX 16
 
-void cog_graphics_render();
+void cog_graphics_render(cog_window* window);
 
 /*-----------------------------------------------------------------------------
  *  Internal

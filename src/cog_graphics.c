@@ -184,7 +184,7 @@ GLuint cog_graphics_load_texture(char* filename) {
 }
 
 void cog_graphics_init(void) {
-    cog_graphics_hwinit();
+//    cog_graphics_hwinit();
 //    cog_graphics_hw_set_viewport(cog_screenw(), cog_screenh());
 }
 
@@ -206,7 +206,7 @@ int GLUINT = 0; //XXX REMOVE
 
 void cog_graphics_hwinit(void) {
     /*
-#ifdef HAVE_GLES
+    #ifdef HAVE_GLES
     //GLES
     cog_graphics_init_shaders();
     glUseProgram(shader_program);
@@ -219,7 +219,7 @@ void cog_graphics_hwinit(void) {
     glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-#else
+    #else
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -229,50 +229,40 @@ void cog_graphics_hwinit(void) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     */
-/*
-        glEnable(GL_TEXTURE_2D);
-        glShadeModel( GL_SMOOTH );
-        glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-        glClearDepth( 1.0f );
-        glEnable( GL_DEPTH_TEST );
-        glDepthFunc( GL_LEQUAL );
-        glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-        */
+    /*
+            glEnable(GL_TEXTURE_2D);
+            glShadeModel( GL_SMOOTH );
+            glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+            glClearDepth( 1.0f );
+            glEnable( GL_DEPTH_TEST );
+            glDepthFunc( GL_LEQUAL );
+            glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+            */
 //#endif
-	GLenum error = GL_NO_ERROR;
-
-	//Initialize Projection Matrix
-	glMatrixMode( GL_PROJECTION );
-	glLoadIdentity();
-	
-	//Check for error
-	error = glGetError();
-	if( error != GL_NO_ERROR )
-	{
-		printf( "Error initializing OpenGL! %s\n", gluErrorString( error ) );
-	}
-
-	//Initialize Modelview Matrix
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity();
-
-	//Check for error
-	error = glGetError();
-	if( error != GL_NO_ERROR )
-	{
-		printf( "Error initializing OpenGL! %s\n", gluErrorString( error ) );
-	}
-	
-	//Initialize clear color
-	glClearColor( 0.f, 0.f, 0.f, 1.f );
-	
-	//Check for error
-	error = glGetError();
-	if( error != GL_NO_ERROR )
-	{
-		printf( "Error initializing OpenGL! %s\n", gluErrorString( error ) );
-	}
-
+    GLenum error = GL_NO_ERROR;
+    //Initialize Projection Matrix
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    //Check for error
+    error = glGetError();
+    if(error != GL_NO_ERROR) {
+        printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+    }
+    //Initialize Modelview Matrix
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    //Check for error
+    error = glGetError();
+    if(error != GL_NO_ERROR) {
+        printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+    }
+    //Initialize clear color
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+    //Check for error
+    error = glGetError();
+    if(error != GL_NO_ERROR) {
+        printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+    }
     SDL_Surface* surface = cog_graphics_load_image("media/test0.png");
     GLUINT = cog_graphics_upload_surface(surface);
 }
@@ -303,7 +293,7 @@ cleanup:
     fclose(fp);
 }
 
-void cog_graphics_render() {
+void cog_graphics_render(cog_window* window) {
     /*
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
@@ -324,32 +314,29 @@ void cog_graphics_render() {
     glVertex3f(-1.0f, -1.0f, 0.0f);
     glEnd();
     */
-	//Clear color buffer
-	glClear( GL_COLOR_BUFFER_BIT );
+    //Clear color buffer
+    glClear(GL_COLOR_BUFFER_BIT);
     //PASTE
     for(cog_int i = 0; i < COG_LAYER_MAX; i++) {
         cog_sprite_draw_layer(i);
         cog_anim_draw_layer(i);
         cog_text_draw_layer(i);
     }
-
-	GLenum error = GL_NO_ERROR;
-	error = glGetError();
-	if( error != GL_NO_ERROR )
-	{
-		cog_errorf( "Error initializing OpenGL! %s\n", gluErrorString( error ) );
-	}
-	
-	//Render quad
+    GLenum error = GL_NO_ERROR;
+    error = glGetError();
+    if(error != GL_NO_ERROR) {
+        cog_errorf("Error initializing OpenGL! %s\n", gluErrorString(error));
+    }
+    //Render quad
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, GLUINT);
     glColor4f(1.0, 1.0, 1.0, 1.0); // reset gl color
-    glBegin( GL_QUADS );
-    glVertex2f( -0.5f, -0.5f );
-    glVertex2f( 0.5f, -0.5f );
-    glVertex2f( 0.5f, 0.5f );
-    glVertex2f( -0.5f, 0.5f );
+    glBegin(GL_QUADS);
+    glVertex2f(-0.5f, -0.5f);
+    glVertex2f(0.5f, -0.5f);
+    glVertex2f(0.5f, 0.5f);
+    glVertex2f(-0.5f, 0.5f);
     glEnd();
     glLoadIdentity();
     glDisable(GL_TEXTURE_2D);
@@ -359,4 +346,11 @@ void cog_graphics_render() {
 #if defined(HAVE_GLES)
     EGL_SwapBuffers();
 #endif
+
+    SDL_Surface* surface = cog_graphics_load_image("media/test0.png");
+    SDL_BlitSurface( surface, NULL, window->screen_surface, NULL );
+	SDL_FreeSurface( surface );
+
+    //Software
+
 }

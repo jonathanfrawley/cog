@@ -119,7 +119,7 @@ void cog_update() {
 void cog_loopstep() {
     cog_update();
     framedrawcounter++;
-    cog_graphics_render();
+    cog_graphics_render(&window);
     cog_window_update(&window);
 }
 
@@ -140,13 +140,13 @@ cog_uint cog_time_delta_millis() {
 
 cog_uint cog_screenw() {
     cog_int w, h;
-    SDL_GetWindowSize(window.screen, &w, &h);
+    SDL_GetWindowSize(window.window, &w, &h);
     return w;
 }
 
 cog_uint cog_screenh() {
     cog_int w, h;
-    SDL_GetWindowSize(window.screen, &w, &h);
+    SDL_GetWindowSize(window.window, &w, &h);
     return h;
 }
 
