@@ -346,11 +346,8 @@ void cog_graphics_render(cog_window* window) {
 #if defined(HAVE_GLES)
     EGL_SwapBuffers();
 #endif
-
     SDL_Surface* surface = cog_graphics_load_image("media/test0.png");
-    SDL_BlitSurface( surface, NULL, window->screen_surface, NULL );
-	SDL_FreeSurface( surface );
-
+    SDL_BlitSurface(surface, NULL, window->screen_surface, NULL);
+    SDL_FreeSurface(surface);
     //Software
-
 }

@@ -37,19 +37,17 @@ void cog_window_init(cog_window* window) {
                    SDL_GetError());
     }
     window->glcontext = SDL_GL_CreateContext(window->screen);
-#if defined(HAVE_GLES)
+    #if defined(HAVE_GLES)
     EGL_Init();
-#endif
+    #endif
     if(SDL_GL_SetSwapInterval(1) < 0) {
         cog_debugf("cog_window_init: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
     }
     */
     //Software
     flags = SDL_WINDOW_SHOWN;
-    window->window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags );
-
+    window->window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
     window->screen_surface = SDL_GetWindowSurface(window->window);
-
 }
 
 void cog_window_update(cog_window* window) {
