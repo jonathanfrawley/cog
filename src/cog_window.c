@@ -45,7 +45,7 @@ void cog_window_update(cog_window* window) {
 }
 
 void cog_window_quit(cog_window* window) {
-    SDL_GL_DeleteContext(window->glcontext);  
+    //SDL_GL_DeleteContext(window->glcontext);  
 }
 
 void cog_window_toggle_fullscreen(cog_window* window) {

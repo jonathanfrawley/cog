@@ -1,8 +1,8 @@
 SHELL 		 = /bin/sh
 CC    		 = gcc
-GLFLAGS		 = -lGL
-LFLAGS		 = `sdl-config --libs` -lalut -lSDL_ttf -lSDL_image
-CFLAGS       = -std=c99 -fPIC -Isrc `sdl-config --cflags` $(LFLAGS) $(GLFLAGS) $(SDLLIBS)
+GLFLAGS		 = -lGL -lGLU
+LFLAGS		 = `sdl2-config --libs` -lalut -lSDL2_ttf -lSDL2_image $(GLFLAGS)
+CFLAGS       = -std=c99 -Wall -Werror -fPIC -Isrc `sdl2-config --cflags` $(LFLAGS)
 
 TARGET_LIB  = libcog.so
 SOURCES = $(shell echo src/*.c)

@@ -95,20 +95,21 @@ void cog_graphics_draw_text(cog_text* text) {
 SDL_Surface* cog_graphics_load_image(const char* filename) {
     //Loads an image and returns an SDL_Surface.
     SDL_Surface* tempsurface;
-    SDL_Surface* result;
+    //SDL_Surface* result;
     tempsurface = IMG_Load(filename);
     if(!tempsurface) {
         fprintf(stderr, "Cannot load image file <%s> : <%s>", filename,
                 SDL_GetError());
         return 0;
     }
-    if((result = SDL_DisplayFormatAlpha(tempsurface)) == NULL) {
+    /*
+    if((result = SDL_ConvertSurface(tempsurface, ->format, NULL)) == NULL) {
         perror(SDL_GetError());
     }
-    SDL_FreeSurface(tempsurface);
-    return result;
-    //TODO: Get transparency working
-    //return IMG_Load(filename);
+    */
+    //SDL_FreeSurface(tempsurface);
+    //return result;
+    return tempsurface;
 }
 
 GLuint cog_graphics_upload_surface(SDL_Surface* image) {
