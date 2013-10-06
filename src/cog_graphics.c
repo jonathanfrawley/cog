@@ -2,7 +2,6 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_video.h>
-
 #include <png.h>
 
 #include "cog.h"
@@ -19,7 +18,7 @@ void cog_graphics_swinit(void);
 void cog_graphics_read_file(char* buf, char* filename);
 //rendering
 void cog_graphics_render();
-//SDL_Surface* cog_graphics_load_image(const char* filename);
+GLuint cog_graphics_load_texture_png(const char* file_name, int* width, int* height);
 
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
@@ -94,146 +93,126 @@ void cog_graphics_draw_text(cog_text* text) {
     glPopMatrix();
 }
 
-SDL_Surface* cog_graphics_load_image(const char* filename) {
-    //Loads an image and returns an SDL_Surface.
-    SDL_Surface* tempsurface;
-    //TODO: Remove this maybe
-    //SDL_Surface* result;
-    tempsurface = IMG_Load(filename);
-    if(!tempsurface) {
-        fprintf(stderr, "Cannot load image file <%s> : <%s>", filename,
-                SDL_GetError());
-        return 0;
-    }
-    //if((result = SDL_ConvertSurface(tempsurface, ->format, NULL)) == NULL) {
-    //    perror(SDL_GetError());
-    //}
-    //SDL_FreeSurface(tempsurface);
-    //return result;
-    return tempsurface;
-}
-
-GLuint cog_graphics_png_texture_load(const char* filename, int* width, int*  height) {
+GLuint cog_graphics_load_texture_png(const char* file_name, int* width, int* height) {
+    /**
+     * Loads a transparent png image as a texure and uploads it to the GPU.
+     * Returns: A reference to the texture which can be passed to glBindTexture
+     **/
+    //Source: https://github.com/DavidEGrayson/ahrs-visualizer/blob/master/png_texture.cpp
+    //License: https://github.com/DavidEGrayson/ahrs-visualizer/blob/master/LICENSE.txt
     png_byte header[8];
-
-    FILE *fp = fopen(filename, "rb");
+    FILE* fp = fopen(file_name, "rb");
     if(fp == 0) {
-        perror(filename);
+        perror(file_name);
         return 0;
     }
-
     // read the header
     fread(header, 1, 8, fp);
-
     if(png_sig_cmp(header, 0, 8)) {
-        fprintf(stderr, "error: %s is not a PNG.\n", filename);
+        cog_errorf("error: %s is not a PNG.\n", file_name);
         fclose(fp);
         return 0;
     }
-
     png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    if (!png_ptr) {
-        fprintf(stderr, "error: png_create_read_struct returned 0.\n");
+    if(!png_ptr) {
+        cog_errorf("error: png_create_read_struct returned 0.\n");
         fclose(fp);
         return 0;
     }
-
     // create png info struct
     png_infop info_ptr = png_create_info_struct(png_ptr);
     if(!info_ptr) {
-        fprintf(stderr, "error: png_create_info_struct returned 0.\n");
+        cog_errorf("error: png_create_info_struct returned 0.\n");
         png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
         fclose(fp);
         return 0;
     }
-
     // create png info struct
     png_infop end_info = png_create_info_struct(png_ptr);
     if(!end_info) {
-        fprintf(stderr, "error: png_create_info_struct returned 0.\n");
+        cog_errorf("error: png_create_info_struct returned 0.\n");
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
         fclose(fp);
         return 0;
     }
-
     // the code in this if statement gets called if libpng encounters an error
     if(setjmp(png_jmpbuf(png_ptr))) {
-        fprintf(stderr, "error from libpng\n");
+        cog_errorf("error from libpng\n");
         png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
         fclose(fp);
         return 0;
     }
-
     // init png reading
     png_init_io(png_ptr, fp);
-
     // let libpng know you already read the first 8 bytes
     png_set_sig_bytes(png_ptr, 8);
-
     // read all the info up to the image data
     png_read_info(png_ptr, info_ptr);
-
     // variables to pass to get info
     int bit_depth, color_type;
     png_uint_32 temp_width, temp_height;
-
     // get info about png
     png_get_IHDR(png_ptr, info_ptr, &temp_width, &temp_height, &bit_depth, &color_type,
-        NULL, NULL, NULL);
-
-    if(width) {  
-        *width = temp_width; 
+                 NULL, NULL, NULL);
+    if(width) {
+        *width = temp_width;
     }
-    if(height) { 
-        *height = temp_height; 
+    if(height) {
+        *height = temp_height;
     }
-
+    //printf("%s: %lux%lu %d\n", file_name, temp_width, temp_height, color_type);
+    if(bit_depth != 8) {
+        cog_errorf("%s: Unsupported bit depth %d. Must be 8.\n", file_name, bit_depth);
+        return 0;
+    }
+    GLint format;
+    switch(color_type) {
+        case PNG_COLOR_TYPE_RGB:
+            format = GL_RGB;
+            break;
+        case PNG_COLOR_TYPE_RGB_ALPHA:
+            format = GL_RGBA;
+            break;
+        default:
+            cog_errorf("%s: Unknown libpng color type %d.\n", file_name, color_type);
+            return 0;
+    }
     // Update the png info struct.
     png_read_update_info(png_ptr, info_ptr);
-
     // Row size in bytes.
     int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-
     // glTexImage2d requires rows to be 4-byte aligned
     rowbytes += 3 - ((rowbytes-1) % 4);
-
     // Allocate the image_data as a big block, to be given to opengl
-    png_byte * image_data;
-    image_data = malloc(rowbytes * temp_height * sizeof(png_byte)+15);
+    png_byte* image_data = (png_byte*)malloc(rowbytes * temp_height * sizeof(png_byte)+15);
     if(image_data == NULL) {
-        fprintf(stderr, "error: could not allocate memory for PNG image data\n");
+        cog_errorf("error: could not allocate memory for PNG image data\n");
         png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
         fclose(fp);
         return 0;
     }
-
     // row_pointers is for pointing to image_data for reading the png with libpng
-    png_bytep * row_pointers = malloc(temp_height * sizeof(png_bytep));
+    png_byte** row_pointers = (png_byte**)malloc(temp_height * sizeof(png_byte*));
     if(row_pointers == NULL) {
-        fprintf(stderr, "error: could not allocate memory for PNG row pointers\n");
+        cog_errorf("error: could not allocate memory for PNG row pointers\n");
         png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
         free(image_data);
         fclose(fp);
         return 0;
     }
-
     // set the individual row_pointers to point at the correct offsets of image_data
-    int i;
-    for (i = 0; i < temp_height; i++) {
+    for(unsigned int i = 0; i < temp_height; i++) {
         row_pointers[temp_height - 1 - i] = image_data + i * rowbytes;
     }
-
     // read the png into image_data through row_pointers
     png_read_image(png_ptr, row_pointers);
-
     // Generate the OpenGL texture object
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, temp_width, temp_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, temp_width, temp_height, 0, format, GL_UNSIGNED_BYTE, image_data);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
     // clean up
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
     free(image_data);
@@ -242,9 +221,8 @@ GLuint cog_graphics_png_texture_load(const char* filename, int* width, int*  hei
     return texture;
 }
 
-GLuint cog_graphics_load_texture(char* filename) {
-    GLuint texture = cog_graphics_png_texture_load(filename, NULL, NULL);
-    return texture;
+GLuint cog_graphics_load_texture(char* filename, int* width, int* height) {
+    return cog_graphics_load_texture_png(filename, 0, 0);
 }
 
 void cog_graphics_init(void) {
@@ -321,7 +299,7 @@ void cog_graphics_hwinit(void) {
         printf("Error initializing OpenGL! %s\n", gluErrorString(error));
     }
     //Initialize clear color
-    glClearColor(0.3f, 0.1f, 0.1f, 1.f);
+    glClearColor(0.3f, 0.f, 0.f, 1.f);
     //Check for error
     error = glGetError();
     if(error != GL_NO_ERROR) {
@@ -329,20 +307,12 @@ void cog_graphics_hwinit(void) {
     }
     //SDL_Surface* surface = cog_graphics_load_image("media/test0.png");
     //GLUINT = cog_graphics_upload_surface(surface);
-
+    GLUINT = cog_graphics_load_texture_png("media/test0.png", 0, 0);
+    //THIS CAUSES IT TO DISAPPEAR
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-/*
-    glEnable(GL_TEXTURE_2D);
-    glShadeModel(GL_SMOOTH);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-*/
-
-    GLUINT = cog_graphics_load_texture("media/kitten_anim.png");
 }
 
 void cog_graphics_read_file(char* buf, char* filename) {
@@ -411,10 +381,14 @@ void cog_graphics_render(cog_window* window) {
     glBindTexture(GL_TEXTURE_2D, GLUINT);
     //glColor4f(1.0, 1.0, 1.0, 1.0); // reset gl color
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(-0.5f, -0.5f);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(0.5f, -0.5f);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(0.5f, 0.5f);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(-0.5f, 0.5f);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2f(-0.5f, -0.5f);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2f(0.5f, -0.5f);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2f(0.5f, 0.5f);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2f(-0.5f, 0.5f);
     glEnd();
     glLoadIdentity();
     glDisable(GL_TEXTURE_2D);
@@ -424,10 +398,8 @@ void cog_graphics_render(cog_window* window) {
 #if defined(HAVE_GLES)
     EGL_SwapBuffers();
 #endif
-    /*
+    //SDL_Surface* surface = cog_graphics_load_image("media/test0.png");
+    //SDL_BlitSurface(surface, NULL, window->screen_surface, NULL);
+    //SDL_FreeSurface(surface);
     //Software
-    SDL_Surface* surface = cog_graphics_load_image("media/test0.png");
-    SDL_BlitSurface(surface, NULL, window->screen_surface, NULL);
-    SDL_FreeSurface(surface);
-    */
 }

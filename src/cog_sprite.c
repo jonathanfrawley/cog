@@ -21,12 +21,13 @@ cog_sprite_id cog_sprite_add(char* img) {
 cog_sprite_id cog_sprite_add_inactive(char* img) {
     cog_sprite* sprite = COG_STRUCT_MALLOC(cog_sprite);
     sprite->id = spritecnt++;
-    sprite->tex_id = cog_graphics_load_texture(img);
+    int w, h;
+    sprite->tex_id = cog_graphics_load_texture(img, &w, &h);
     sprite->layer = COG_SPRITE_LAYER;
     sprite->pos.x = 0;
     sprite->pos.y = 0;
-    sprite->dim.w = 0;
-    sprite->dim.h = 0;
+    sprite->dim.w = (float)w;
+    sprite->dim.h = (float)h;
     sprite->rot = 0;
     sprite->tex_pos.x = 0.0f;
     sprite->tex_pos.y = 0.0f;

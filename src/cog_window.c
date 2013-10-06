@@ -36,9 +36,9 @@ void cog_window_init(cog_window* window) {
                    SDL_GetError());
     }
     window->glcontext = SDL_GL_CreateContext(window->window);
-    #if defined(HAVE_GLES)
+#if defined(HAVE_GLES)
     EGL_Init();
-    #endif
+#endif
     if(SDL_GL_SetSwapInterval(1) < 0) {
         cog_debugf("cog_window_init: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
     }
