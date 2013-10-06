@@ -25,7 +25,8 @@ cog_text_id cog_text_add(cog_string str) {
     TTF_SetFontStyle(default_font, default_renderstyle);
     SDL_Surface* textsurface =
         TTF_RenderText_Blended(default_font, str, default_colour);
-    text->tex_id = cog_graphics_upload_surface(textsurface);
+    //TODO: Update these to use libpng or something
+    //text->tex_id = cog_graphics_upload_surface(textsurface);
     text->font = default_font;
     text->pt_size = default_pt_size;
     text->c = default_colour;
@@ -51,7 +52,8 @@ void cog_text_refresh(cog_text_id id) {
     TTF_SetFontStyle(text->font, default_renderstyle);
     SDL_Surface* text_surface =
         TTF_RenderText_Blended(text->font, text->str, text->c);
-    text->tex_id = cog_graphics_upload_surface(text_surface);
+    //TODO:libpng here
+    //text->tex_id = cog_graphics_upload_surface(text_surface);
     text->dim.w = text_surface->w;
     text->dim.h = text_surface->h;
     SDL_FreeSurface(text_surface);
