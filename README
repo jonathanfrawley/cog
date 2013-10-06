@@ -20,3 +20,9 @@ On Windows
 3) Build cog using "scons", the dlls + exe will end up in the bin/ directory.
 
 Sources used to build deps are up on dropbox.
+
+Usage
+=====
+##Screen Coordinates
+The screen coordinates go from (-1.0f, -1.0f) in the bottom left of the screen to (1.0f, 1.0f) in the top right of the screen
+

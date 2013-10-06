@@ -11,13 +11,13 @@ typedef struct entity {
 void entity_init(entity* obj) {
     obj->anim = cog_anim_add("media/kitten_anim.png", 3);
     cog_anim_set(obj->anim, (cog_anim) {
-            .dim = (cog_dim2){.w=0.3f, .h=0.3f},
-            .pos = (cog_pos2){.x=0, .y=0},
-            .vel = (cog_vec2){.x=0.0001, .y=0.0003},
-            .transition_millis = 150,
-            .looped = COG_TRUE,
-            .ang_vel = COG_PI/14000
-            });
+        .dim = (cog_dim2) {.w=0.3f, .h=0.3f},
+        .pos = (cog_pos2) {.x=0, .y=0},
+        .vel = (cog_vec2) {.x=0.0001, .y=0.0003},
+        .transition_millis = 150,
+         .looped = COG_TRUE,
+          .ang_vel = COG_PI/14000
+    });
     cog_anim_set_frames(obj->anim, 0, 1, 2);
 }
 

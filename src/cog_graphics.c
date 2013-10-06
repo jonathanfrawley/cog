@@ -25,7 +25,7 @@ GLuint cog_graphics_load_texture_png(const char* file_name, int* width, int* hei
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
 void cog_graphics_draw_sprite(cog_sprite* sprite) {
-    /*  
+    /*
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
@@ -41,7 +41,7 @@ void cog_graphics_draw_sprite(cog_sprite* sprite) {
     glVertex2f(-0.5f, 0.5f);
     glEnd();
     glPushMatrix();
-*/
+    */
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     glLoadIdentity();
@@ -64,7 +64,7 @@ void cog_graphics_draw_sprite(cog_sprite* sprite) {
     };
     GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
                           3, 1, 2       // second triangle (bottom left - top right - bottom right)
-                        };                          
+                        };
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -95,7 +95,7 @@ void cog_graphics_draw_text(cog_text* text) {
     GLfloat tex[] = { 1, 0, 0, 0, 0, 1, 1, 1 };
     GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
                           3, 1, 2       // second triangle (bottom left - top right - bottom right)
-                        };                          
+                        };
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -414,8 +414,8 @@ void cog_graphics_render(cog_window* window) {
     //Restore alpha to normal
     //glColor4f(1.0, 1.0, 1.0, 1.0);
     glPopMatrix();
-#if defined(HAVE_GLES)
+    #if defined(HAVE_GLES)
     EGL_SwapBuffers();
-#endif
+    #endif
     */
 }
