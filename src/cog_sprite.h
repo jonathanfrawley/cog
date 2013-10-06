@@ -18,16 +18,16 @@ typedef struct {
     cog_sprite_id id;
     cog_uint layer;
     GLuint tex_id;
-    //These coords and dimensions are for the whole sprite in the game world.
-    cog_pos2 pos;
-    cog_dim2 dim;
-    cog_float rot;
     //These are the coords and dimensions of the sprite within the image.
     //(Can have multiple sprites per image - cog_anims are implemented using this)
     cog_pos2 tex_pos;
     cog_dim2 tex_dim;
-    //physics
+    //User attributes
+    cog_pos2 pos;
+    cog_dim2 dim;
+    cog_float rot;
     cog_vec2 vel;
+    cog_float ang_vel;
 } cog_sprite;
 
 cog_sprite_id cog_sprite_add(char* img);
@@ -36,6 +36,7 @@ cog_bool cog_sprite_collides_sprite(cog_sprite_id id0, cog_sprite_id id1);
 cog_sprite* cog_sprite_get(cog_sprite_id);
 void cog_sprite_remove(cog_sprite_id id);
 void cog_sprite_removeall(void);
+void cog_sprite_set(cog_sprite_id id, cog_sprite src);
 
 /*-----------------------------------------------------------------------------
  *  Internal

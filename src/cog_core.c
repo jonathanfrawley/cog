@@ -16,6 +16,7 @@ void* cog_malloc(cog_uint size) {
                    size);
         return 0;
     }
+    memset(ptr, 0, size); //initialise to zero
     return ptr;
 }
 

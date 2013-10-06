@@ -19,20 +19,7 @@ cog_anim_id cog_anim_add(char* img, cog_int n_frames) {
     anim->id = animcnt++;
     anim->layer = COG_ANIM_LAYER;
     cog_list_init(&anim->frames, sizeof(cog_sprite));
-    anim->transition_millis = 0;
-    anim->looped = COG_FALSE;
-    anim->current_frame = 0;
-    anim->current_frame_millis = 0;
-    anim->paused = COG_FALSE;
     anim->n_frames = n_frames;
-    anim->pos.x = 0;
-    anim->pos.y = 0;
-    anim->dim.w = 0;
-    anim->dim.h = 0;
-    anim->rot = 0;
-    anim->vel.x = 0;
-    anim->vel.y = 0;
-    anim->finished = 0;
     cog_float w_frame = ((cog_float) 1.0f / n_frames);
     cog_float h_frame = 1.0f;
     //Load nimages sprites in, with offset dependant on frame number.
@@ -86,6 +73,19 @@ void cog_anim_remove(cog_anim_id id) {
 
 void cog_anim_removeall(void) {
     cog_list_removeall(&active_anims);
+}
+
+void cog_anim_set(cog_anim_id id, cog_anim src) {
+    cog_anim* anim = cog_anim_get(id);
+    anim->transition_millis = src.transition_millis;
+    anim->looped = src.looped;
+    anim->paused = src.paused;
+    anim->pos = src.pos;
+    anim->dim = src.dim;
+    anim->rot = src.rot;
+    anim->vel = src.vel;
+    anim->ang_vel = src.ang_vel;
+    anim->finished = src.finished;
 }
 
 void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...) {
@@ -176,5 +176,6 @@ void cog_anim_update(cog_uint delta_millis) {
         cog_anim* this_anim = cog_anim_get(*(cog_anim_id*) curr->data);
         this_anim->pos.x += delta_millis * this_anim->vel.x;
         this_anim->pos.y += delta_millis * this_anim->vel.y;
+        this_anim->rot += delta_millis * this_anim->ang_vel;
     }
 }

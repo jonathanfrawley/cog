@@ -2,7 +2,6 @@
 #include "cog_anim.h"
 #include "cog_math.h"
 
-static int current_x = 20;
 static const int N_ENTITIES = 1;
 
 typedef struct entity {
@@ -11,26 +10,25 @@ typedef struct entity {
 
 void entity_init(entity* obj) {
     obj->anim = cog_anim_add("media/kitten_anim.png", 3);
-    cog_anim* anim = cog_anim_get(obj->anim);
-    anim->transition_millis = 150;
-    anim->looped = COG_TRUE;
-    //anim->pos.x = 0.0;
-    anim->pos.x = 200.0;
-    current_x += 200;
-    anim->pos.y = 200.0;
-    anim->dim.w = 128;
-    anim->dim.h = 128;
-    anim->rot = 0;
-    anim->paused = COG_FALSE;
+    cog_anim_set(obj->anim, (cog_anim) {
+            .dim = (cog_dim2){.w=0.3f, .h=0.3f},
+            .pos = (cog_pos2){.x=0, .y=0},
+            .vel = (cog_vec2){.x=0.0001, .y=0.0003},
+            .transition_millis = 150,
+            .looped = COG_TRUE,
+            .ang_vel = COG_PI/14000
+            });
     cog_anim_set_frames(obj->anim, 0, 1, 2);
 }
 
 void entity_update(entity* obj) {
-    // Do some simple movement
     cog_anim* anim = cog_anim_get(obj->anim);
-    //anim->pos.x += 0.001;
-    anim->pos.y += 0.001;
-    anim->rot += (COG_PI * 0.001);
+    if((anim->pos.x > 1.0f) || (anim->pos.x < -1.0f)) {
+        anim->vel.x = -anim->vel.x;
+    }
+    if((anim->pos.y > 1.0f) || (anim->pos.y < -1.0f)) {
+        anim->vel.y = -anim->vel.y;
+    }
 }
 
 int main(void) {
@@ -45,5 +43,4 @@ int main(void) {
         }
         cog_loopstep();
     }
-    return 0;
 }

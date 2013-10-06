@@ -25,19 +25,35 @@ GLuint cog_graphics_load_texture_png(const char* file_name, int* width, int* hei
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
 void cog_graphics_draw_sprite(cog_sprite* sprite) {
+    /*  
     glPushMatrix();
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
+    //glColor4f(1.0, 1.0, 1.0, 1.0); // reset gl color
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2f(-0.5f, -0.5f);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2f(0.5f, -0.5f);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2f(0.5f, 0.5f);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2f(-0.5f, 0.5f);
+    glEnd();
+    glPushMatrix();
+*/
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     glLoadIdentity();
     glTranslatef(sprite->pos.x, sprite->pos.y, 0.0);
     glRotatef(cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
-    float W = sprite->dim.w;
-    float H = sprite->dim.h;
+    float w = sprite->dim.w;
+    float h = sprite->dim.h;
     GLfloat vertices[] = {
-        -1.0f * W, 1.0f * H, 0,
-        1.0f * W, 1.0f * H, 0,
-        1.0f * W, -1.0f * H, 0,
-        -1.0f * W, -1.0f * H, 0,
+        -1.0f * w, 1.0f * h, 0,
+        1.0f * w, 1.0f * h, 0,
+        1.0f * w, -1.0f * h, 0,
+        -1.0f * w, -1.0f * h, 0,
     };
     GLfloat tex[] = {
         sprite->tex_pos.x, sprite->tex_pos.y + sprite->tex_dim.h,
@@ -47,8 +63,8 @@ void cog_graphics_draw_sprite(cog_sprite* sprite) {
         sprite->tex_pos.x, sprite->tex_pos.y
     };
     GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
-                          3, 1, 2
-                        };                          // second triangle (bottom left - top right - bottom right)
+                          3, 1, 2       // second triangle (bottom left - top right - bottom right)
+                        };                          
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -78,8 +94,8 @@ void cog_graphics_draw_text(cog_text* text) {
     };
     GLfloat tex[] = { 1, 0, 0, 0, 0, 1, 1, 1 };
     GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
-                          3, 1, 2
-                        };                          // second triangle (bottom left - top right - bottom right)
+                          3, 1, 2       // second triangle (bottom left - top right - bottom right)
+                        };                          
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -364,12 +380,15 @@ void cog_graphics_render(cog_window* window) {
     */
     //Clear color buffer
     glClear(GL_COLOR_BUFFER_BIT);
+    glPushMatrix();
+    glEnable(GL_TEXTURE_2D);
     //PASTE
     for(cog_int i = 0; i < COG_LAYER_MAX; i++) {
         cog_sprite_draw_layer(i);
         cog_anim_draw_layer(i);
         cog_text_draw_layer(i);
     }
+    /*
     GLenum error = GL_NO_ERROR;
     error = glGetError();
     if(error != GL_NO_ERROR) {
@@ -398,8 +417,5 @@ void cog_graphics_render(cog_window* window) {
 #if defined(HAVE_GLES)
     EGL_SwapBuffers();
 #endif
-    //SDL_Surface* surface = cog_graphics_load_image("media/test0.png");
-    //SDL_BlitSurface(surface, NULL, window->screen_surface, NULL);
-    //SDL_FreeSurface(surface);
-    //Software
+    */
 }

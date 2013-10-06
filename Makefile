@@ -26,7 +26,7 @@ cplib:
 $(TARGET_LIB):
 	$(CC) -shared $(CFLAGS) -o $(TARGET_LIB) $(SOURCES)
 
-tests: test test_anim test_list test_sound test_state test_text
+tests: test test_anim test_list test_sound test_sprite test_state test_text
 
 test:
 	$(CC) -o bin/test tests/test.c $(CFLAGS) $(TARGET_LIB)
@@ -39,6 +39,9 @@ test_list:
 
 test_sound:
 	$(CC) -o bin/test_sound tests/test_sound.c $(CFLAGS) $(TARGET_LIB)
+
+test_sprite:
+	$(CC) -o bin/test_sprite tests/test_sprite.c $(CFLAGS) $(TARGET_LIB)
 
 test_state:
 	$(CC) -o bin/test_state tests/test_state.c $(CFLAGS) $(TARGET_LIB)

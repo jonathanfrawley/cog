@@ -24,18 +24,10 @@ cog_sprite_id cog_sprite_add_inactive(char* img) {
     int w, h;
     sprite->tex_id = cog_graphics_load_texture(img, &w, &h);
     sprite->layer = COG_SPRITE_LAYER;
-    sprite->pos.x = 0;
-    sprite->pos.y = 0;
     sprite->dim.w = (float)w;
     sprite->dim.h = (float)h;
-    sprite->rot = 0;
-    sprite->tex_pos.x = 0.0f;
-    sprite->tex_pos.y = 0.0f;
     sprite->tex_dim.w = 1.0f;
     sprite->tex_dim.h = 1.0f;
-    //vel always 0 to start with
-    sprite->vel.x = 0.0f;
-    sprite->vel.y = 0.0f;
     cog_map_put(&sprites, sprite->id, (void*) sprite);
     return sprite->id;
 }
@@ -66,6 +58,15 @@ void cog_sprite_remove(cog_sprite_id id) {
 
 void cog_sprite_removeall(void) {
     cog_list_removeall(&active_sprites);
+}
+
+void cog_sprite_set(cog_sprite_id id, cog_sprite src) {
+    cog_sprite* sprite = cog_sprite_get(id);
+    sprite->pos = src.pos;
+    sprite->dim = src.dim;
+    sprite->rot = src.rot;
+    sprite->vel = src.vel;
+    sprite->ang_vel = src.ang_vel;
 }
 
 /*-----------------------------------------------------------------------------
@@ -120,5 +121,6 @@ void cog_sprite_update(cog_float timedelta) {
         //do physics update for current sprite
         curr_sprite->pos.x += timedelta * curr_sprite->vel.x;
         curr_sprite->pos.y += timedelta * curr_sprite->vel.y;
+        curr_sprite->rot += timedelta * curr_sprite->ang_vel;
     }
 }

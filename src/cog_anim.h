@@ -12,18 +12,19 @@
 typedef struct {
     cog_anim_id id;
     cog_uint layer;
-    cog_uint transition_millis;
     cog_uint current_frame;
     cog_uint current_frame_millis;
-    cog_bool looped;
     cog_list frames;
     cog_uint n_frames;
+    //User attributes
+    cog_uint transition_millis;
+    cog_bool looped;
     cog_bool paused;
-    //For convenience
     cog_pos2 pos;
     cog_dim2 dim;
     cog_float rot;
     cog_vec2 vel;
+    cog_float ang_vel;
     cog_bool finished;
 } cog_anim;
 
@@ -33,6 +34,7 @@ cog_bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1);
 cog_anim* cog_anim_get(cog_anim_id);
 void cog_anim_remove(cog_anim_id id);
 void cog_anim_removeall(void);
+void cog_anim_set(cog_anim_id id, cog_anim src);
 void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...);
 
 /*-----------------------------------------------------------------------------
