@@ -119,6 +119,7 @@ void cog_update() {
 void cog_loopstep() {
     cog_update();
     framedrawcounter++;
+    //XXX: This should be added back in!
     //cog_graphics_render(&window);
     cog_window_update(&window);
 }
