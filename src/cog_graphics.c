@@ -11,9 +11,7 @@
 #include "cog_math.h"
 #include "cog_sprite.h"
 
-void cog_graphics_hw_set_viewport(cog_int w, cog_int h);
 void cog_graphics_hwinit(void);
-void cog_graphics_swinit(void);
 //file io
 void cog_graphics_read_file(char* buf, char* filename);
 //rendering
@@ -25,23 +23,6 @@ GLuint cog_graphics_load_texture_png(const char* file_name, int* width, int* hei
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
 void cog_graphics_draw_sprite(cog_sprite* sprite) {
-    /*
-    glPushMatrix();
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
-    //glColor4f(1.0, 1.0, 1.0, 1.0); // reset gl color
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex2f(-0.5f, -0.5f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex2f(0.5f, -0.5f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex2f(0.5f, 0.5f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex2f(-0.5f, 0.5f);
-    glEnd();
-    glPushMatrix();
-    */
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     glLoadIdentity();
@@ -84,13 +65,13 @@ void cog_graphics_draw_text(cog_text* text) {
     glTranslatef(text->pos.x + text->dim.w, text->pos.y + text->dim.h, 0.0);
     glRotatef(cog_math_radians_to_degrees(text->rot), 0.0f, 0.0f, 1.0f);
     glColor4f(1.0, 1.0, 1.0, text->alpha);
-    float W = text->dim.w;
-    float H = text->dim.h;
+    float w = text->dim.w;
+    float h = text->dim.h;
     GLfloat vertices[] = {
-        -1.0f * W, 1.0f * H, 0,
-        1.0f * W, 1.0f * H, 0,
-        1.0f * W, -1.0f * H, 0,
-        -1.0f * W, -1.0f * H, 0,
+        -1.0f * w, 1.0f * h, 0,
+        1.0f * w, 1.0f * h, 0,
+        1.0f * w, -1.0f * h, 0,
+        -1.0f * w, -1.0f * h, 0,
     };
     GLfloat tex[] = { 1, 0, 0, 0, 0, 1, 1, 1 };
     GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
@@ -109,13 +90,15 @@ void cog_graphics_draw_text(cog_text* text) {
     glPopMatrix();
 }
 
+/*-----------------------------------------------------------------------------
+ * Loads a transparent png image as a texure and uploads it to the GPU.
+ * Returns: A reference to the texture which can be passed to glBindTexture
+ *
+ * Notes:
+ * Source: https://github.com/DavidEGrayson/ahrs-visualizer/blob/master/png_texture.cpp
+ * License: https://github.com/DavidEGrayson/ahrs-visualizer/blob/master/LICENSE.txt
+ *-----------------------------------------------------------------------------*/
 GLuint cog_graphics_load_texture_png(const char* file_name, int* width, int* height) {
-    /**
-     * Loads a transparent png image as a texure and uploads it to the GPU.
-     * Returns: A reference to the texture which can be passed to glBindTexture
-     **/
-    //Source: https://github.com/DavidEGrayson/ahrs-visualizer/blob/master/png_texture.cpp
-    //License: https://github.com/DavidEGrayson/ahrs-visualizer/blob/master/LICENSE.txt
     png_byte header[8];
     FILE* fp = fopen(file_name, "rb");
     if(fp == 0) {
@@ -243,60 +226,9 @@ GLuint cog_graphics_load_texture(char* filename, int* width, int* height) {
 
 void cog_graphics_init(void) {
     cog_graphics_hwinit();
-//    cog_graphics_hw_set_viewport(cog_screenw(), cog_screenh());
 }
-
-void cog_graphics_hw_set_viewport(cog_int w, cog_int h) {
-    /*  Height / width ration */
-    /*
-    GLfloat ratio;
-    ratio = (GLfloat)w / (GLfloat)h;
-    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(45.0f, ratio, 0.1f, 100.0f);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    */
-}
-
-int GLUINT = 0; //XXX REMOVE
 
 void cog_graphics_hwinit(void) {
-    /*
-    #ifdef HAVE_GLES
-    //GLES
-    cog_graphics_init_shaders();
-    glUseProgram(shader_program);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    #else
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, cog_screenw(), cog_screenh(), 0, -1, 1);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    */
-    /*
-            glEnable(GL_TEXTURE_2D);
-            glShadeModel( GL_SMOOTH );
-            glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-            glClearDepth( 1.0f );
-            glEnable( GL_DEPTH_TEST );
-            glDepthFunc( GL_LEQUAL );
-            glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-            */
-//#endif
     GLenum error = GL_NO_ERROR;
     //Initialize Projection Matrix
     glMatrixMode(GL_PROJECTION);
@@ -321,10 +253,6 @@ void cog_graphics_hwinit(void) {
     if(error != GL_NO_ERROR) {
         printf("Error initializing OpenGL! %s\n", gluErrorString(error));
     }
-    //SDL_Surface* surface = cog_graphics_load_image("media/test0.png");
-    //GLUINT = cog_graphics_upload_surface(surface);
-    GLUINT = cog_graphics_load_texture_png("media/test0.png", 0, 0);
-    //THIS CAUSES IT TO DISAPPEAR
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glEnable(GL_BLEND);
@@ -358,64 +286,12 @@ cleanup:
 }
 
 void cog_graphics_render(cog_window* window) {
-    /*
-    glClear(GL_COLOR_BUFFER_BIT);
-    glLoadIdentity();
-    //PASTE
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-    glTranslatef(-1.5f, 0.0f, -6.0f);
-    glBegin(GL_TRIANGLES);
-    glVertex3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, 0.0f);
-    glEnd();
-    glTranslatef(3.0f, 0.0f, 0.0f);
-    glBegin(GL_QUADS);
-    glVertex3f(-1.0f, 1.0f, 0.0f);
-    glVertex3f(1.0f, 1.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, 0.0f);
-    glEnd();
-    */
     //Clear color buffer
     glClear(GL_COLOR_BUFFER_BIT);
-    glPushMatrix();
-    glEnable(GL_TEXTURE_2D);
     //PASTE
     for(cog_int i = 0; i < COG_LAYER_MAX; i++) {
         cog_sprite_draw_layer(i);
         cog_anim_draw_layer(i);
         cog_text_draw_layer(i);
     }
-    /*
-    GLenum error = GL_NO_ERROR;
-    error = glGetError();
-    if(error != GL_NO_ERROR) {
-        cog_errorf("Error initializing OpenGL! %s\n", gluErrorString(error));
-    }
-    //Render quad
-    glPushMatrix();
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, GLUINT);
-    //glColor4f(1.0, 1.0, 1.0, 1.0); // reset gl color
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex2f(-0.5f, -0.5f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex2f(0.5f, -0.5f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex2f(0.5f, 0.5f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex2f(-0.5f, 0.5f);
-    glEnd();
-    glLoadIdentity();
-    glDisable(GL_TEXTURE_2D);
-    //Restore alpha to normal
-    //glColor4f(1.0, 1.0, 1.0, 1.0);
-    glPopMatrix();
-    #if defined(HAVE_GLES)
-    EGL_SwapBuffers();
-    #endif
-    */
 }
