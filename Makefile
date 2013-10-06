@@ -1,8 +1,9 @@
 SHELL 		 = /bin/sh
 CC    		 = gcc
-GLFLAGS		 = -lGL -lGLU
-LFLAGS		 = `sdl2-config --libs` -lalut -lSDL2_ttf -l SDL2_image `pkg-config --libs libpng` $(GLFLAGS)
-CFLAGS       = -std=c99 -Wall -Werror -fPIC -Isrc `sdl2-config --cflags` `pkg-config --cflags libpng` $(LFLAGS) 
+GLFLAGS		 = -lGL -lGLU -lGLEW
+#TODO: Remove ttf and image
+LFLAGS		 = `sdl2-config --libs` -lalut -lSDL2_ttf -l SDL2_image `pkg-config --libs libpng` `pkg-config --libs freetype2` $(GLFLAGS) 
+CFLAGS       = -std=c99 -Wall -Werror -fPIC -Isrc `sdl2-config --cflags` `pkg-config --cflags libpng` `pkg-config --cflags freetype2` $(LFLAGS) 
 
 TARGET_LIB  = libcog.so
 SOURCES = $(shell echo src/*.c)
@@ -26,7 +27,7 @@ cplib:
 $(TARGET_LIB):
 	$(CC) -shared $(CFLAGS) -o $(TARGET_LIB) $(SOURCES)
 
-tests: test test_anim test_list test_sound test_sprite test_state test_text
+tests: test test_anim test_list test_sound test_sprite test_state test_text tmp_text
 
 test:
 	$(CC) -o bin/test tests/test.c $(CFLAGS) $(TARGET_LIB)
@@ -48,6 +49,9 @@ test_state:
 
 test_text:
 	$(CC) -o bin/test_text tests/test_text.c $(CFLAGS) $(TARGET_LIB)
+
+tmp_text:
+	$(CC) -o bin/tmp_text tests/tmp_text.c $(CFLAGS) $(TARGET_LIB)
 
 clean:
 	rm -rf $(OBJECTS)
