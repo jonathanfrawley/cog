@@ -8,6 +8,17 @@ FT_GlyphSlot g;
 
 void render_text(const char* text, float x, float y, float sx, float sy) {
     const char* p;
+
+    //TODO: Not sure if this is needed
+    GLuint t;
+    glGenTextures(1, &t);
+    glBindTexture(GL_TEXTURE_2D, t);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     for(p = text; *p; p++) {
         if(FT_Load_Char(face, *p, FT_LOAD_RENDER)) {
             continue;
@@ -44,6 +55,7 @@ void render_text(const char* text, float x, float y, float sx, float sy) {
         glLoadIdentity();
         //glTranslatef(x2, y2, 0.0);
         //glColor4f(1.0, 1.0, 1.0, text->alpha);
+        glColor4f(1.0, 0.0, 0.0, 1.0);
         /*
         GLfloat vertices[] = {
             -1.0f * w, 1.0f * h, 0,
@@ -87,7 +99,7 @@ int main(void) {
         cog_errorf("Could not init freetype library\n");
         return 1;
     }
-    if(FT_New_Face(ft, "media/font/FreeSans.ttf", 0, &face)) {
+    if(FT_New_Face(ft, "media/font/04B_03__.ttf", 0, &face)) {
         cog_errorf("Could not open font\n");
         return 1;
     }
@@ -97,17 +109,9 @@ int main(void) {
         return 1;
     }
     g = face->glyph;
-    GLuint tex;
     glClearColor(0.2, 0.2, 0.2, 0);
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-    render_text("Jonathan RULZ", -1, -1, 0.001, 0.001);
+    render_text("Jonathan RULZ", -1, -1, 0.002, 0.002);
     while(!cog_hasquit()) {
         cog_loopstep();
     }
