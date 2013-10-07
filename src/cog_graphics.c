@@ -93,20 +93,16 @@ void cog_graphics_draw_text(cog_text* text) {
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glPopMatrix();
     */
-
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, text->tex_id);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
     const char* p;
     FT_GlyphSlot g = text->face->glyph;
     float x = text->pos.x;
@@ -135,11 +131,9 @@ void cog_graphics_draw_text(cog_text* text) {
         glPushMatrix();
         glEnable(GL_TEXTURE_2D);
         glLoadIdentity();
-        //glRotatef(cog_math_radians_to_degrees(text->rot), 0.0f, 0.0f, 1.0f);
-        //cog_color c = text->col;
-        //glColor4f(c.r, c.g, c.b, c.a);
+        cog_color c = text->col;
+        glColor4f(c.r, c.g, c.b, c.a);
         //glColor4f(c.r, c.g, c.b, 0.0);
-
         GLfloat vertices[] = {
             x2, -y2, 0, //top left
             x2 + w, -y2, 0, //top right
@@ -153,11 +147,9 @@ void cog_graphics_draw_text(cog_text* text) {
         glTexCoordPointer(2, GL_FLOAT, 0, tex);
         glVertexPointer(3, GL_FLOAT, 0, vertices);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-
         x += (g->advance.x >> 6) * sx;
         y += (g->advance.y >> 6) * sy;
     }
-
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisable(GL_TEXTURE_2D);

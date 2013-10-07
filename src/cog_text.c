@@ -33,6 +33,18 @@ cog_text_id cog_text_add() {
     return text->id;
 }
 
+FT_Face cog_text_load_face(cog_string path, cog_float pt_size) {
+    FT_Face face;
+    if(FT_New_Face(font_library, path, 0, &face)) {
+        cog_errorf("Could not open font");
+    }
+    FT_Set_Pixel_Sizes(face, 0, pt_size);
+    if(FT_Load_Char(face, 'X', FT_LOAD_RENDER)) {
+        cog_errorf("Could not load character 'X'");
+    }
+    return face;
+}
+
 cog_text* cog_text_get(cog_text_id id) {
     return (cog_text*) cog_map_get(&texts, id);
 }
@@ -41,7 +53,6 @@ void cog_text_set(cog_text_id id, cog_text src) {
     cog_text* text = cog_text_get(id);
     text->pos = src.pos;
     text->dim = src.dim;
-    text->rot = src.rot;
     text->col = src.col;
     strcpy(text->str, src.str);
 }
@@ -64,24 +75,11 @@ void cog_text_removeall(void) {
  *  Internal
  *-----------------------------------------------------------------------------*/
 
-FT_Face cog_text_load_face(cog_string path, cog_float pt_size) {
-    FT_Face face;
-    if(FT_New_Face(font_library, path, 0, &face)) {
-        cog_errorf("Could not open font");
-    }
-    FT_Set_Pixel_Sizes(face, 0, pt_size);
-    if(FT_Load_Char(face, 'X', FT_LOAD_RENDER)) {
-        cog_errorf("Could not load character 'X'");
-    }
-    return face;
-}
-
 void cog_text_init(void) {
     if(FT_Init_FreeType(&font_library)) {
         cog_errorf("Could not init freetype library");
     }
     default_face = cog_text_load_face(default_path, default_pt_size);
-
     cog_map_init(&texts);
     cog_list_init(&activetexts, sizeof(cog_text_id));
 }

@@ -10,7 +10,6 @@ typedef struct {
     //User attributes
     cog_pos2 pos;
     cog_dim2 dim;
-    cog_float rot;
     cog_color col;
     char str[COG_TEXT_MAX];
 } cog_text_multiline;

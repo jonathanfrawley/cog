@@ -28,13 +28,13 @@ typedef struct {
     //User attributes
     cog_pos2 pos;
     cog_dim2 dim;
-    cog_float rot;
     cog_color col;
     cog_char str[COG_TEXT_MAX];
 } cog_text;
 
 cog_text_id cog_text_add();
 cog_text* cog_text_get(cog_text_id id);
+FT_Face cog_text_load_face(cog_string path, cog_float pt_size);
 void cog_text_remove(cog_text_id id);
 void cog_text_removeall(void);
 void cog_text_set(cog_text_id id, cog_text src);
