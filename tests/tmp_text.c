@@ -78,7 +78,7 @@ int main(void) {
         cog_errorf("Could not init freetype library\n");
         return 1;
     }
-    if(FT_New_Face(ft, "media/font/ArcadeClassic.ttf", 0, &face)) {
+    if(FT_New_Face(ft, "media/font/FreeSans.ttf", 0, &face)) {
         cog_errorf("Could not open font\n");
         return 1;
     }
@@ -89,7 +89,7 @@ int main(void) {
     }
     g = face->glyph;
     GLuint tex;
-    glClearColor(1, 1, 1, 1);
+    glClearColor(0.2, 0.2, 0.2, 0);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -97,10 +97,10 @@ int main(void) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    render_text("Jonathan RULZ", 0, 0, 0.003, 0.003);
     while(!cog_hasquit()) {
         cog_loopstep();
-        glClear(GL_COLOR_BUFFER_BIT);
-        render_text("TESToiwejoiwhoiwhoiwh", 0, 0, 1.0, 1.0);
     }
     cog_quit();
     return 0;
