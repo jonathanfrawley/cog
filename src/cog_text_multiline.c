@@ -8,27 +8,69 @@
 
 // TODO: Keep track of multiline strings.
 static cog_text_multiline_id text_multiline_cnt;
-static cog_float padding = 10.0f;
+static cog_float padding = 0.1f;
+static cog_map multiline_texts;
 
-cog_text_multiline_id cog_text_multiline_add(cog_string str,
-        cog_pos2 pos) {
+cog_text_multiline_id cog_text_multiline_add() {
     cog_text_multiline* text_multiline = COG_STRUCT_MALLOC(cog_text_multiline);
     text_multiline->id = text_multiline_cnt++;
+    /*
+    cog_string line = strtok(str, "\n");
+    cog_list* text_list = cog_list_alloc(sizeof(cog_text_id));
+    cog_int line_no = 0;
+    while(line != cog_null) {
+        cog_text_id text_id = cog_text_add();
+        // this is the important bit, move the line down on the y.
+        // add a bit of padding as it can look bad otherwise.
+        cog_text_set(text_id, (cog_text){
+                .pos = (cog_pos2){.x=pos.x, .y=pos.y + ((((cog_float)line_no) * text->dim.h) + 
+                                                       (((cog_float)line_no) * padding)));
+        cog_list_append(text_list, (cog_dataptr) &text_id);
+        line = strtok(null, "\n");
+        line_no++;
+    }
+    text_multiline->text_ids = text_list;
+    */
+
+    cog_map_put(&multiline_texts, text_multiline->id, (cog_dataptr) text_multiline);
+    return text_multiline->id;
+}
+
+void cog_text_multiline_init(void) {
+    cog_map_init(&multiline_texts);
+}
+
+cog_text_multiline* cog_text_multiline_get(cog_text_multiline_id id) {
+    return (cog_text_multiline*) cog_map_get(&multiline_texts, id);
+}
+
+void cog_text_multiline_set(cog_text_multiline_id id, cog_text_multiline src) {
+    cog_text_multiline* text = cog_text_multiline_get(id);
+    text->pos = src.pos;
+    text->dim = src.dim;
+    text->rot = src.rot;
+    text->col = src.col;
+    strcpy(text->str, src.str);
+    char* str = text->str;
     cog_string line = strtok(str, "\n");
     cog_list* text_list = cog_list_alloc(sizeof(cog_text_id));
     cog_int line_no = 0;
     while(line != COG_NULL) {
-        cog_text_id text_id = cog_text_add(line);
-        cog_text* text = cog_text_get(text_id);
-        text->pos.x = pos.x;
-        // This is the important bit, move the line down on the y.
-        // Add a bit of padding as it can look bad otherwise.
-        text->pos.y = pos.y + (((cog_float)line_no) * text->dim.h) +
-                      (((cog_float)line_no) * padding);
+        cog_text_id text_id = cog_text_add();
+        // this is the important bit, move the line down on the y.
+        // add a bit of padding as it can look bad otherwise.
+        cog_text tmp = (cog_text){
+                .pos = (cog_pos2){.x=text->pos.x, .y=text->pos.y - ((((cog_float)line_no) * src.dim.h) + 
+                                                       (((cog_float)line_no) * padding))},
+                .dim = text->dim,
+                .rot = text->rot,
+                .col = text->col,
+                };
+        strcpy(tmp.str, line);
+        cog_text_set(text_id, tmp);
         cog_list_append(text_list, (cog_dataptr) &text_id);
-        line = strtok(NULL, "\n");
+        line = strtok(COG_NULL, "\n");
         line_no++;
     }
-    text_multiline->text_ids = text_list;
-    return text_multiline->id;
+    text->text_ids = text_list;
 }

@@ -6,6 +6,9 @@
 #define COG_FALSE 0
 #define COG_TRUE 1
 
+//constants
+#define COG_TEXT_MAX 255
+
 //types
 typedef float cog_float;
 typedef int cog_anim_id;
@@ -35,5 +38,12 @@ typedef struct cog_dim2 {
     cog_float w;
     cog_float h;
 } cog_dim2;
+
+typedef struct cog_color {
+    cog_float r;
+    cog_float g;
+    cog_float b;
+    cog_float a;
+} cog_color;
 
 #endif // COG_TYPES_H

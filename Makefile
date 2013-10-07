@@ -3,7 +3,7 @@ CC    		 = gcc
 GLFLAGS		 = -lGL -lGLU -lGLEW
 #TODO: Remove ttf and image
 LFLAGS		 = `sdl2-config --libs` -lalut -lSDL2_ttf -l SDL2_image `pkg-config --libs libpng` `pkg-config --libs freetype2` $(GLFLAGS) 
-CFLAGS       = -std=c99 -Wall -Werror -fPIC -Isrc `sdl2-config --cflags` `pkg-config --cflags libpng` `pkg-config --cflags freetype2` $(LFLAGS) 
+CFLAGS       = -std=c99 -Wall -Werror -fPIC -Isrc `sdl2-config --cflags` `pkg-config --cflags libpng` `pkg-config --cflags freetype2` $(LFLAGS) -g
 
 TARGET_LIB  = libcog.so
 SOURCES = $(shell echo src/*.c)

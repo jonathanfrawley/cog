@@ -10,34 +10,24 @@ static cog_list activetexts;    //text drawn(active) at the moment
 static cog_map texts;
 static cog_text_id textcnt;
 
-static TTF_Font* default_font;
-//TODO:Add option to set these.
-static SDL_Color default_colour = { 255, 255, 255, 0 };
+static FT_Library font_library;
+static FT_Face default_face;
 
 static const cog_string default_path = "media/font/04B_03__.ttf";
-static cog_uint default_pt_size = 8;
-static cog_int default_renderstyle = TTF_STYLE_NORMAL;
+static cog_uint default_pt_size = 48;
+static cog_color default_color = {.r=1,.g=1,.b=1,.a=1};
 
-cog_text_id cog_text_add(cog_string str) {
+
+FT_Face cog_text_load_face(cog_string path, cog_float pt_size);
+
+cog_text_id cog_text_add() {
     cog_text* text = COG_STRUCT_MALLOC(cog_text);
     text->id = textcnt++;
+    text->tex_id = cog_graphics_gen_tex_id();
+    text->face = default_face;
     text->layer = COG_TEXT_LAYER;
-    TTF_SetFontStyle(default_font, default_renderstyle);
-    SDL_Surface* textsurface =
-        TTF_RenderText_Blended(default_font, str, default_colour);
-    //TODO: Update these to use libpng or something
-    //text->tex_id = cog_graphics_upload_surface(textsurface);
-    text->font = default_font;
-    text->pt_size = default_pt_size;
-    text->c = default_colour;
-    text->pos.x = 0;
-    text->pos.y = 0;
-    text->rot = COG_PI;
-    text->dim.w = textsurface->w;
-    text->dim.h = textsurface->h;
-    text->alpha = 1.0f;
-    strcpy(text->str, str);
-    SDL_FreeSurface(textsurface);
+    text->col = default_color;
+    strcpy(text->str, "");
     cog_map_put(&texts, text->id, (cog_dataptr) text);
     cog_list_append(&activetexts, (cog_dataptr) & (text->id));
     return text->id;
@@ -47,16 +37,13 @@ cog_text* cog_text_get(cog_text_id id) {
     return (cog_text*) cog_map_get(&texts, id);
 }
 
-void cog_text_refresh(cog_text_id id) {
-    cog_text* text = cog_map_get(&texts, id);
-    TTF_SetFontStyle(text->font, default_renderstyle);
-    SDL_Surface* text_surface =
-        TTF_RenderText_Blended(text->font, text->str, text->c);
-    //TODO:libpng here
-    //text->tex_id = cog_graphics_upload_surface(text_surface);
-    text->dim.w = text_surface->w;
-    text->dim.h = text_surface->h;
-    SDL_FreeSurface(text_surface);
+void cog_text_set(cog_text_id id, cog_text src) {
+    cog_text* text = cog_text_get(id);
+    text->pos = src.pos;
+    text->dim = src.dim;
+    text->rot = src.rot;
+    text->col = src.col;
+    strcpy(text->str, src.str);
 }
 
 void cog_text_remove(cog_text_id id) {
@@ -73,23 +60,28 @@ void cog_text_removeall(void) {
     cog_list_removeall(&activetexts);
 }
 
-void cog_text_set_str(cog_text_id id, cog_string str) {
-    cog_text* text = cog_text_get(id);
-    strcpy(text->str, str);
-}
-
 /*-----------------------------------------------------------------------------
  *  Internal
  *-----------------------------------------------------------------------------*/
+
+FT_Face cog_text_load_face(cog_string path, cog_float pt_size) {
+    FT_Face face;
+    if(FT_New_Face(font_library, path, 0, &face)) {
+        cog_errorf("Could not open font");
+    }
+    FT_Set_Pixel_Sizes(face, 0, pt_size);
+    if(FT_Load_Char(face, 'X', FT_LOAD_RENDER)) {
+        cog_errorf("Could not load character 'X'");
+    }
+    return face;
+}
+
 void cog_text_init(void) {
-    if(TTF_Init() < 0) {
-        cog_errorf("Couldn't initialize TTF: %s\n", SDL_GetError());
+    if(FT_Init_FreeType(&font_library)) {
+        cog_errorf("Could not init freetype library");
     }
-    default_font = TTF_OpenFont(default_path, default_pt_size);
-    if(default_font == COG_NULL) {
-        cog_errorf("Couldn't load %d pt font from %s: %s\n",
-                   default_pt_size, default_path, SDL_GetError());
-    }
+    default_face = cog_text_load_face(default_path, default_pt_size);
+
     cog_map_init(&texts);
     cog_list_init(&activetexts, sizeof(cog_text_id));
 }

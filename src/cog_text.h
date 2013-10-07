@@ -6,12 +6,14 @@
 #else
 #include <GLES/gl.h>
 #endif
-#include <SDL2/SDL_ttf.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 
 #include "cog_core.h"
 #include "cog_types.h"
 
-#define COG_TEXT_MAX 255
 #define COG_TEXT_LAYER 3
 
 /*-----------------------------------------------------------------------------
@@ -20,23 +22,22 @@
 typedef struct {
     cog_text_id id;
     GLuint tex_id;
+    FT_Face face;
     cog_uint layer;
-    TTF_Font* font;
-    cog_uint pt_size;
-    SDL_Color c;
+
+    //User attributes
     cog_pos2 pos;
-    cog_float rot;
     cog_dim2 dim;
-    char str[COG_TEXT_MAX];
-    cog_float alpha;
+    cog_float rot;
+    cog_color col;
+    cog_char str[COG_TEXT_MAX];
 } cog_text;
 
-cog_text_id cog_text_add(cog_string text);
+cog_text_id cog_text_add();
 cog_text* cog_text_get(cog_text_id id);
-void cog_text_refresh(cog_text_id id);
 void cog_text_remove(cog_text_id id);
 void cog_text_removeall(void);
-void cog_text_set_str(cog_text_id id, cog_string str);
+void cog_text_set(cog_text_id id, cog_text src);
 
 /*-----------------------------------------------------------------------------
  *  Internal

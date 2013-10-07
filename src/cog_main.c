@@ -6,8 +6,6 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 
 #include "cog_anim.h"
 #include "cog_core.h"
@@ -20,6 +18,7 @@
 #include "cog_sprite.h"
 #include "cog_snd.h"
 #include "cog_text.h"
+#include "cog_text_multiline.h"
 #include "cog_window.h"
 
 //constants
@@ -57,6 +56,7 @@ void cog_init(void) {
     cog_window_init(&window);
     cog_graphics_init();
     cog_text_init();
+    cog_text_multiline_init();
     starttime = SDL_GetTicks();
     //init rng
     srand(2);
@@ -119,8 +119,7 @@ void cog_update() {
 void cog_loopstep() {
     cog_update();
     framedrawcounter++;
-    //XXX: This should be added back in!
-    //cog_graphics_render(&window);
+    cog_graphics_render(&window);
     cog_window_update(&window);
 }
 
@@ -167,6 +166,7 @@ void cog_clear() {
     cog_anim_init();
     cog_text_removeall();
     cog_text_init();
+    cog_text_multiline_init();
     cog_snd_stopall();
     cog_snd_init();
 }
