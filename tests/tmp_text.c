@@ -1,7 +1,7 @@
-#include "cog.h"
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+#include <cog.h>
 
 FT_Face face;
 FT_GlyphSlot g;
@@ -42,15 +42,24 @@ void render_text(const char* text, float x, float y, float sx, float sy) {
         glPushMatrix();
         glEnable(GL_TEXTURE_2D);
         glLoadIdentity();
-        glTranslatef(x2, y2, 0.0);
+        //glTranslatef(x2, y2, 0.0);
         //glColor4f(1.0, 1.0, 1.0, text->alpha);
+        /*
         GLfloat vertices[] = {
             -1.0f * w, 1.0f * h, 0,
             1.0f * w, 1.0f * h, 0,
             1.0f * w, -1.0f * h, 0,
             -1.0f * w, -1.0f * h, 0,
         };
-        GLfloat tex[] = { 1, 0, 0, 0, 0, 1, 1, 1 };
+        */
+        GLfloat vertices[] = {
+            x2, -y2, 0, //top left
+            x2 + w, -y2, 0, //top right
+            x2 + w, -y2 - h, 0, //bottom right
+            x2, -y2 - h, 0 //bottom left
+        };
+        //GLfloat tex[] = { 1, 0, 0, 0, 0, 1, 1, 1 };
+        GLfloat tex[] = {0, 0, 1, 0, 1, 1, 0, 1};
         GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
                               3, 1, 2       // second triangle (bottom left - top right - bottom right)
                             };
@@ -98,7 +107,7 @@ int main(void) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-    render_text("Jonathan RULZ", 0, 0, 0.003, 0.003);
+    render_text("Jonathan RULZ", -1, -1, 0.001, 0.001);
     while(!cog_hasquit()) {
         cog_loopstep();
     }
