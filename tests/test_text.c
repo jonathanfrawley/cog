@@ -10,14 +10,18 @@ int main(void) {
         .dim = (cog_dim2) {.w=0.003f, .h=0.003f},
         .pos = (cog_pos2) {.x=-1, .y=-1},
         .str="This is some single line text.",
-        .col=(cog_color){.r=1,.g=1,.b=1,.a=1}
+        .col=(cog_color) {
+            .r=1,.g=1,.b=1,.a=1
+        }
     });
     cog_text_multiline_id mid = cog_text_multiline_add();
     cog_text_multiline_set(mid, (cog_text_multiline) {
         .dim = (cog_dim2) {.w=0.002f, .h=0.002f},
         .pos = (cog_pos2) {.x=-1, .y=0.5},
         .str="This is some multiline text.\nThis is the second line.\nAnd the third.\n4",
-        .col=(cog_color){.r=0.2f,.g=1,.b=0.1,.a=1}
+        .col=(cog_color) {
+            .r=0.2f,.g=1,.b=0.1,.a=1
+        }
     });
     cog_text* text = cog_text_get(id);
     text->face = cog_text_load_face("media/font/FreeSans.ttf", 48);
@@ -26,7 +30,6 @@ int main(void) {
     while(!cog_hasquit()) {
         text->pos.x += xvel;
         text->pos.y += yvel;
-
         if((text->pos.x > 1.0f) || (text->pos.x < -1.0f)) {
             xvel = -xvel;
         }
