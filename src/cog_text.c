@@ -14,11 +14,11 @@ static FT_Library font_library;
 static FT_Face default_face;
 
 static const cog_string default_path = "media/font/04B_03__.ttf";
-static cog_uint default_pt_size = 48;
+static uint32_t default_pt_size = 48;
 static cog_color default_color = {.r=1,.g=1,.b=1,.a=1};
 
 
-FT_Face cog_text_load_face(cog_string path, cog_float pt_size);
+FT_Face cog_text_load_face(cog_string path, double pt_size);
 
 cog_text_id cog_text_add() {
     cog_text* text = COG_STRUCT_MALLOC(cog_text);
@@ -33,7 +33,7 @@ cog_text_id cog_text_add() {
     return text->id;
 }
 
-FT_Face cog_text_load_face(cog_string path, cog_float pt_size) {
+FT_Face cog_text_load_face(cog_string path, double pt_size) {
     FT_Face face;
     if(FT_New_Face(font_library, path, 0, &face)) {
         cog_errorf("Could not open font");
@@ -84,7 +84,7 @@ void cog_text_init(void) {
     cog_list_init(&activetexts, sizeof(cog_text_id));
 }
 
-void cog_text_draw_layer(cog_uint layer) {
+void cog_text_draw_layer(uint32_t layer) {
     COG_LIST_FOREACH(&activetexts) {
         cog_text_id id = *(cog_text_id*) curr->data;
         cog_text* text = cog_text_get(id);

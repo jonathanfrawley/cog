@@ -5,6 +5,6 @@
 
 #include "cog_types.h"
 
-void cog_test(cog_string testname, cog_bool condition);
+void cog_test(cog_string testname, bool condition);
 
 #endif // COG_TEST_H

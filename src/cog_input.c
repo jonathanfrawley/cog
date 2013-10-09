@@ -7,16 +7,16 @@
 #include "cog_log.h"
 #include "cog_window.h"
 
-static cog_uint MY_SDL_BUTTON_RIGHT_MASK = 8;
+static uint32_t MY_SDL_BUTTON_RIGHT_MASK = 8;
 
-static cog_bool mouse_left_pressed;
-static cog_bool mouse_right_pressed;
-static cog_bool mouse_left_just_pressed = 0;
-static cog_bool mouse_right_just_pressed;
-static cog_float mouse_x;
-static cog_float mouse_y;
-static SDL_Keycode key_pressed;
-static cog_uint key_just_pressed;
+static bool mouse_left_pressed;
+static bool mouse_right_pressed;
+static bool mouse_left_just_pressed = 0;
+static bool mouse_right_just_pressed;
+static double mouse_x;
+static double mouse_y;
+static uint32_t key_pressed;
+static uint32_t key_just_pressed;
 
 void cog_input_blank() {
     key_just_pressed = COG_FALSE;
@@ -48,49 +48,49 @@ void cog_input_check_keys(void) {
     }
 }
 
-cog_bool cog_input_key_pressed(void) {
+bool cog_input_key_pressed(void) {
     return key_just_pressed;
 }
 
-SDL_Keycode cog_input_key_code(void) {
+uint32_t cog_input_key_code(void) {
     return key_pressed;
 }
 
-cog_bool cog_input_mouse_left_pressed() {
+bool cog_input_mouse_left_pressed() {
     return mouse_left_pressed;
 }
 
-cog_bool cog_input_mouse_left_just_pressed() {
-    cog_bool just_pressed = mouse_left_just_pressed;
+bool cog_input_mouse_left_just_pressed() {
+    bool just_pressed = mouse_left_just_pressed;
     //Stop mouse from sticking
     mouse_left_just_pressed = COG_FALSE;
     return just_pressed;
 }
 
-cog_bool cog_input_mouse_right_pressed() {
+bool cog_input_mouse_right_pressed() {
     return mouse_right_pressed;
 }
 
-cog_bool cog_input_mouse_right_just_pressed() {
-    cog_bool just_pressed = mouse_right_just_pressed;
+bool cog_input_mouse_right_just_pressed() {
+    bool just_pressed = mouse_right_just_pressed;
     //Stop mouse from sticking
     mouse_right_just_pressed = COG_FALSE;
     return just_pressed;
 }
 
-cog_float cog_input_mouse_x() {
+double cog_input_mouse_x() {
     return mouse_x;
 }
 
-cog_float cog_input_mouse_y() {
+double cog_input_mouse_y() {
     return mouse_y;
 }
 
 void cog_input_check_mouse(void) {
-    cog_int x, y;
-    cog_uint state = SDL_GetMouseState(&x, &y);
-    mouse_x = (cog_float) x;
-    mouse_y = (cog_float) y;
+    int x, y;
+    uint32_t state = SDL_GetMouseState(&x, &y);
+    mouse_x = (double) x;
+    mouse_y = (double) y;
     if(SDL_BUTTON_LEFT == SDL_BUTTON(state)) {
         if(!mouse_left_pressed) {
             mouse_left_just_pressed = COG_TRUE;
@@ -113,7 +113,7 @@ void cog_input_check_mouse(void) {
     }
 }
 
-cog_bool cog_input_space_pressed() {
+bool cog_input_space_pressed() {
     if(cog_input_key_pressed()) {
         SDL_Keycode key = cog_input_key_code();
         if(key == SDLK_SPACE) {

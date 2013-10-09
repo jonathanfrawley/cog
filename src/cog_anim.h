@@ -11,39 +11,39 @@
  *-----------------------------------------------------------------------------*/
 typedef struct {
     cog_anim_id id;
-    cog_uint layer;
-    cog_uint current_frame;
-    cog_uint current_frame_millis;
+    uint32_t layer;
+    uint32_t current_frame;
+    uint32_t current_frame_millis;
     cog_list frames;
-    cog_uint n_frames;
+    uint32_t n_frames;
     //User attributes
-    cog_uint transition_millis;
-    cog_bool looped;
-    cog_bool paused;
+    uint32_t transition_millis;
+    bool looped;
+    bool paused;
     cog_pos2 pos;
     cog_dim2 dim;
-    cog_float rot;
+    double rot;
     cog_vec2 vel;
-    cog_float ang_vel;
-    cog_bool finished;
+    double ang_vel;
+    bool finished;
 } cog_anim;
 
-cog_anim_id cog_anim_add(char* anim_img, cog_int n_frames);
-cog_bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1);
-cog_bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1);
+cog_anim_id cog_anim_add(char* anim_img, int n_frames);
+bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1);
+bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1);
 cog_anim* cog_anim_get(cog_anim_id);
 void cog_anim_remove(cog_anim_id id);
 void cog_anim_removeall(void);
 void cog_anim_set(cog_anim_id id, cog_anim src);
-void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...);
+void cog_anim_set_frames(cog_anim_id id, int frame0, ...);
 
 /*-----------------------------------------------------------------------------
  *  Internal
  *-----------------------------------------------------------------------------*/
-cog_float cog_anim_dist_anim(cog_anim_id id0, cog_anim_id id1);
-cog_float cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1);
-void cog_anim_draw_layer(cog_uint layer);
+double cog_anim_dist_anim(cog_anim_id id0, cog_anim_id id1);
+double cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1);
+void cog_anim_draw_layer(uint32_t layer);
 void cog_anim_init();
-void cog_anim_update(cog_uint deltamillis);
+void cog_anim_update(uint32_t deltamillis);
 
 #endif // COG_ANIM_H

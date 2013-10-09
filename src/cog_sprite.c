@@ -32,7 +32,7 @@ cog_sprite_id cog_sprite_add_inactive(char* img) {
     return sprite->id;
 }
 
-cog_bool cog_sprite_collides_sprite(cog_sprite_id id0, cog_sprite_id id1) {
+bool cog_sprite_collides_sprite(cog_sprite_id id0, cog_sprite_id id1) {
     cog_sprite* sprite0 = cog_sprite_get(id0);
     cog_sprite* sprite1 = cog_sprite_get(id1);
     if(cog_sprite_dist_sprite(id0, id1) < (sprite0->dim.w + sprite1->dim.w)) {
@@ -77,7 +77,7 @@ void cog_sprite_init(void) {
     cog_list_init(&active_sprites, sizeof(cog_sprite_id));
 }
 
-cog_float cog_sprite_dist_anim(cog_sprite_id a, cog_anim_id b) {
+double cog_sprite_dist_anim(cog_sprite_id a, cog_anim_id b) {
     cog_sprite* asprite = cog_sprite_get(a);
     cog_anim* banim = cog_anim_get(b);
     cog_sprite* bsprite = (cog_sprite*) banim->frames.next->data;
@@ -88,7 +88,7 @@ cog_float cog_sprite_dist_anim(cog_sprite_id a, cog_anim_id b) {
                          (asprite->pos.y - bsprite->pos.y));
 }
 
-cog_float cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b) {
+double cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b) {
     cog_sprite* asprite = cog_sprite_get(a);
     cog_sprite* bsprite = cog_sprite_get(b);
     return cog_math_sqrt((asprite->pos.x - bsprite->pos.x) *
@@ -98,7 +98,7 @@ cog_float cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b) {
                          (asprite->pos.y - bsprite->pos.y));
 }
 
-void cog_sprite_draw_layer(cog_uint layer) {
+void cog_sprite_draw_layer(uint32_t layer) {
     //Draw sprites
     COG_LIST_FOREACH(&active_sprites) {
         //draw current sprite if it is on the correct layer
@@ -112,7 +112,7 @@ void cog_sprite_draw_layer(cog_uint layer) {
     }
 }
 
-void cog_sprite_update(cog_float timedelta) {
+void cog_sprite_update(double timedelta) {
     COG_LIST_FOREACH(&active_sprites) {
         cog_sprite* curr_sprite = (cog_sprite*) cog_map_get(&sprites,
                                   *((cog_sprite_id

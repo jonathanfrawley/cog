@@ -2,7 +2,7 @@
 
 #include "cog_log.h"
 
-void cog_test(cog_string testname, cog_bool condition) {
+void cog_test(cog_string testname, bool condition) {
     if(condition) {
         cog_infof("[PASS] : %s", testname);
     } else {

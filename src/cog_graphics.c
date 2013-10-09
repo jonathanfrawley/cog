@@ -1,8 +1,5 @@
 #include "cog_graphics.h"
 
-//#include <SDL2/SDL_image.h>
-//#include <SDL2/SDL_video.h>
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <png.h>
@@ -31,8 +28,8 @@ void cog_graphics_draw_sprite(cog_sprite* sprite) {
     glLoadIdentity();
     glTranslatef(sprite->pos.x, sprite->pos.y, 0.0);
     glRotatef(cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
-    float w = sprite->dim.w;
-    float h = sprite->dim.h;
+    double w = sprite->dim.w;
+    double h = sprite->dim.h;
     GLfloat vertices[] = {
         -1.0f * w, 1.0f * h, 0,
         1.0f * w, 1.0f * h, 0,
@@ -61,38 +58,6 @@ void cog_graphics_draw_sprite(cog_sprite* sprite) {
 }
 
 void cog_graphics_draw_text(cog_text* text) {
-    /*
-    glPushMatrix();
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, text->tex_id);
-    glLoadIdentity();
-    glTranslatef(text->pos.x + text->dim.w, text->pos.y + text->dim.h, 0.0);
-    glRotatef(cog_math_radians_to_degrees(text->rot), 0.0f, 0.0f, 1.0f);
-    glColor4f(1.0, 1.0, 1.0, text->alpha);
-    float w = text->dim.w;
-    float h = text->dim.h;
-    GLfloat vertices[] = {
-        -1.0f * w, 1.0f * h, 0,
-        1.0f * w, 1.0f * h, 0,
-        1.0f * w, -1.0f * h, 0,
-        -1.0f * w, -1.0f * h, 0,
-    };
-    GLfloat tex[] = { 1, 0, 0, 0, 0, 1, 1, 1 };
-    GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
-                          3, 1, 2       // second triangle (bottom left - top right - bottom right)
-                        };
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, tex);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisable(GL_TEXTURE_2D);
-    //Restore alpha to normal
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-    glPopMatrix();
-    */
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, text->tex_id);
@@ -105,8 +70,8 @@ void cog_graphics_draw_text(cog_text* text) {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     const char* p;
     FT_GlyphSlot g = text->face->glyph;
-    float x = text->pos.x;
-    float y = text->pos.y;
+    double x = text->pos.x;
+    double y = text->pos.y;
     for(p = text->str; *p; p++) {
         if(FT_Load_Char(text->face, *p, FT_LOAD_RENDER)) {
             continue;
@@ -122,12 +87,12 @@ void cog_graphics_draw_text(cog_text* text) {
             GL_UNSIGNED_BYTE,
             g->bitmap.buffer
         );
-        float sx = text->dim.w;
-        float sy = text->dim.h;
-        float x2 = x + g->bitmap_left * sx;
-        float y2 = -y - g->bitmap_top * sy;
-        float w = g->bitmap.width * sx;
-        float h = g->bitmap.rows * sy;
+        double sx = text->dim.w;
+        double sy = text->dim.h;
+        double x2 = x + g->bitmap_left * sx;
+        double y2 = -y - g->bitmap_top * sy;
+        double w = g->bitmap.width * sx;
+        double h = g->bitmap.rows * sy;
         glPushMatrix();
         glEnable(GL_TEXTURE_2D);
         glLoadIdentity();
@@ -363,7 +328,7 @@ void cog_graphics_render(cog_window* window) {
     //Clear color buffer
     glClear(GL_COLOR_BUFFER_BIT);
     //PASTE
-    for(cog_int i = 0; i < COG_LAYER_MAX; i++) {
+    for(int i = 0; i < COG_LAYER_MAX; i++) {
         cog_sprite_draw_layer(i);
         cog_anim_draw_layer(i);
         cog_text_draw_layer(i);

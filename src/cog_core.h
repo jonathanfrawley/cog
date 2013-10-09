@@ -9,8 +9,8 @@
 
 //#memory management
 void cog_free(void* ptr);
-void* cog_malloc(cog_uint size);
-cog_int cog_memcmp(cog_dataptr s1, cog_dataptr s2, cog_uint size);
-void* cog_memcpy(cog_dataptr destination, cog_dataptr source, cog_uint size);
+void* cog_malloc(uint32_t size);
+int cog_memcmp(cog_dataptr s1, cog_dataptr s2, uint32_t size);
+void* cog_memcpy(cog_dataptr destination, cog_dataptr source, uint32_t size);
 
 #endif // COG_CORE_H

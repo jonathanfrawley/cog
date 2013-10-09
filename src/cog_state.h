@@ -4,8 +4,8 @@
 #include "cog_types.h"
 #include "cog_list.h"
 
-typedef cog_int cog_state;
-typedef cog_int cog_event;
+typedef int cog_state;
+typedef int cog_event;
 
 #define COG_STATE_ERROR -255
 
@@ -43,7 +43,7 @@ void cog_state_fsm_add_transition(cog_state_fsm* fsm,
  * */
 void cog_state_fsm_add_transitions(cog_state_fsm* fsm,
                                    cog_state_transition* transitions,
-                                   cog_uint size);
+                                   uint32_t size);
 /* *
  * Process any new events and transition the state of the fsm accordingly.
  * */

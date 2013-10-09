@@ -25,8 +25,8 @@ int main(void) {
     });
     cog_text* text = cog_text_get(id);
     text->face = cog_text_load_face("media/font/FreeSans.ttf", 48);
-    float xvel = 0.003f;
-    float yvel = 0.009f;
+    double xvel = 0.003f;
+    double yvel = 0.009f;
     while(!cog_hasquit()) {
         text->pos.x += xvel;
         text->pos.y += yvel;

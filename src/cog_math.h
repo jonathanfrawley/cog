@@ -5,12 +5,12 @@
 
 #define COG_PI 3.14159265
 
-cog_float cog_math_cosf(cog_float radians);
-cog_float cog_math_degrees_to_radians(cog_float degrees);
-cog_float cog_math_radians_to_degrees(cog_float radians);
-cog_float cog_math_sinf(cog_float radians);
-cog_float cog_math_slopef(cog_float x1, cog_float y1, cog_float x2,
-                          cog_float y2);
-cog_float cog_math_sqrt(cog_float x);
+double cog_math_cosf(double radians);
+double cog_math_degrees_to_radians(double degrees);
+double cog_math_radians_to_degrees(double radians);
+double cog_math_sinf(double radians);
+double cog_math_slopef(double x1, double y1, double x2,
+                          double y2);
+double cog_math_sqrt(double x);
 
 #endif // COG_MATH_H

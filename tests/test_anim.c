@@ -11,7 +11,7 @@ typedef struct entity {
 void entity_init(entity* obj) {
     obj->anim = cog_anim_add("media/kitten_anim.png", 3);
     cog_anim_set(obj->anim, (cog_anim) {
-        .dim = (cog_dim2) {.w=0.3f, .h=0.3f},
+        .dim = (cog_dim2) {.w=0.3, .h=0.3},
         .pos = (cog_pos2) {.x=0, .y=0},
         .vel = (cog_vec2) {.x=0.0001, .y=0.0003},
         .transition_millis = 150,
@@ -23,10 +23,10 @@ void entity_init(entity* obj) {
 
 void entity_update(entity* obj) {
     cog_anim* anim = cog_anim_get(obj->anim);
-    if((anim->pos.x > 1.0f) || (anim->pos.x < -1.0f)) {
+    if((anim->pos.x > 1.0) || (anim->pos.x < -1.0)) {
         anim->vel.x = -anim->vel.x;
     }
-    if((anim->pos.y > 1.0f) || (anim->pos.y < -1.0f)) {
+    if((anim->pos.y > 1.0) || (anim->pos.y < -1.0)) {
         anim->vel.y = -anim->vel.y;
     }
 }

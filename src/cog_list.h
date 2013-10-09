@@ -19,7 +19,7 @@
 typedef struct cog_list {
     struct cog_list* next;
     cog_dataptr data;
-    cog_uint size;              //size of data member
+    uint32_t size;              //size of data member
 } cog_list;
 
 //List structure:
@@ -33,9 +33,9 @@ typedef struct cog_list {
 // All data members are alloced and dealloced by the list data structure.
 // Do not rely on these data values lying around for reference elsewhere.
 
-cog_list* cog_list_alloc(cog_uint size);
+cog_list* cog_list_alloc(uint32_t size);
 
-void cog_list_init(cog_list* list, cog_uint size);
+void cog_list_init(cog_list* list, uint32_t size);
 
 //----------------------------------------------------------------------
 //  Adds data to this list. List will handle freeing data.
@@ -55,7 +55,7 @@ void cog_list_removeall(cog_list* list);
 //----------------------------------------------------------------------
 //  Returns: Length of list.
 //----------------------------------------------------------------------
-cog_uint cog_list_len(cog_list* list);
+uint32_t cog_list_len(cog_list* list);
 
 //----------------------------------------------------------------------
 //  Pops the front element of the list and returns it.

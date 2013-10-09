@@ -8,7 +8,7 @@
 
 // TODO: Keep track of multiline strings.
 static cog_text_multiline_id text_multiline_cnt;
-static cog_float padding = 0.1f;
+static double padding = 0.1f;
 static cog_map multiline_texts;
 
 cog_text_multiline_id cog_text_multiline_add() {
@@ -35,15 +35,15 @@ void cog_text_multiline_set(cog_text_multiline_id id, cog_text_multiline src) {
     char* str = text->str;
     cog_string line = strtok(str, "\n");
     cog_list* text_list = cog_list_alloc(sizeof(cog_text_id));
-    cog_int line_no = 0;
+    int line_no = 0;
     while(line != COG_NULL) {
         cog_text_id text_id = cog_text_add();
         // this is the important bit, move the line down on the y.
         // add a bit of padding as it can look bad otherwise.
         cog_text tmp = (cog_text) {
             .pos = (cog_pos2) {
-                .x=text->pos.x, .y=text->pos.y - ((((cog_float)line_no) * src.dim.h) +
-                                                  (((cog_float)line_no) * padding))
+                .x=text->pos.x, .y=text->pos.y - ((((double)line_no) * src.dim.h) +
+                                                  (((double)line_no) * padding))
             },
             .dim = text->dim,
              .col = text->col,

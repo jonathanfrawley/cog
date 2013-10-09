@@ -23,7 +23,7 @@
 
 //constants
 #define FRAMES_PER_SECOND 40
-static cog_uint FRAME_TIME = 1000 / FRAMES_PER_SECOND;
+static uint32_t FRAME_TIME = 1000 / FRAMES_PER_SECOND;
 
 //data structures
 typedef struct {
@@ -33,18 +33,18 @@ static cog_game game;
 
 //#prototypes
 //##main
-cog_float cog_math_radtodeg(cog_float rad);
+double cog_math_radtodeg(double rad);
 
 //#global vars
 static cog_window window;
 //##timing
-static cog_uint delta_millis;
-static cog_uint starttime;
-static cog_uint now;
-static cog_uint framedrawcounter;
-static cog_uint lastframetime;
-static cog_uint frametimecounter;
-static cog_uint frameupdatecounter;
+static uint32_t delta_millis;
+static uint32_t starttime;
+static uint32_t now;
+static uint32_t framedrawcounter;
+static uint32_t lastframetime;
+static uint32_t frametimecounter;
+static uint32_t frameupdatecounter;
 
 //implementations
 void cog_init(void) {
@@ -73,13 +73,13 @@ void cog_mainloop() {
  * This will be return true when the user should call another
  * cog_update()
  * */
-cog_bool cog_updateready() {
+bool cog_updateready() {
     now = SDL_GetTicks();
     delta_millis = now - starttime;
     return (delta_millis > FRAME_TIME);
 }
 
-void cog_sleep(cog_uint millis) {
+void cog_sleep(uint32_t millis) {
     SDL_Delay(millis);
 }
 
@@ -130,27 +130,15 @@ void cog_quit() {
     alutExit();
 }
 
-cog_bool cog_hasquit() {
+bool cog_hasquit() {
     return game.finished;
 }
 
-cog_uint cog_time_delta_millis() {
+uint32_t cog_time_delta_millis() {
     return delta_millis;
 }
 
-cog_uint cog_screenw() {
-    cog_int w, h;
-    SDL_GetWindowSize(window.window, &w, &h);
-    return w;
-}
-
-cog_uint cog_screenh() {
-    cog_int w, h;
-    SDL_GetWindowSize(window.window, &w, &h);
-    return h;
-}
-
-cog_uint cog_nextrand() {
+uint32_t cog_nextrand() {
     return rand();
 }
 
@@ -174,15 +162,8 @@ void cog_clear() {
 void cog_set_background(char* img) {
     cog_sprite_id id = cog_sprite_add(img);
     cog_sprite* sprite = cog_sprite_get(id);
-    sprite->pos.x = cog_screenw() * 0.5;
-    sprite->pos.y = cog_screenh() * 0.5;
-    sprite->dim.w = cog_screenw() * 0.5;
-    sprite->dim.h = cog_screenh() * 0.5;
-}
-
-cog_pos2 cog_screen_coords(cog_float x, cog_float y) {
-    cog_pos2 pos;
-    pos.x = x * cog_screenw();
-    pos.y = y * cog_screenh();
-    return pos;
+    sprite->pos.x = 0.0;
+    sprite->pos.y = 0.0;
+    sprite->dim.w = 1.0;
+    sprite->dim.h = 1.0;
 }

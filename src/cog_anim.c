@@ -14,14 +14,14 @@ static cog_list active_anims;   //anims drawn(active) at the moment
 /*-----------------------------------------------------------------------------
  * Assumes animation is a single 1D animation frame.
  *-----------------------------------------------------------------------------*/
-cog_anim_id cog_anim_add(char* img, cog_int n_frames) {
+cog_anim_id cog_anim_add(char* img, int n_frames) {
     cog_anim* anim = COG_STRUCT_MALLOC(cog_anim);
     anim->id = animcnt++;
     anim->layer = COG_ANIM_LAYER;
     cog_list_init(&anim->frames, sizeof(cog_sprite));
     anim->n_frames = n_frames;
-    cog_float w_frame = ((cog_float) 1.0f / n_frames);
-    cog_float h_frame = 1.0f;
+    double w_frame = ((double) 1.0f / n_frames);
+    double h_frame = 1.0f;
     //Load nimages sprites in, with offset dependant on frame number.
     for(int i = 0; i < n_frames; i++) {
         cog_sprite_id sid = cog_sprite_add_inactive(img);
@@ -37,7 +37,7 @@ cog_anim_id cog_anim_add(char* img, cog_int n_frames) {
     return anim->id;
 }
 
-cog_bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1) {
+bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1) {
     cog_anim* anim0 = cog_anim_get(id0);
     cog_anim* anim1 = cog_anim_get(id1);
     if(cog_anim_dist_anim(id0, id1) < (anim0->dim.w + anim1->dim.w)) {
@@ -47,7 +47,7 @@ cog_bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1) {
     }
 }
 
-cog_bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1) {
+bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1) {
     cog_anim* anim0 = cog_anim_get(id0);
     cog_sprite* sprite1 = cog_sprite_get(id1);
     if(cog_anim_dist_sprite(id0, id1) < (anim0->dim.w + sprite1->dim.w)) {
@@ -88,11 +88,11 @@ void cog_anim_set(cog_anim_id id, cog_anim src) {
     anim->finished = src.finished;
 }
 
-void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...) {
+void cog_anim_set_frames(cog_anim_id id, int frame0, ...) {
     cog_anim* anim = cog_anim_get(id);
     va_list ap;
     va_start(ap, frame0);
-    for(cog_int i = frame0; i >= 0; i = va_arg(ap, cog_int)) {
+    for(int i = frame0; i >= 0; i = va_arg(ap, int)) {
         cog_list_append(&(anim->frames), (cog_dataptr) & frame0);
 //        cog_list_append(&(anim->frames), (cog_dataptr)&frame0);
     }
@@ -102,7 +102,7 @@ void cog_anim_set_frames(cog_anim_id id, cog_int frame0, ...) {
 /*-----------------------------------------------------------------------------
  *  Internal
  *-----------------------------------------------------------------------------*/
-cog_float cog_anim_dist_anim(cog_anim_id id0, cog_anim_id id1) {
+double cog_anim_dist_anim(cog_anim_id id0, cog_anim_id id1) {
     cog_anim* anim0 = cog_anim_get(id0);
     cog_anim* anim1 = cog_anim_get(id1);
     return cog_math_sqrt(((anim0->pos.x - anim1->pos.x) *
@@ -111,7 +111,7 @@ cog_float cog_anim_dist_anim(cog_anim_id id0, cog_anim_id id1) {
                           (anim0->pos.y - anim1->pos.y)));
 }
 
-cog_float cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1) {
+double cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1) {
     cog_anim* anim0 = cog_anim_get(id0);
     cog_sprite* sprite1 = cog_sprite_get(id1);
     return cog_math_sqrt(((anim0->pos.x - sprite1->pos.x) *
@@ -120,7 +120,7 @@ cog_float cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1) {
                           (anim0->pos.y - sprite1->pos.y)));
 }
 
-void cog_anim_draw_layer(cog_uint layer) {
+void cog_anim_draw_layer(uint32_t layer) {
     //Draw anims
     COG_LIST_FOREACH(&active_anims) {
         //draw current sprite
@@ -130,7 +130,7 @@ void cog_anim_draw_layer(cog_uint layer) {
         }
         //find active frame to render
         cog_list* frame = (anim->frames.next);
-        cog_uint i = 0;
+        uint32_t i = 0;
         while(i < anim->current_frame) {
             frame = frame->next;
             i++;
@@ -150,7 +150,7 @@ void cog_anim_init() {
     cog_list_init(&active_anims, sizeof(cog_sprite_id));
 }
 
-void cog_anim_update(cog_uint delta_millis) {
+void cog_anim_update(uint32_t delta_millis) {
     COG_LIST_FOREACH(&active_anims) {
         //Draw current sprite
         cog_anim_id id = *((cog_anim_id*) curr->data);

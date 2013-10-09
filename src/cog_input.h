@@ -23,43 +23,43 @@ void cog_input_check_keys(void);
 /*-----------------------------------------------------------------------------
  *  Key pressed in the last loop.
  *-----------------------------------------------------------------------------*/
-cog_bool cog_input_key_pressed(void);
+bool cog_input_key_pressed(void);
 
 /*-----------------------------------------------------------------------------
  *  Key code pressed.
  *-----------------------------------------------------------------------------*/
-SDL_Keycode cog_input_key_code(void);
+uint32_t cog_input_key_code(void);
 
 /*-----------------------------------------------------------------------------
  *  Mouse left was pressed in the last main loop.
  *-----------------------------------------------------------------------------*/
-cog_bool cog_input_mouse_left_just_pressed();
+bool cog_input_mouse_left_just_pressed();
 
 /*-----------------------------------------------------------------------------
  *  Mouse left is pressed at the moment.
  *-----------------------------------------------------------------------------*/
-cog_bool cog_input_mouse_left_pressed();
+bool cog_input_mouse_left_pressed();
 
 /*-----------------------------------------------------------------------------
  *  Mouse right was pressed in the last main loop.
  *-----------------------------------------------------------------------------*/
-cog_bool cog_input_mouse_right_just_pressed();
+bool cog_input_mouse_right_just_pressed();
 
 /*-----------------------------------------------------------------------------
  *  Mouse right is pressed at the moment.
  *-----------------------------------------------------------------------------*/
-cog_bool cog_input_mouse_right_pressed();
+bool cog_input_mouse_right_pressed();
 
 /*-----------------------------------------------------------------------------
  *  Mouse x coord
  *-----------------------------------------------------------------------------*/
-cog_float cog_input_mouse_x();
+double cog_input_mouse_x();
 
 /*-----------------------------------------------------------------------------
  *  Mouse y coord
  *-----------------------------------------------------------------------------*/
-cog_float cog_input_mouse_y();
+double cog_input_mouse_y();
 
-cog_bool cog_input_space_pressed();
+bool cog_input_space_pressed();
 
 #endif // COG_INPUT_H

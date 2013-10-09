@@ -3,13 +3,13 @@
 #include "cog_core.h"
 #include "cog.h"
 
-cog_list* cog_list_alloc(cog_uint size) {
+cog_list* cog_list_alloc(uint32_t size) {
     cog_list* obj = COG_STRUCT_MALLOC(cog_list);
     cog_list_init(obj, size);
     return obj;
 }
 
-void cog_list_init(cog_list* list, cog_uint size) {
+void cog_list_init(cog_list* list, uint32_t size) {
     //Initial list has null data and a looped pointer to itself
     list->data = COG_LIST_ENDSENTINAL;
     list->next = list;
@@ -55,8 +55,8 @@ void cog_list_removeall(cog_list* list) {
     }
 }
 
-cog_uint cog_list_len(cog_list* list) {
-    cog_uint cnt = 0;
+uint32_t cog_list_len(cog_list* list) {
+    uint32_t cnt = 0;
     COG_LIST_FOREACH(list) {
         cnt++;
     }

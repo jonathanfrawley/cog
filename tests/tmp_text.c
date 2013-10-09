@@ -6,7 +6,7 @@
 FT_Face face;
 FT_GlyphSlot g;
 
-void render_text(const char* text, float x, float y, float sx, float sy) {
+void render_text(const char* text, double x, double y, double sx, double sy) {
     const char* p;
     //TODO: Not sure if this is needed
     GLuint t;
@@ -33,7 +33,7 @@ void render_text(const char* text, float x, float y, float sx, float sy) {
             g->bitmap.buffer
         );
         /*
-            GLfloat box[4][4] = {
+            GLdouble box[4][4] = {
                 {x2,     -y2    , 0, 0},
                 {x2 + w, -y2    , 1, 0},
                 {x2,     -y2 - h, 0, 1},
@@ -44,10 +44,10 @@ void render_text(const char* text, float x, float y, float sx, float sy) {
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
         */
-        float x2 = x + g->bitmap_left * sx;
-        float y2 = -y - g->bitmap_top * sy;
-        float w = g->bitmap.width * sx;
-        float h = g->bitmap.rows * sy;
+        double x2 = x + g->bitmap_left * sx;
+        double y2 = -y - g->bitmap_top * sy;
+        double w = g->bitmap.width * sx;
+        double h = g->bitmap.rows * sy;
         glPushMatrix();
         glEnable(GL_TEXTURE_2D);
         glLoadIdentity();
@@ -55,21 +55,21 @@ void render_text(const char* text, float x, float y, float sx, float sy) {
         //glColor4f(1.0, 1.0, 1.0, text->alpha);
         glColor4f(1.0, 0.0, 0.0, 1.0);
         /*
-        GLfloat vertices[] = {
+        GLdouble vertices[] = {
             -1.0f * w, 1.0f * h, 0,
             1.0f * w, 1.0f * h, 0,
             1.0f * w, -1.0f * h, 0,
             -1.0f * w, -1.0f * h, 0,
         };
         */
-        GLfloat vertices[] = {
+        GLdouble vertices[] = {
             x2, -y2, 0, //top left
             x2 + w, -y2, 0, //top right
             x2 + w, -y2 - h, 0, //bottom right
             x2, -y2 - h, 0 //bottom left
         };
-        //GLfloat tex[] = { 1, 0, 0, 0, 0, 1, 1, 1 };
-        GLfloat tex[] = {0, 0, 1, 0, 1, 1, 0, 1};
+        //GLdouble tex[] = { 1, 0, 0, 0, 0, 1, 1, 1 };
+        GLdouble tex[] = {0, 0, 1, 0, 1, 1, 0, 1};
         GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
                               3, 1, 2       // second triangle (bottom left - top right - bottom right)
                             };
