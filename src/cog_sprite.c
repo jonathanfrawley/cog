@@ -24,8 +24,8 @@ cog_sprite_id cog_sprite_add_inactive(char* img) {
     int w, h;
     sprite->tex_id = cog_graphics_load_texture(img, &w, &h);
     sprite->layer = COG_SPRITE_LAYER;
-    sprite->dim.w = (float)w;
-    sprite->dim.h = (float)h;
+    sprite->dim.w = (double)w;
+    sprite->dim.h = (double)h;
     sprite->tex_dim.w = 1.0f;
     sprite->tex_dim.h = 1.0f;
     cog_map_put(&sprites, sprite->id, (void*) sprite);

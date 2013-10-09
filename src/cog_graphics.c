@@ -30,13 +30,13 @@ void cog_graphics_draw_sprite(cog_sprite* sprite) {
     glRotatef(cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
     double w = sprite->dim.w;
     double h = sprite->dim.h;
-    GLfloat vertices[] = {
+    GLdouble vertices[] = {
         -1.0f * w, 1.0f * h, 0,
         1.0f * w, 1.0f * h, 0,
         1.0f * w, -1.0f * h, 0,
         -1.0f * w, -1.0f * h, 0,
     };
-    GLfloat tex[] = {
+    GLdouble tex[] = {
         sprite->tex_pos.x, sprite->tex_pos.y + sprite->tex_dim.h,
         sprite->tex_pos.x + sprite->tex_dim.w,
         sprite->tex_pos.y + sprite->tex_dim.h,
@@ -99,13 +99,13 @@ void cog_graphics_draw_text(cog_text* text) {
         cog_color c = text->col;
         glColor4f(c.r, c.g, c.b, c.a);
         //glColor4f(c.r, c.g, c.b, 0.0);
-        GLfloat vertices[] = {
+        GLdouble vertices[] = {
             x2, -y2, 0, //top left
             x2 + w, -y2, 0, //top right
             x2 + w, -y2 - h, 0, //bottom right
             x2, -y2 - h, 0 //bottom left
         };
-        GLfloat tex[] = {0, 0, 1, 0, 1, 1, 0, 1};
+        GLdouble tex[] = {0, 0, 1, 0, 1, 1, 0, 1};
         GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
                               3, 1, 2       // second triangle (bottom left - top right - bottom right)
                             };
