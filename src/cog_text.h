@@ -38,6 +38,7 @@ FT_Face cog_text_load_face(cog_string path, double pt_size);
 void cog_text_remove(cog_text_id id);
 void cog_text_removeall(void);
 void cog_text_set(cog_text_id id, cog_text src);
+void cog_text_set_str(cog_text_id id, char* str);
 
 /*-----------------------------------------------------------------------------
  *  Internal

@@ -57,6 +57,11 @@ void cog_text_set(cog_text_id id, cog_text src) {
     strcpy(text->str, src.str);
 }
 
+void cog_text_set_str(cog_text_id id, char* str) {
+    cog_text* text = cog_text_get(id);
+    strcpy(text->str, str);
+}
+
 void cog_text_remove(cog_text_id id) {
     COG_LIST_FOREACH(&activetexts) {
         if(*((cog_text_id*) curr->data) == id) {

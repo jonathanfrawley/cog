@@ -16,7 +16,9 @@ void cog_update();
 bool cog_updateready();
 
 //rng
-uint32_t cog_nextrand();
+int32_t cog_rand_int(int32_t a, int32_t b);
+double cog_rand();
+double cog_rand_uniform(double a, double b);
 
 // Remove all sprites, sounds and anims.
 void cog_clear();

@@ -138,8 +138,25 @@ uint32_t cog_time_delta_millis() {
     return delta_millis;
 }
 
-uint32_t cog_nextrand() {
-    return rand();
+/*-----------------------------------------------------------------------------
+ * Generates an integer between a and b.
+ * Precondition: a <= N <= b
+ *-----------------------------------------------------------------------------*/
+int32_t cog_rand_int(int32_t a, int32_t b) {
+    return (int32_t)cog_rand_uniform((double)a, (double)b);
+}
+
+double cog_rand() {
+    return ((double)rand()/(double)RAND_MAX);
+}
+
+/*-----------------------------------------------------------------------------
+ * Generates a real number between a and b.
+ * Precondition: a <= N <= b
+ *-----------------------------------------------------------------------------*/
+double cog_rand_uniform(double a, double b) {
+    double r = cog_rand();
+    return a + (b - a) * r;
 }
 
 void cog_toggle_fullscreen() {
