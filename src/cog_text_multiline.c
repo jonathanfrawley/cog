@@ -46,7 +46,7 @@ void cog_text_multiline_set(cog_text_multiline_id id, cog_text_multiline src) {
                                                   (((double)line_no) * padding))
             },
             .dim = text->dim,
-            .col = text->col,
+             .col = text->col,
         };
         strcpy(tmp.str, line);
         cog_text_set(text_id, tmp);
