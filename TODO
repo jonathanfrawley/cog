@@ -1,6 +1,6 @@
 PORT tasks cog
 ==============
- - Get working with emscripten
+ - Get working with cross compiler for linux64, linux32, win32 and os X
 
 TODO Tasks cog
 ==============
