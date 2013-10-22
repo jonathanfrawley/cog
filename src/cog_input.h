@@ -4,6 +4,7 @@
 #include <SDL2/SDL_keyboard.h>
 
 #include "cog_types.h"
+#include "cog_window.h"
 
 /*-----------------------------------------------------------------------------
  *  Blank the state of the input.
@@ -19,6 +20,8 @@ void cog_input_check_mouse(void);
  *  Check which keys are pressed and set flags accordingly.
  *-----------------------------------------------------------------------------*/
 void cog_input_check_keys(void);
+
+void cog_input_init(cog_window* window);
 
 /*-----------------------------------------------------------------------------
  *  Key pressed in the last loop.

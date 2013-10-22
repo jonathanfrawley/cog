@@ -36,6 +36,8 @@ void cog_window_init(cog_window* window) {
                    SDL_GetError());
     }
     window->glcontext = SDL_GL_CreateContext(window->window);
+    window->w = (double)width;
+    window->h = (double)height;
 #if defined(HAVE_GLES)
     EGL_Init();
 #endif

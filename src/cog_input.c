@@ -5,7 +5,6 @@
 #include "cog.h"
 #include "cog_core.h"
 #include "cog_log.h"
-#include "cog_window.h"
 
 static uint32_t MY_SDL_BUTTON_RIGHT_MASK = 8;
 
@@ -15,6 +14,8 @@ static bool mouse_left_just_pressed = 0;
 static bool mouse_right_just_pressed;
 static double mouse_x;
 static double mouse_y;
+static double window_w;
+static double window_h;
 static uint32_t key_pressed;
 static uint32_t key_just_pressed;
 
@@ -22,6 +23,12 @@ void cog_input_blank() {
     key_just_pressed = COG_FALSE;
     mouse_left_just_pressed = COG_FALSE;
     mouse_right_just_pressed = COG_FALSE;
+}
+
+void cog_input_init(cog_window* win) {
+    //Grab width and height from window
+    window_w = win->w;
+    window_h = win->h;
 }
 
 void cog_input_check_keys(void) {
@@ -79,11 +86,11 @@ bool cog_input_mouse_right_just_pressed() {
 }
 
 double cog_input_mouse_x() {
-    return mouse_x;
+    return ((mouse_x/window_w)*2.0) - 1.0;
 }
 
 double cog_input_mouse_y() {
-    return mouse_y;
+    return (((window_h - mouse_y) / window_h) * 2.0) - 1.0;
 }
 
 void cog_input_check_mouse(void) {

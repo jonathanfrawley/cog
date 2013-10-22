@@ -10,6 +10,8 @@ typedef struct cog_window {
     SDL_Window* window;
     SDL_GLContext glcontext;
     SDL_Surface* screen_surface;
+    double w;
+    double h;
 } cog_window;
 
 /*-----------------------------------------------------------------------------
