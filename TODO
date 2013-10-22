@@ -1,3 +1,7 @@
+PORT tasks cog
+==============
+ - Get working with emscripten
+
 TODO Tasks cog
 ==============
 XXX) Function to take animation frame seq in.
