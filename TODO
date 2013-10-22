@@ -4,15 +4,7 @@ PORT tasks cog
 
 TODO Tasks cog
 ==============
-XXX) Function to take animation frame seq in.
-
-3.25) Get list iteration more sensibly implemented. DONE
-    -> Integrate FOREACH into cog and littleearth codebases.
-3.5) Static frame rate for updates made easy for games.
-5) Particle Effects [MAYBE]
-6) Port lls to use it.
-7) Software renderer (Meh, not sure if this will be needed/possible due to opengl being so much more powerful with rotations and somewhat, but leave in stubs for functions at the moment)
-8) test for input.
+ - Text wrapping function for cog_text and cog_text_multiline (maybe merge these 2?)
 
 Done Tasks cog
 ==============
@@ -23,3 +15,12 @@ Done Tasks cog
     - Rendering in main loop.
 3) Sound
 4) Physics [MAYBE]
+XXX) Function to take animation frame seq in.
+
+3.25) Get list iteration more sensibly implemented. DONE
+    -> Integrate FOREACH into cog and littleearth codebases.
+3.5) Static frame rate for updates made easy for games.
+5) Particle Effects [MAYBE]
+6) Port lls to use it.
+7) Software renderer (Meh, not sure if this will be needed/possible due to opengl being so much more powerful with rotations and somewhat, but leave in stubs for functions at the moment)
+8) test for input.
