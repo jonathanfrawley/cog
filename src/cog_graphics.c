@@ -72,7 +72,18 @@ void cog_graphics_draw_text(cog_text* text) {
     FT_GlyphSlot g = text->face->glyph;
     double x = text->pos.x;
     double y = text->pos.y;
+    double sx = text->scale.w;
+    double sy = text->scale.h;
+    double row_height = text->face->descender * sy * 0.15;
     for(p = text->str; *p; p++) {
+        int new_line = x > (text->pos.x + text->dim.w) || (*p) == '\n';
+        if(new_line) {
+            x = text->pos.x;
+            y += row_height;
+            if((*p) == '\n') {
+                continue;
+            }
+        }
         if(FT_Load_Char(text->face, *p, FT_LOAD_RENDER)) {
             continue;
         }
@@ -87,9 +98,8 @@ void cog_graphics_draw_text(cog_text* text) {
             GL_UNSIGNED_BYTE,
             g->bitmap.buffer
         );
-        double sx = text->dim.w;
-        double sy = text->dim.h;
         double x2 = x + g->bitmap_left * sx;
+        //double y2 = y + g->bitmap_top * sy;
         double y2 = -y - g->bitmap_top * sy;
         double w = g->bitmap.width * sx;
         double h = g->bitmap.rows * sy;

@@ -28,6 +28,7 @@ typedef struct {
     //User attributes
     cog_pos2 pos;
     cog_dim2 dim;
+    cog_dim2 scale;
     cog_color col;
     char str[COG_TEXT_MAX];
 } cog_text;

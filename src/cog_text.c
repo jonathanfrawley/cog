@@ -53,6 +53,7 @@ void cog_text_set(cog_text_id id, cog_text src) {
     cog_text* text = cog_text_get(id);
     text->pos = src.pos;
     text->dim = src.dim;
+    text->scale = src.scale;
     text->col = src.col;
     strcpy(text->str, src.str);
 }

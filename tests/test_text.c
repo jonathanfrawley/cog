@@ -1,22 +1,23 @@
 #include "cog.h"
 #include "cog_math.h"
 #include "cog_text.h"
-#include "cog_text_multiline.h"
 
 int main(void) {
     cog_init();
     cog_text_id id = cog_text_add();
     cog_text_set(id, (cog_text) {
-        .dim = (cog_dim2) {.w=0.003, .h=0.003},
+        .scale = (cog_dim2) {.w=0.003, .h=0.003},
+        .dim = (cog_dim2) {.w=0.5, .h=0.003},
         .pos = (cog_pos2) {.x=-1, .y=-1},
-        .str="This is some single line text.",
+        .str="This is some single line text wrapped around.",
         .col=(cog_color) {
             .r=1,.g=1,.b=1,.a=1
         }
     });
-    cog_text_multiline_id mid = cog_text_multiline_add();
-    cog_text_multiline_set(mid, (cog_text_multiline) {
-        .dim = (cog_dim2) {.w=0.002, .h=0.002},
+    cog_text_id mid = cog_text_add();
+    cog_text_set(mid, (cog_text) {
+        .scale = (cog_dim2) {.w=0.003, .h=0.003},
+        .dim = (cog_dim2) {.w=2.0, .h=2.0},
         .pos = (cog_pos2) {.x=-1, .y=0.5},
         .str="This is some multiline text.\nThis is the second line.\nAnd the third.\n4",
         .col=(cog_color) {
