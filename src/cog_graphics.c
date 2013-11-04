@@ -74,7 +74,8 @@ void cog_graphics_draw_text(cog_text* text) {
     double y = text->pos.y;
     double sx = text->scale.w;
     double sy = text->scale.h;
-    double row_height = text->face->descender * sy * 0.15;
+    double scalar_y = 0.15; //TODO : Figure out a more generic way to find scale
+    double row_height = text->face->descender * sy * scalar_y;
     for(p = text->str; *p; p++) {
         int new_line = x > (text->pos.x + text->dim.w) || (*p) == '\n';
         if(new_line) {
