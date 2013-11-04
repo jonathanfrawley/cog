@@ -7,7 +7,7 @@ int main(void) {
     cog_text_id id = cog_text_add();
     cog_text_set(id, (cog_text) {
         .scale = (cog_dim2) {.w=0.003, .h=0.003},
-        .dim = (cog_dim2) {.w=0.5, .h=0.003},
+        .dim = (cog_dim2) {.w=1.0, .h=0.003},
         .pos = (cog_pos2) {.x=-1, .y=-1},
         .str="This is some single line text wrapped around.",
         .col=(cog_color) {
@@ -17,7 +17,7 @@ int main(void) {
     cog_text_id mid = cog_text_add();
     cog_text_set(mid, (cog_text) {
         .scale = (cog_dim2) {.w=0.003, .h=0.003},
-        .dim = (cog_dim2) {.w=2.0, .h=2.0},
+        .dim = (cog_dim2) {.w=2.0, .h=2.0}, //screen coords -1.0 -> 1.0
         .pos = (cog_pos2) {.x=-1, .y=0.5},
         .str="This is some multiline text.\nThis is the second line.\nAnd the third.\n4",
         .col=(cog_color) {

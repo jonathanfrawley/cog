@@ -18,7 +18,6 @@
 #include "cog_sprite.h"
 #include "cog_snd.h"
 #include "cog_text.h"
-#include "cog_text_multiline.h"
 #include "cog_window.h"
 
 //constants
@@ -57,7 +56,6 @@ void cog_init(void) {
     cog_input_init(&window);
     cog_graphics_init();
     cog_text_init();
-    cog_text_multiline_init();
     starttime = SDL_GetTicks();
     //init rng
     srand(2);
@@ -172,7 +170,6 @@ void cog_clear() {
     cog_anim_init();
     cog_text_removeall();
     cog_text_init();
-    cog_text_multiline_init();
     cog_snd_stopall();
     cog_snd_init();
 }
