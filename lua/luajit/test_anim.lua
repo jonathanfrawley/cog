@@ -12,8 +12,8 @@ kitten.looped = true
 kitten.ang_vel = COG_PI/14000
 kitten.vel = cog.vec2.new(0.0001, 0.0003)
 
-cog.anim_set(kitten_anim_id, kitten) 
-cog.anim_set_frames(kitten_anim_id, 0, 1, 2)
+cog.anim.set(kitten_anim_id, kitten) 
+cog.anim.set_frames(kitten_anim_id, 0, 1, 2)
 
 while not cog.hasquit() do
     cog.loopstep()
