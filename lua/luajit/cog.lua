@@ -131,5 +131,28 @@ void cog_anim_update(uint32_t deltamillis);
 
 
 ]]
-return C
+cog = {}
+cog.init = C.cog_init
+cog.loopstep = C.cog_loopstep
+cog.mainloop = C.cog_mainloop
+cog.hasquit = C.cog_hasquit
+cog.quit = C.cog_quit
 
+cog.dim2 = {}
+function cog.dim2.new(w, h) return ffi.new("cog_dim2", w, h) end
+cog.vec2 = {}
+function cog.vec2.new(x, y) return ffi.new("cog_vec2", x, y) end
+cog.pos2 = {}
+function cog.pos2.new(x, y) return ffi.new("cog_pos2", x, y) end
+
+
+cog.anim = {}
+cog.anim.add = C.cog_anim_add
+cog.anim.get = C.cog_anim_get
+function cog.anim.new() return ffi.new("cog_anim") end
+cog.anim_set = C.cog_anim_set
+cog.anim_set_frames = C.cog_anim_set_frames
+
+return cog
+
+--return C
