@@ -1,6 +1,5 @@
-
 local cog = require 'cog'
 
 cog.init()
-cog.mainloop();
-cog.quit();
+cog.mainloop()
+cog.quit()

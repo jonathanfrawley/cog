@@ -129,7 +129,13 @@ void cog_anim_draw_layer(uint32_t layer);
 void cog_anim_init();
 void cog_anim_update(uint32_t deltamillis);
 
-
+void cog_snd_init(void);
+cog_snd_id cog_snd_add(const char* fname);
+void cog_snd_play(cog_snd_id id);
+void cog_snd_play_sfx(cog_snd_id snd);
+void cog_snd_play_music(cog_snd_id snd);
+void cog_snd_stop(cog_snd_id id);
+void cog_snd_stopall();
 ]]
 cog = {}
 cog.init = C.cog_init
@@ -145,13 +151,16 @@ function cog.vec2.new(x, y) return ffi.new("cog_vec2", x, y) end
 cog.pos2 = {}
 function cog.pos2.new(x, y) return ffi.new("cog_pos2", x, y) end
 
-
 cog.anim = {}
 cog.anim.add = C.cog_anim_add
 cog.anim.get = C.cog_anim_get
 function cog.anim.new() return ffi.new("cog_anim") end
 cog.anim_set = C.cog_anim_set
 cog.anim_set_frames = C.cog_anim_set_frames
+
+cog.snd = {}
+cog.snd.add = C.cog_snd_add
+cog.snd.play = C.cog_snd_play
 
 return cog
 
