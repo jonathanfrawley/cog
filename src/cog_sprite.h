@@ -30,8 +30,8 @@ typedef struct {
     double ang_vel;
 } cog_sprite;
 
-cog_sprite_id cog_sprite_add(char* img);
-cog_sprite_id cog_sprite_add_inactive(char* img);
+cog_sprite_id cog_sprite_add(const char* img);
+cog_sprite_id cog_sprite_add_inactive(const char* img);
 bool cog_sprite_collides_sprite(cog_sprite_id id0, cog_sprite_id id1);
 cog_sprite* cog_sprite_get(cog_sprite_id);
 void cog_sprite_remove(cog_sprite_id id);
