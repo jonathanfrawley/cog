@@ -89,7 +89,7 @@ void render_text(const char* text, double x, double y, double sx, double sy) {
     }
 }
 
-int main(void) {
+int main(int argc, char* argv[]) {
     cog_init();
     //Source: http://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Text_Rendering_01
     FT_Library ft;
