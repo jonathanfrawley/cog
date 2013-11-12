@@ -1,9 +1,10 @@
-#DONE
- - Changed over linker and header files
- - Render an image using SDL_Texture stuff
- - Get anims working with SDL_Textures
- - Follow this and get it all working again : http://wiki.libsdl.org/MigrationGuide
+#Windows
+ - Builds and works mostly
+ - Bug (High): cog_anim crashes when run from command line.
+ - Bug (Low): Exit error code when run from IDE: Maybe okay?
 
-#TODO
- - Fonts...
+#OS X
+TODO
 
+ #Ubuntu
+TODO

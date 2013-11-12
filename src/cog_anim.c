@@ -14,7 +14,7 @@ static cog_list active_anims;   //anims drawn(active) at the moment
 /*-----------------------------------------------------------------------------
  * Assumes animation is a single 1D animation frame.
  *-----------------------------------------------------------------------------*/
-cog_anim_id cog_anim_add(char* img, int n_frames) {
+cog_anim_id cog_anim_add(const char* img, int n_frames) {
     cog_anim* anim = COG_STRUCT_MALLOC(cog_anim);
     anim->id = animcnt++;
     anim->layer = COG_ANIM_LAYER;

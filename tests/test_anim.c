@@ -31,7 +31,7 @@ void entity_update(entity* obj) {
     }
 }
 
-int main(void) {
+int main(int argc, char* argv[]) {
     cog_init();
     entity myentity[N_ENTITIES];
     for(int i = 0; i < N_ENTITIES; i++) {

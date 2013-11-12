@@ -1,6 +1,6 @@
 #include "cog.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
     cog_init();
     cog_mainloop();
     cog_quit();

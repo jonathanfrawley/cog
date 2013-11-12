@@ -28,7 +28,7 @@ void entity_update(entity* obj) {
     anim->pos.y = cog_input_mouse_y();
 }
 
-int main(void) {
+int main(int argc, char* argv[]) {
     cog_init();
     entity myentity[N_ENTITIES];
     for(int i = 0; i < N_ENTITIES; i++) {
