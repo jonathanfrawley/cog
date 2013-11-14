@@ -25,7 +25,7 @@ find_package(Lua51)
 find_package(ALUT REQUIRED)
 find_package(OpenAL REQUIRED)
 #add_definitions(-std=c99 -Werror -Wall)
-add_definitions(-std=c99 -Wall)
+add_definitions(-std=c99 -Wall -g)
 
 set(CMAKE_BUILD_TYPE Debug)
 
