@@ -37,6 +37,14 @@ if(LUA51_FOUND)
     add_library(cogl SHARED ${srcs} ${lua_srcs})
 endif()
 
+find_package(PythonLibs)
+if(PYTHONLIBS_FOUND)
+    INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
+    file(GLOB python_srcs  ../swig/*.c)
+    add_library(cogsharedpython SHARED ${srcs} ${python_srcs})
+    target_link_libraries(cogsharedpython m ${SDL2_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${PYTHON_LIBRARIES})
+endif()
+
 if(PLATFORM_BUILD STREQUAL Pandora)
     #Add 3rd party libs
     file(GLOB lib_srcs ../deps/src/*.c)
