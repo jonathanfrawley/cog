@@ -3,7 +3,7 @@
 #include "cog_log.h"
 #include "cog_test.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
     cog_list* list = cog_list_alloc(sizeof(uint32_t));
     //@test: COG_LIST_FOREACH
     bool flag = COG_TRUE;

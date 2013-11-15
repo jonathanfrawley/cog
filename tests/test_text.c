@@ -2,7 +2,7 @@
 #include "cog_math.h"
 #include "cog_text.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
     cog_init();
     cog_text_id id = cog_text_add();
     cog_text_set(id, (cog_text) {

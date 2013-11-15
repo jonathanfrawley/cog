@@ -1,5 +1,5 @@
 local ffi = require("ffi")
-local C = ffi.load('./libcogshared.so')
+local C = ffi.load('./libcogshared')
 ffi.cdef[[
 
 //cog_types.h
