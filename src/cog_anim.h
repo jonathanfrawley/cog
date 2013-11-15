@@ -28,7 +28,7 @@ typedef struct {
     bool finished;
 } cog_anim;
 
-cog_anim_id cog_anim_add(char* anim_img, int n_frames);
+cog_anim_id cog_anim_add(const char* anim_img, int n_frames);
 bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1);
 bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1);
 cog_anim* cog_anim_get(cog_anim_id);

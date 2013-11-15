@@ -17,7 +17,7 @@ void cog_snd_init() {
     cog_map_init(&snds);
     cog_list_init(&activesnds, sizeof(cog_sprite_id));
 }
-cog_snd_id cog_snd_load(char* fname) {
+cog_snd_id cog_snd_add(const char* fname) {
     cog_snd* snd = COG_STRUCT_MALLOC(cog_snd);
     snd->id = cog_sndcnt++;
     snd->buffer = alutCreateBufferFromFile(fname);

@@ -1,10 +1,9 @@
 #include <cog.h>
 
-
 /*-----------------------------------------------------------------------------
  *  Should see sprite in centre of screen
  *-----------------------------------------------------------------------------*/
-int main(void) {
+int main(int argc, char* argv[]) {
     cog_init();
     cog_sprite_id id = cog_sprite_add("media/test0.png");
     cog_sprite_set(id, (cog_sprite) {

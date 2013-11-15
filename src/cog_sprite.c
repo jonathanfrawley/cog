@@ -11,14 +11,14 @@ static cog_list active_sprites; //sprites drawn(active) at the moment
 static cog_map sprites;
 static cog_sprite_id spritecnt;
 
-cog_sprite_id cog_sprite_add(char* img) {
+cog_sprite_id cog_sprite_add(const char* img) {
     cog_sprite_id id = cog_sprite_add_inactive(img);
     cog_sprite* sprite = cog_sprite_get(id);
     cog_list_append(&active_sprites, (cog_dataptr) & (sprite->id));
     return id;
 }
 
-cog_sprite_id cog_sprite_add_inactive(char* img) {
+cog_sprite_id cog_sprite_add_inactive(const char* img) {
     cog_sprite* sprite = COG_STRUCT_MALLOC(cog_sprite);
     sprite->id = spritecnt++;
     int w, h;
