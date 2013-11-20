@@ -5,6 +5,8 @@ PORT tasks cog
 TODO Tasks cog
 ==============
  - Think about using top-left coordinate system - this mimicks how files are read, how people read, etc.
+ - Set media folder by default, no need to type each time.
+ - Good definition of all keycodes (enum?)
 
 Done Tasks cog
 ==============

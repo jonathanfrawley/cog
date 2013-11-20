@@ -17,10 +17,13 @@ static double mouse_y;
 static double window_w;
 static double window_h;
 static uint32_t key_pressed;
+static uint32_t key_depressed;
 static uint32_t key_just_pressed;
+static uint32_t key_just_depressed;
 
 void cog_input_blank() {
     key_just_pressed = COG_FALSE;
+    key_just_depressed = COG_FALSE;
     mouse_left_just_pressed = COG_FALSE;
     mouse_right_just_pressed = COG_FALSE;
 }
@@ -34,23 +37,24 @@ void cog_input_init(cog_window* win) {
 void cog_input_check_keys(void) {
     SDL_Event event;
     key_just_pressed = COG_FALSE;
+    key_just_depressed = COG_FALSE;
     while(SDL_PollEvent(&event)) {
-        switch(event.type) {
-            case SDL_QUIT:
+        if(event.type == SDL_QUIT) {
+            cog_quit();
+        }
+        if(event.type == SDL_KEYDOWN) {
+            if(event.key.keysym.sym == SDLK_ESCAPE) {
                 cog_quit();
-                break;
-            case SDL_KEYDOWN:
-                switch(event.key.keysym.sym) {
-                    case SDLK_ESCAPE:
-                        cog_quit();
-                        break;
-                    default:
-                        key_pressed = event.key.keysym.sym;
-                        key_just_pressed = COG_TRUE;
-                        cog_debugf("WARNING: Unhandled keypress <%d>",
-                                   (event.key.keysym.sym));
-                        break;
-                }
+            } else {
+                key_pressed = event.key.keysym.sym;
+                key_just_pressed = COG_TRUE;
+                cog_debugf("WARNING: Unhandled keypress <%d>",
+                        (event.key.keysym.sym));
+            }
+        }
+        if(event.type == SDL_KEYUP) {
+            key_depressed = event.key.keysym.sym;
+            key_just_depressed = COG_TRUE;
         }
     }
 }
@@ -59,8 +63,16 @@ bool cog_input_key_pressed(void) {
     return key_just_pressed;
 }
 
-uint32_t cog_input_key_code(void) {
+bool cog_input_key_depressed(void) {
+    return key_just_depressed;
+}
+
+uint32_t cog_input_key_code_pressed(void) {
     return key_pressed;
+}
+
+uint32_t cog_input_key_code_depressed(void) {
+    return key_depressed;
 }
 
 bool cog_input_mouse_left_pressed() {
@@ -122,7 +134,7 @@ void cog_input_check_mouse(void) {
 
 bool cog_input_space_pressed() {
     if(cog_input_key_pressed()) {
-        SDL_Keycode key = cog_input_key_code();
+        SDL_Keycode key = cog_input_key_code_pressed();
         if(key == SDLK_SPACE) {
             return COG_TRUE;
         }

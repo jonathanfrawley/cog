@@ -29,9 +29,16 @@ void cog_input_init(cog_window* window);
 bool cog_input_key_pressed(void);
 
 /*-----------------------------------------------------------------------------
+ *  Key depressed in the last loop.
+ *-----------------------------------------------------------------------------*/
+bool cog_input_key_depressed(void);
+
+/*-----------------------------------------------------------------------------
  *  Key code pressed.
  *-----------------------------------------------------------------------------*/
-uint32_t cog_input_key_code(void);
+uint32_t cog_input_key_code_pressed(void);
+
+uint32_t cog_input_key_code_depressed(void);
 
 /*-----------------------------------------------------------------------------
  *  Mouse left was pressed in the last main loop.
