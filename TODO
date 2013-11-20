@@ -4,7 +4,7 @@ PORT tasks cog
 
 TODO Tasks cog
 ==============
- - Text wrapping function for cog_text and cog_text_multiline (maybe merge these 2?)
+ - Think about using top-left coordinate system - this mimicks how files are read, how people read, etc.
 
 Done Tasks cog
 ==============
@@ -24,3 +24,4 @@ XXX) Function to take animation frame seq in.
 6) Port lls to use it.
 7) Software renderer (Meh, not sure if this will be needed/possible due to opengl being so much more powerful with rotations and somewhat, but leave in stubs for functions at the moment)
 8) test for input.
+ - Text wrapping function for cog_text and cog_text_multiline (maybe merge these 2?)
