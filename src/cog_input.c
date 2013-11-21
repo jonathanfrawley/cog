@@ -39,7 +39,7 @@ void cog_input_init(cog_window* win) {
     //Grab width and height from window
     window_w = win->w;
     window_h = win->h;
-    //Check if there's any joysticks 
+    //Check if there's any joysticks
     if(SDL_NumJoysticks() >= 1) {
         sdl_joystick_0 = SDL_JoystickOpen(0);
         if(sdl_joystick_0 == COG_NULL) {
@@ -78,28 +78,28 @@ void cog_input_check_keys(void) {
             //TODO: Handle multiple joysticks.
             if(event.jaxis.which == 0) {
                 if(event.jaxis.axis == 0) {
-                     if( ( event.jaxis.value > -8000 ) && ( event.jaxis.value < 8000 ) ) {
+                    if((event.jaxis.value > -8000) && (event.jaxis.value < 8000)) {
                         joystick_x_depressed = true;
-                     } else {
-                         joystick_x_pressed = true;
-                         if(event.jaxis.value < 0) {
-                             joystick_x_value = -1.0;
-                         } else {
-                             joystick_x_value = 1.0;
-                         }
-                     }
+                    } else {
+                        joystick_x_pressed = true;
+                        if(event.jaxis.value < 0) {
+                            joystick_x_value = -1.0;
+                        } else {
+                            joystick_x_value = 1.0;
+                        }
+                    }
                 }
                 if(event.jaxis.axis == 1) {
-                     if( ( event.jaxis.value > -8000 ) && ( event.jaxis.value < 8000 ) ) {
+                    if((event.jaxis.value > -8000) && (event.jaxis.value < 8000)) {
                         joystick_y_depressed = true;
-                     } else {
-                         joystick_y_pressed = true;
-                         if(event.jaxis.value < 0) {
-                             joystick_y_value = 1.0;
-                         } else {
-                             joystick_y_value = -1.0;
-                         }
-                     }
+                    } else {
+                        joystick_y_pressed = true;
+                        if(event.jaxis.value < 0) {
+                            joystick_y_value = 1.0;
+                        } else {
+                            joystick_y_value = -1.0;
+                        }
+                    }
                 }
             }
             cog_debugf("value %d", event.jaxis.value);
@@ -214,7 +214,7 @@ void cog_input_check_mouse(void) {
 }
 
 void cog_input_quit(void) {
-    SDL_JoystickClose(sdl_joystick_0);
+    //SDL_JoystickClose(sdl_joystick_0);
 }
 
 bool cog_input_space_pressed(void) {
