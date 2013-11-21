@@ -124,6 +124,7 @@ void cog_loopstep() {
 
 void cog_quit() {
     game.finished = 1;
+    cog_input_quit();
     cog_window_quit(&window);
     //TODO:Add more cleanup here.
     alutExit();

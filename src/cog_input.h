@@ -23,6 +23,22 @@ void cog_input_check_keys(void);
 
 void cog_input_init(cog_window* window);
 
+bool cog_input_joystick_depressed(void);
+
+bool cog_input_joystick_x_depressed(void);
+
+bool cog_input_joystick_y_depressed(void);
+
+bool cog_input_joystick_pressed(void);
+
+bool cog_input_joystick_x_pressed(void);
+
+bool cog_input_joystick_y_pressed(void);
+
+double cog_input_joystick_x_value();
+
+double cog_input_joystick_y_value();
+
 /*-----------------------------------------------------------------------------
  *  Key pressed in the last loop.
  *-----------------------------------------------------------------------------*/
@@ -69,6 +85,8 @@ double cog_input_mouse_x();
  *  Mouse y coord
  *-----------------------------------------------------------------------------*/
 double cog_input_mouse_y();
+
+void cog_input_quit(void);
 
 bool cog_input_space_pressed();
 

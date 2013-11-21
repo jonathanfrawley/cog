@@ -3,7 +3,7 @@
 #include "cog_log.h"
 
 void cog_window_init(cog_window* window) {
-    if(SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         cog_errorf(SDL_GetError());
     }
 #if defined(HAVE_GLES)
@@ -12,7 +12,7 @@ void cog_window_init(cog_window* window) {
     }
 #endif
     //TODO: Get from yaml conf.
-    int width = 800;
+    int width = 600;
     int height = 600;
     int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
     //Use OpenGL 2.1
