@@ -49,7 +49,7 @@ void cog_input_check_keys(void) {
                 key_pressed = event.key.keysym.sym;
                 key_just_pressed = COG_TRUE;
                 cog_debugf("WARNING: Unhandled keypress <%d>",
-                        (event.key.keysym.sym));
+                           (event.key.keysym.sym));
             }
         }
         if(event.type == SDL_KEYUP) {
