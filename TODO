@@ -1,13 +1,13 @@
-PORT tasks cog
+TODO port
 ==============
- - Get working with cross compiler for linux64, linux32, win32 and os X
+ - Get working with cross compiler for OSX X
 
-TODO Tasks cog
+TODO general
 ==============
- - Think about using top-left coordinate system - this mimicks how files are read, how people read, etc.
- - Set media folder by default, no need to type each time.
- - Good definition of all keycodes (enum?)
- - Normalisation of vectors
+ - Think about using top-left coordinate system - this mimicks how files are read, how people read, etc. Maybe better then center-based as is currently?
+ - Set media folder on init, so no need to type each time.
+ - Good readable definition of all keycodes (enum?)
+ - Normalisation of vectors built-in
 
 Done Tasks cog
 ==============
