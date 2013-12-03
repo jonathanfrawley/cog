@@ -18,6 +18,10 @@ Some omissions include platform support (linux and win32 only at the moment), a 
  - libpng
  - zlib
 
+In addition, to build cog you will need:
+ - A C compiler (e.g - gcc)
+ - cmake
+
 See https://github.com/df3n5/cog_deps for some useful scripts to help build dependencies.
 
 ##Compiling
