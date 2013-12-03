@@ -75,3 +75,5 @@ The screen coordinates go from (-1.0f, -1.0f) in the bottom left of the screen t
 
 See tests/
 
+##License
+GPLv3. See LICENSE.txt for a copy.
