@@ -62,9 +62,9 @@ On linux, to run an example from the root of the repo:
 
 
 ###Windows
-1) Install MSys + c compiler tool (w/ mingw-get-inst)
-2) Build deps in place using cog_deps repo and associated bash script.
-3) If you intend to use the python wrapper, you will need to install python and swig.
+ 1. Install MSys + c compiler tool (w/ mingw-get-inst)
+ 2. Build deps in place using cog_deps repo and associated bash script.
+ 3. If you intend to use the python wrapper, you will need to install python and swig.
 
 You will need to copy the resultant dlls to wherever you intend to run the program (distribute it from)
 
