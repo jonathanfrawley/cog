@@ -8,6 +8,10 @@ Developed with the KISS philosophy and borrowing concepts from the brilliant act
 At the moment, cog is in alpha stage.
 Some omissions include platform support (linux and win32 only at the moment), a decent input handling system and physics.
 
+##Future ideas
+ - Make API more opaque (use the PIMPL idiom : https://en.wikipedia.org/wiki/Opaque_pointer)
+ - C++ support
+
 ##Dependencies
  - SDL2
  - OpenGL
