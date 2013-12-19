@@ -1,4 +1,4 @@
-#include "cog_graphics.h"
+#include "cog_graphics_opengl.h"
 
 #include <SDL2/SDL.h>
 
@@ -16,6 +16,10 @@
 #include FT_FREETYPE_H
 #include <png.h>
 
+#include <cog_log.h>
+#include <cog_math.h>
+
+GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, int* height);
 
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite) {
     glEnable(GL_TEXTURE_2D);
@@ -82,7 +86,6 @@ void cog_graphics_opengl_init(void) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
-
 
 void cog_graphics_opengl_draw_text(cog_text* text) {
     glPushMatrix();
@@ -297,8 +300,8 @@ GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, i
     return texture;
 }
 
-uint32_t cog_graphics_opengl_load_texture(char* filename, int* width, int* height) {
-    return cog_graphics_load_texture_png(filename, 0, 0);
+uint32_t cog_graphics_opengl_load_texture(const char* filename, int* width, int* height) {
+    return cog_graphics_opengl_load_texture_png(filename, 0, 0);
 }
 
 

@@ -12,6 +12,7 @@ typedef struct {
     void (*clear)(void);
     void (*draw_sprite)(cog_sprite* sprite);
     void (*draw_text)(cog_text* text);
+    uint32_t (*load_texture)(const char* filename, int* width, int* height);
     uint32_t (*gen_tex_id)();
 } cog_renderer;
 
@@ -23,7 +24,7 @@ void cog_graphics_render(cog_window* window);
 void cog_graphics_init(void);
 void cog_graphics_draw_sprite(cog_sprite* sprite);
 void cog_graphics_draw_text(cog_text* text);
-uint32_t cog_graphics_load_tex(char* filename, int* width, int* height);
+uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height);
 uint32_t cog_graphics_gen_tex_id();
 
 #endif // COG_GRAPHICS_H

@@ -25,7 +25,7 @@ find_package(Lua51)
 find_package(ALUT REQUIRED)
 find_package(OpenAL REQUIRED)
 #add_definitions(-std=c99 -Werror -Wall)
-add_definitions(-std=c99 -Wall -g)
+add_definitions(-std=c99 -Werror -O0 -Wall -g)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -65,6 +65,8 @@ endif()
 if(PLATFORM_BUILD STREQUAL Pandora)
     add_definitions(-DWITH_GLES)
 endif ()
+
+add_definitions(-DOPENGL_RENDERING)
 
 set(TEST_DIR ../tests)
 include_directories("${CMAKE_SOURCE_DIR}" "${TEST_DIR}")
