@@ -18,8 +18,10 @@
 
 #include <cog_log.h>
 #include <cog_math.h>
+#include <cog_main.h>
 
 GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, int* height);
+cog_window* window;
 
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite) {
     glEnable(GL_TEXTURE_2D);
@@ -56,7 +58,8 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite) {
     glPopMatrix();
 }
 
-void cog_graphics_opengl_init(void) {
+void cog_graphics_opengl_init(cog_window* win) {
+    window = win;
     GLenum error = GL_NO_ERROR;
     //Initialize Projection Matrix
     glMatrixMode(GL_PROJECTION);
@@ -307,4 +310,8 @@ uint32_t cog_graphics_opengl_load_texture(const char* filename, int* width, int*
 
 void cog_graphics_opengl_clear() {
     glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void cog_graphics_opengl_flush() {
+    SDL_GL_SwapWindow(window->window);
 }

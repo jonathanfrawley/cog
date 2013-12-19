@@ -1,12 +1,6 @@
 #ifndef  COG_SPRITE_H
 #define  COG_SPRITE_H
 
-#if !defined(HAVE_GLES)
-#include <GL/glew.h>
-#else
-#include <GLES/gl.h>
-#endif
-
 #include "cog_types.h"
 
 #define COG_SPRITE_LAYER 1
@@ -17,7 +11,7 @@
 typedef struct {
     cog_sprite_id id;
     uint32_t layer;
-    GLuint tex_id;
+    uint32_t tex_id;
     //These are the coords and dimensions of the sprite within the image.
     //(Can have multiple sprites per image - cog_anims are implemented using this)
     cog_pos2 tex_pos;

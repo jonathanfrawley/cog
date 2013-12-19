@@ -1,15 +1,8 @@
 #ifndef  COG_TEXT_H
 #define  COG_TEXT_H
 
-#if !defined(HAVE_GLES)
-#include <GL/glew.h>
-#else
-#include <GLES/gl.h>
-#endif
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
 
 #include "cog_core.h"
 #include "cog_types.h"
@@ -21,7 +14,7 @@
  *-----------------------------------------------------------------------------*/
 typedef struct {
     cog_text_id id;
-    GLuint tex_id;
+    uint32_t tex_id;
     FT_Face face;
     uint32_t layer;
 

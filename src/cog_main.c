@@ -54,7 +54,7 @@ void cog_init(void) {
     cog_anim_init();
     cog_window_init(&window);
     cog_input_init(&window);
-    cog_graphics_init();
+    cog_graphics_init(&window);
     cog_text_init();
     starttime = SDL_GetTicks();
     //init rng
