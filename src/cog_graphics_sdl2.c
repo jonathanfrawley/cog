@@ -33,6 +33,10 @@ void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     SDL_Texture* texture = (SDL_Texture*)cog_map_get(&textures, sprite->tex_id);
     //TODO: Define this properly
     cog_pos2 sdl2_pos = scale_pos2(sprite->pos, win_dim);
+    sdl2_pos.x += (win_dim.w * 0.5);
+    sdl2_pos.y += (win_dim.h * 0.5);
+    sdl2_pos.x *= 0.5;
+    sdl2_pos.y *= 0.5;
     cog_dim2 sdl2_dim = scale_dim2(sprite->dim, win_dim);
     cog_debugf("sdl2_pos <%f, %f>", sdl2_pos.x, sdl2_pos.y);
     cog_debugf("sdl2_dim <%f, %f>", sdl2_dim.w, sdl2_dim.h);
@@ -63,8 +67,8 @@ void cog_graphics_sdl2_init(cog_window* win) {
     window = win;
     int w, h;
     SDL_GetWindowSize(window->window,
-            &w,
-            &h);
+                      &w,
+                      &h);
     win_dim.w = (float)w;
     win_dim.h = (float)h;
     renderer = SDL_CreateRenderer(window->window, -1, SDL_RENDERER_ACCELERATED);
