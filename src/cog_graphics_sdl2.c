@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include <cog_log.h>
 #include <cog_main.h>
 #include <cog_map.h>
 #include <cog_window.h>
@@ -11,21 +12,61 @@ static cog_map textures;
 static uint32_t texture_cnt;
 static SDL_Renderer* renderer;
 static cog_window* window;
+static cog_dim2 win_dim;
+
+/* Scales pos to use new dimension system passed in. */
+cog_pos2 scale_pos2(cog_pos2 pos, cog_dim2 dim) {
+    cog_pos2 res;
+    res.x = pos.x * dim.w;
+    res.y = pos.y * dim.h;
+    return res;
+}
+
+cog_dim2 scale_dim2(cog_dim2 dim1, cog_dim2 dim2) {
+    cog_dim2 res;
+    res.w = dim1.w * dim2.w;
+    res.h = dim1.h * dim2.h;
+    return res;
+}
 
 void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     SDL_Texture* texture = (SDL_Texture*)cog_map_get(&textures, sprite->tex_id);
     //TODO: Define this properly
+    cog_pos2 sdl2_pos = scale_pos2(sprite->pos, win_dim);
+    cog_dim2 sdl2_dim = scale_dim2(sprite->dim, win_dim);
+    cog_debugf("sdl2_pos <%f, %f>", sdl2_pos.x, sdl2_pos.y);
+    cog_debugf("sdl2_dim <%f, %f>", sdl2_dim.w, sdl2_dim.h);
+    int tex_w, tex_h;
+    SDL_QueryTexture(texture, NULL, NULL, &tex_w, &tex_h);
+    cog_dim2 sdl2_tex_full_dim;
+    sdl2_tex_full_dim.w = tex_w;
+    sdl2_tex_full_dim.h = tex_h;
+    cog_pos2 sdl2_tex_pos = scale_pos2(sprite->tex_pos, sdl2_tex_full_dim);
+    cog_dim2 sdl2_tex_dim = scale_dim2(sprite->tex_dim, sdl2_tex_full_dim);
+    cog_debugf("sdl2_tex_pos <%f, %f>", sdl2_tex_pos.x, sdl2_tex_pos.y);
+    cog_debugf("sdl2_tex_dim <%f, %f>", sdl2_tex_dim.w, sdl2_tex_dim.h);
+    SDL_Rect texsrc;
+    texsrc.x = sdl2_tex_pos.x;
+    texsrc.y = sdl2_tex_pos.y;
+    texsrc.w = sdl2_tex_dim.w;
+    texsrc.h = sdl2_tex_dim.h;
     SDL_Rect texr;
-    texr.x = 0;
-    texr.y = 0;
-    texr.w = 400;
-    texr.h = 300;
-    SDL_RenderCopy(renderer, texture, NULL, &texr);
+    texr.x = sdl2_pos.x;
+    texr.y = sdl2_pos.y;
+    texr.w = sdl2_dim.w;
+    texr.h = sdl2_dim.h;
+    SDL_RenderCopy(renderer, texture, &texsrc, &texr);
 }
 
 void cog_graphics_sdl2_init(cog_window* win) {
     cog_map_init(&textures);
     window = win;
+    int w, h;
+    SDL_GetWindowSize(window->window,
+            &w,
+            &h);
+    win_dim.w = (float)w;
+    win_dim.h = (float)h;
     renderer = SDL_CreateRenderer(window->window, -1, SDL_RENDERER_ACCELERATED);
 }
 
