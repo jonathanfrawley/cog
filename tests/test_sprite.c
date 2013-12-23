@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
     cog_sprite_id id = cog_sprite_add("media/grid.png");
     cog_sprite_set(id, (cog_sprite) {
         .dim=(cog_dim2) {
-            .w=1, .h=1
+            .w=2, .h=2
         }
     });
     while(!cog_hasquit()) {
