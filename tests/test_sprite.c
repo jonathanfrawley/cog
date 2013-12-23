@@ -5,7 +5,8 @@
  *-----------------------------------------------------------------------------*/
 int main(int argc, char* argv[]) {
     cog_init();
-    cog_sprite_id id = cog_sprite_add("media/test0.png");
+    //cog_sprite_id id = cog_sprite_add("media/test0.png");
+    cog_sprite_id id = cog_sprite_add("media/grid.png");
     cog_sprite_set(id, (cog_sprite) {
         .dim=(cog_dim2) {
             .w=1, .h=1

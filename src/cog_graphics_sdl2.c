@@ -30,16 +30,31 @@ cog_dim2 scale_dim2(cog_dim2 dim1, cog_dim2 dim2) {
 }
 
 void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
+    // Input sprite coord system:
+    //        *----------* (1,1)
+    //        |    .(0,0)|
+    // (-1,-1)*----------*
+    //##################################
+    // Output sprite coord system:
+    //             (0,0)*----------* (SCREEN_WIDTH,0)
+    //                  |    .(x,y)|
+    // (0,SCREEN_HEIGHT)*----------* (SCREEN_WIDTH,SCREEN_HEIGHT)
+    //
     SDL_Texture* texture = (SDL_Texture*)cog_map_get(&textures, sprite->tex_id);
     //TODO: Define this properly
+    cog_debugf("win_dim <%f, %f>", win_dim.w, win_dim.h);
+    cog_debugf("pos <%f, %f>", sprite->pos.x, sprite->pos.y);
     cog_pos2 sdl2_pos = scale_pos2(sprite->pos, win_dim);
-    sdl2_pos.x += (win_dim.w * 0.5);
-    sdl2_pos.y += (win_dim.h * 0.5);
+    cog_debugf("after scale sdl2_pos <%f, %f>", sdl2_pos.x, sdl2_pos.y);
+    sdl2_pos.x += (win_dim.w * 0.5); //300
+    sdl2_pos.y += (win_dim.h * 0.5); //300
+    cog_debugf("after add sdl2_pos <%f, %f>", sdl2_pos.x, sdl2_pos.y);
     sdl2_pos.x *= 0.5;
     sdl2_pos.y *= 0.5;
+    cog_debugf("after mult sdl2_pos <%f, %f>", sdl2_pos.x, sdl2_pos.y);
     cog_dim2 sdl2_dim = scale_dim2(sprite->dim, win_dim);
-    cog_debugf("sdl2_pos <%f, %f>", sdl2_pos.x, sdl2_pos.y);
-    cog_debugf("sdl2_dim <%f, %f>", sdl2_dim.w, sdl2_dim.h);
+    //cog_debugf("sdl2_pos <%f, %f>", sdl2_pos.x, sdl2_pos.y);
+    //cog_debugf("sdl2_dim <%f, %f>", sdl2_dim.w, sdl2_dim.h);
     int tex_w, tex_h;
     SDL_QueryTexture(texture, NULL, NULL, &tex_w, &tex_h);
     cog_dim2 sdl2_tex_full_dim;
@@ -47,19 +62,30 @@ void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     sdl2_tex_full_dim.h = tex_h;
     cog_pos2 sdl2_tex_pos = scale_pos2(sprite->tex_pos, sdl2_tex_full_dim);
     cog_dim2 sdl2_tex_dim = scale_dim2(sprite->tex_dim, sdl2_tex_full_dim);
-    cog_debugf("sdl2_tex_pos <%f, %f>", sdl2_tex_pos.x, sdl2_tex_pos.y);
-    cog_debugf("sdl2_tex_dim <%f, %f>", sdl2_tex_dim.w, sdl2_tex_dim.h);
+    //cog_debugf("sdl2_tex_pos <%f, %f>", sdl2_tex_pos.x, sdl2_tex_pos.y);
+    //cog_debugf("sdl2_tex_dim <%f, %f>", sdl2_tex_dim.w, sdl2_tex_dim.h);
     SDL_Rect texsrc;
     texsrc.x = sdl2_tex_pos.x;
     texsrc.y = sdl2_tex_pos.y;
     texsrc.w = sdl2_tex_dim.w;
     texsrc.h = sdl2_tex_dim.h;
     SDL_Rect texr;
-    texr.x = sdl2_pos.x;
-    texr.y = sdl2_pos.y;
+    texr.x = sdl2_pos.x - (sdl2_dim.w*0.25);
+    texr.y = sdl2_pos.y - (sdl2_dim.h*0.25);
+    //texr.x = sdl2_pos.x;
+    //texr.y = sdl2_pos.y;
     texr.w = sdl2_dim.w;
     texr.h = sdl2_dim.h;
     SDL_RenderCopy(renderer, texture, &texsrc, &texr);
+    //Render red filled quad
+    int WIDTH = 10;
+    int HEIGHT = 10;
+    int x = texr.x+(texr.w/2)-WIDTH;
+    int y = texr.y+(texr.h/2)-HEIGHT;
+    SDL_Rect fillRect = { x, y, WIDTH, HEIGHT};
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+    SDL_RenderFillRect(renderer, &fillRect);
+    SDL_SetRenderDrawColor(renderer, 0x00, 0xA0, 0x00, 0xFF);
 }
 
 void cog_graphics_sdl2_init(cog_window* win) {
