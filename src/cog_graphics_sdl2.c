@@ -6,6 +6,7 @@
 #include <cog_log.h>
 #include <cog_main.h>
 #include <cog_map.h>
+#include <cog_math.h>
 #include <cog_window.h>
 
 static cog_map textures;
@@ -58,7 +59,8 @@ void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     //                    |    .(x,y)|
     // (0,SCREEN_HEIGHT)*----------* (SCREEN_WIDTH,SCREEN_HEIGHT)
     SDL_Texture* texture = (SDL_Texture*)cog_map_get(&textures, sprite->tex_id);
-    cog_dim2 sdl2_dim = scale_dim2(sprite->dim, win_dim);
+    cog_dim2 sdl2_dim_tmp = scale_dim2(sprite->dim, (cog_dim2){.w=2.0f, .h=2.0f});
+    cog_dim2 sdl2_dim = scale_dim2(sdl2_dim_tmp, win_dim);
     //TODO: Define this properly
     cog_pos2 sdl2_pos = sprite->pos;
     cog_debugf("#########################################################");
@@ -124,7 +126,7 @@ void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     texr.y = sdl2_pos.y;
     texr.w = sdl2_dim.w*(0.5);
     texr.h = sdl2_dim.h*(0.5);
-    SDL_RenderCopy(renderer, texture, &texsrc, &texr);
+    SDL_RenderCopyEx(renderer, texture, &texsrc, &texr, cog_math_radians_to_degrees(-sprite->rot), NULL, SDL_FLIP_NONE);
     //Render red filled quad
     int WIDTH = 10;
     int HEIGHT = 10;
@@ -133,7 +135,7 @@ void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     SDL_Rect fillRect = { x, y, WIDTH, HEIGHT};
     SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
     SDL_RenderFillRect(renderer, &fillRect);
-    SDL_SetRenderDrawColor(renderer, 0x00, 0xA0, 0x00, 0xFF);
+    SDL_SetRenderDrawColor(renderer, 0x48, 0x00, 0x00, 0xFF);
 }
 
 void cog_graphics_sdl2_init(cog_window* win) {
