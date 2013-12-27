@@ -6,10 +6,10 @@
 #include "cog_list.h"
 #include "cog_math.h"
 #include "cog_sprite.h"
-#ifdef OPENGL_RENDERING
-#include "cog_graphics_opengl.h"
-#else
+#ifdef USE_SDL
 #include "cog_graphics_sdl2.h"
+#else
+#include "cog_graphics_opengl.h"
 #endif
 
 cog_renderer* r;
@@ -37,15 +37,7 @@ uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height
 
 void cog_graphics_init(cog_window* win) {
     r = COG_STRUCT_MALLOC(cog_renderer);
-#ifdef OPENGL_RENDERING
-    r->draw_sprite = cog_graphics_opengl_draw_sprite;
-    r->init = cog_graphics_opengl_init;
-    r->draw_text = cog_graphics_opengl_draw_text;
-    r->gen_tex_id = cog_graphics_opengl_gen_tex_id;
-    r->load_texture = cog_graphics_opengl_load_texture;
-    r->clear = cog_graphics_opengl_clear;
-    r->flush = cog_graphics_opengl_flush;
-#else
+#ifdef USE_SDL
     r->draw_sprite = cog_graphics_sdl2_draw_sprite;
     r->init = cog_graphics_sdl2_init;
     r->draw_text = cog_graphics_sdl2_draw_text;
@@ -53,6 +45,14 @@ void cog_graphics_init(cog_window* win) {
     r->load_texture = cog_graphics_sdl2_load_texture;
     r->clear = cog_graphics_sdl2_clear;
     r->flush = cog_graphics_sdl2_flush;
+#else
+    r->draw_sprite = cog_graphics_opengl_draw_sprite;
+    r->init = cog_graphics_opengl_init;
+    r->draw_text = cog_graphics_opengl_draw_text;
+    r->gen_tex_id = cog_graphics_opengl_gen_tex_id;
+    r->load_texture = cog_graphics_opengl_load_texture;
+    r->clear = cog_graphics_opengl_clear;
+    r->flush = cog_graphics_opengl_flush;
 #endif
     r->init(win);
 }

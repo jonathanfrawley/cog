@@ -67,7 +67,7 @@ if(PLATFORM_BUILD STREQUAL Pandora)
     add_definitions(-DWITH_GLES)
 endif ()
 
-#add_definitions(-DOPENGL_RENDERING)
+add_definitions(-DUSE_SDL)
 
 set(TEST_DIR ../tests)
 include_directories("${CMAKE_SOURCE_DIR}" "${TEST_DIR}")

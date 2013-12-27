@@ -9,13 +9,13 @@ void cog_window_init(cog_window* window) {
     //TODO: Get from yaml conf.
     int width = 600;
     int height = 600;
-#ifdef OPENGL_RENDERING
+#ifdef USE_SDL
+    int flags = SDL_RENDERER_ACCELERATED;
+#else
     int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
     //Use OpenGL 2.1
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-#else
-    int flags = SDL_RENDERER_ACCELERATED;
 #endif
     if((window->window = SDL_CreateWindow("cog game",
                                           SDL_WINDOWPOS_UNDEFINED,
@@ -25,7 +25,7 @@ void cog_window_init(cog_window* window) {
         cog_errorf("cog_window_init failed when creating SDL window <%s> \n",
                    SDL_GetError());
     }
-#ifdef OPENGL_RENDERING
+#ifndef USE_SDL
     window->glcontext = SDL_GL_CreateContext(window->window);
     if(SDL_GL_SetSwapInterval(1) < 0) {
         cog_debugf("cog_window_init: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
@@ -41,7 +41,7 @@ void cog_window_update(cog_window* window) {
 }
 
 void cog_window_quit(cog_window* window) {
-#ifdef OPENGL_RENDERING
+#ifndef USE_SDL
     SDL_GL_DeleteContext(window->glcontext);
 #endif
     SDL_Quit();
