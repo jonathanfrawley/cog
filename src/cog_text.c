@@ -14,7 +14,7 @@
 
 typedef struct {
     void (*text_init)(void);
-    cog_text_id (*text_add)(cog_text_id id);
+    cog_text_id(*text_add)(cog_text_id id);
     cog_text* (*text_get)(cog_text_id id);
     void (*text_remove)(cog_text_id id);
     void (*text_set_face)(cog_text_id id, cog_string path, double pt_size);
