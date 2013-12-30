@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
         }
     });
     cog_text* text = cog_text_get(id);
-    text->face = cog_text_load_face("media/font/FreeSans.ttf", 48);
+    cog_text_set_face(id, "media/font/FreeSans.ttf", 48);
     double xvel = 0.003;
     double yvel = 0.009;
     while(!cog_hasquit()) {

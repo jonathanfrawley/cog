@@ -15,6 +15,7 @@ typedef struct {
     void (*snd_add_mus)(const char* fname, cog_snd_id id);
     void (*snd_play)(cog_snd_id id);
     void (*snd_stop)(cog_snd_id id);
+    void (*snd_shutdown)();
 } cog_snd_player;
 
 static cog_snd_player player;
@@ -29,12 +30,14 @@ void cog_snd_init() {
     player.snd_add_mus = cog_snd_sdl2_add_mus;
     player.snd_play = cog_snd_sdl2_play;
     player.snd_stop = cog_snd_sdl2_stop;
+    player.snd_shutdown = cog_snd_sdl2_shutdown;
 #else
     player.snd_init = cog_snd_al_init;
     player.snd_add = cog_snd_al_add;
     player.snd_add_mus = cog_snd_al_add;
     player.snd_play = cog_snd_al_play;
     player.snd_stop = cog_snd_al_stop;
+    player.snd_shutdown = cog_snd_al_shutdown;
 #endif
     cog_list_init(&activesnds, sizeof(cog_snd_id));
     player.snd_init();
@@ -67,4 +70,8 @@ void cog_snd_stopall() {
         cog_snd_id* snd = (cog_snd_id*) curr->data;
         cog_snd_stop(*snd);
     }
+}
+
+void cog_snd_shutdown() {
+    player.snd_shutdown();
 }

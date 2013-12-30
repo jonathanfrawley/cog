@@ -24,7 +24,7 @@ static cog_map snds;
 void cog_snd_sdl2_init(void) {
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
         cog_errorf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-    }   
+    }
     cog_map_init(&snds);
 }
 
@@ -66,4 +66,7 @@ void cog_snd_sdl2_stop(cog_snd_id id) {
     } else {
         Mix_HaltMusic();
     }
+}
+
+void cog_snd_sdl2_shutdown() {
 }

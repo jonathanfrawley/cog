@@ -17,5 +17,6 @@ cog_snd_id cog_snd_add_mus(const char* fname);
 void cog_snd_play(cog_snd_id id);
 void cog_snd_stop(cog_snd_id id);
 void cog_snd_stopall();
+void cog_snd_shutdown();
 
 #endif // COG_SND_H

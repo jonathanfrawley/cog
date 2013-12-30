@@ -38,3 +38,7 @@ void cog_snd_al_stop(cog_snd_id id) {
     cog_snd_al* snd = (cog_snd_al*) cog_map_get(&snds, id);
     alSourceStop(snd->source);
 }
+
+void cog_snd_al_shutdown() {
+    alutExit();
+}
