@@ -31,7 +31,6 @@ static cog_color default_color = {.r=1,.g=1,.b=1,.a=1};
 cog_text_id cog_text_add() {
     cog_text_id id = textcnt++;
     renderer.text_add(id);
-
     cog_text* text = COG_STRUCT_MALLOC(cog_text);
     text->layer = COG_TEXT_LAYER;
     text->id = id;

@@ -8,6 +8,7 @@ TODO general
  - Set media folder on init, so no need to type each time.
  - Good readable definition of all keycodes (enum?)
  - Normalisation of vectors built-in
+ - Make shutdown more safe -> Deallocate memory and call shutdown functions in correct order
 
 Done Tasks cog
 ==============

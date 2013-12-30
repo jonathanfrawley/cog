@@ -14,7 +14,7 @@ static cog_map text_freetypes;
 static const cog_string default_path = "media/font/04B_03__.ttf";
 static uint32_t default_pt_size = 48;
 
-cog_text_freetype_id cog_text_freetype_add(cog_text_id id) {
+cog_text_id cog_text_freetype_add(cog_text_id id) {
     cog_text_freetype* text_freetype = COG_STRUCT_MALLOC(cog_text_freetype);
     text_freetype->id = id;
     text_freetype->tex_id = cog_graphics_opengl_gen_tex_id();
@@ -35,16 +35,16 @@ FT_Face cog_text_freetype_load_face(cog_string path, double pt_size) {
     return face;
 }
 
-void cog_text_freetype_set_face(cog_text_freetype_id id, cog_string path, double pt_size) {
+void cog_text_freetype_set_face(cog_text_id id, cog_string path, double pt_size) {
     cog_text_freetype* text_freetype = cog_map_get(&text_freetypes, id);
     text_freetype->face = cog_text_freetype_load_face(path, pt_size);
 }
 
-cog_text_freetype* cog_text_freetype_get(cog_text_freetype_id id) {
+cog_text_freetype* cog_text_freetype_get(cog_text_id id) {
     return (cog_text_freetype*) cog_map_get(&text_freetypes, id);
 }
 
-void cog_text_freetype_remove(cog_text_freetype_id id) {
+void cog_text_freetype_remove(cog_text_id id) {
     cog_map_remove(&text_freetypes, id);
 }
 
