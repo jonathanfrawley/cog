@@ -128,10 +128,14 @@ void cog_graphics_sdl2_init(cog_window* win) {
 void cog_graphics_sdl2_draw_text(cog_text* text) {
     cog_text_sdl2* text_sdl2 = cog_text_sdl2_get(text->id);
     SDL_Color text_color = {.r=text->col.r, .g=text->col.g, .b=text->col.b, .a=text->col.a};
-	SDL_Surface* text_surface = TTF_RenderText_Solid(text_sdl2->face, text->str, text_color );
+    SDL_Surface* text_surface = TTF_RenderText_Solid(text_sdl2->face, text->str, text_color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-    cog_pos2 tex_pos = (cog_pos2){.x=0.0, .y=0.0};
-    cog_dim2 tex_dim = (cog_dim2){.w=1.0, .h=1.0};
+    cog_pos2 tex_pos = (cog_pos2) {
+        .x=0.0, .y=0.0
+    };
+    cog_dim2 tex_dim = (cog_dim2) {
+        .w=1.0, .h=1.0
+    };
     double text_rot = 0.0;
     cog_graphics_sdl2_draw_texture(texture, text->pos, text->scale, tex_pos, tex_dim, text_rot);
 }
