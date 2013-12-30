@@ -1,7 +1,7 @@
 #include "cog_snd.h"
 
 #ifdef USE_SDL
-#include <cog_snd_sdl.h>
+#include <cog_snd_sdl2.h>
 #else
 #include <cog_snd_al.h>
 #endif
@@ -12,6 +12,7 @@
 typedef struct {
     void (*snd_init)(void);
     void (*snd_add)(const char* fname, cog_snd_id id);
+    void (*snd_add_mus)(const char* fname, cog_snd_id id);
     void (*snd_play)(cog_snd_id id);
     void (*snd_stop)(cog_snd_id id);
 } cog_snd_player;
@@ -23,13 +24,15 @@ static cog_snd_id cog_snd_cnt;
 
 void cog_snd_init() {
 #ifdef USE_SDL
-    player.snd_init = cog_snd_sdl_init;
-    player.snd_add = cog_snd_sdl_add;
-    player.snd_play = cog_snd_sdl_play;
-    player.snd_stop = cog_snd_sdl_stop;
+    player.snd_init = cog_snd_sdl2_init;
+    player.snd_add = cog_snd_sdl2_add;
+    player.snd_add_mus = cog_snd_sdl2_add_mus;
+    player.snd_play = cog_snd_sdl2_play;
+    player.snd_stop = cog_snd_sdl2_stop;
 #else
     player.snd_init = cog_snd_al_init;
     player.snd_add = cog_snd_al_add;
+    player.snd_add_mus = cog_snd_al_add;
     player.snd_play = cog_snd_al_play;
     player.snd_stop = cog_snd_al_stop;
 #endif
@@ -40,6 +43,12 @@ void cog_snd_init() {
 cog_snd_id cog_snd_add(const char* fname) {
     cog_snd_id id = cog_snd_cnt++;
     player.snd_add(fname, id);
+    return id;
+}
+
+cog_snd_id cog_snd_add_mus(const char* fname) {
+    cog_snd_id id = cog_snd_cnt++;
+    player.snd_add_mus(fname, id);
     return id;
 }
 
