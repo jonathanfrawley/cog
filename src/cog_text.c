@@ -81,7 +81,7 @@ void cog_text_removeall(void) {
 void cog_text_init(void) {
 #ifdef USE_SDL
     //TODO:Implement
-/*
+    /*
     renderer->text_init = cog_text_sdl2_init;
     renderer->text_add = cog_text_sdl2_add;
     renderer->text_get = cog_text_sdl2_get;
