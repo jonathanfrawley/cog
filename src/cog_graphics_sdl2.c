@@ -2,11 +2,13 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include <cog_log.h>
 #include <cog_main.h>
 #include <cog_map.h>
 #include <cog_math.h>
+#include <cog_text_sdl2.h>
 #include <cog_window.h>
 
 static cog_map textures;
@@ -30,7 +32,7 @@ cog_dim2 scale_dim2(cog_dim2 dim1, cog_dim2 dim2) {
     return res;
 }
 
-void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
+void cog_graphics_sdl2_draw_texture(SDL_Texture* texture, cog_pos2 pos, cog_dim2 dim, cog_pos2 tex_pos, cog_dim2 tex_dim, double rot) {
     // Input sprite coord system:
     //        *----------* (1,1)
     //        |    .(0,0)|
@@ -58,12 +60,11 @@ void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     //               (0,0)*----------* (SCREEN_WIDTH,0)
     //                    |    .(x,y)|
     // (0,SCREEN_HEIGHT)*----------* (SCREEN_WIDTH,SCREEN_HEIGHT)
-    SDL_Texture* texture = (SDL_Texture*)cog_map_get(&textures, sprite->tex_id);
-    cog_dim2 sdl2_dim_tmp = scale_dim2(sprite->dim, (cog_dim2) {
+    cog_dim2 sdl2_dim_tmp = scale_dim2(dim, (cog_dim2) {
         .w=2.0f, .h=2.0f
     });
     cog_dim2 sdl2_dim = scale_dim2(sdl2_dim_tmp, win_dim);
-    cog_pos2 sdl2_pos = sprite->pos;
+    cog_pos2 sdl2_pos = pos;
     //2)
     sdl2_pos.y *= -1.0;
     //1)
@@ -83,8 +84,8 @@ void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     cog_dim2 sdl2_tex_full_dim;
     sdl2_tex_full_dim.w = tex_w;
     sdl2_tex_full_dim.h = tex_h;
-    cog_pos2 sdl2_tex_pos = scale_pos2(sprite->tex_pos, sdl2_tex_full_dim);
-    cog_dim2 sdl2_tex_dim = scale_dim2(sprite->tex_dim, sdl2_tex_full_dim);
+    cog_pos2 sdl2_tex_pos = scale_pos2(tex_pos, sdl2_tex_full_dim);
+    cog_dim2 sdl2_tex_dim = scale_dim2(tex_dim, sdl2_tex_full_dim);
     SDL_Rect texsrc;
     texsrc.x = sdl2_tex_pos.x;
     texsrc.y = sdl2_tex_pos.y;
@@ -95,7 +96,7 @@ void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     texr.y = sdl2_pos.y;
     texr.w = sdl2_dim.w*(0.5);
     texr.h = sdl2_dim.h*(0.5);
-    SDL_RenderCopyEx(renderer, texture, &texsrc, &texr, cog_math_radians_to_degrees(-sprite->rot), NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, texture, &texsrc, &texr, cog_math_radians_to_degrees(-rot), NULL, SDL_FLIP_NONE);
     //Render red filled quad
     int WIDTH = 10;
     int HEIGHT = 10;
@@ -105,6 +106,11 @@ void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
     SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
     SDL_RenderFillRect(renderer, &fillRect);
     SDL_SetRenderDrawColor(renderer, 0x48, 0x00, 0x00, 0xFF);
+}
+
+void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
+    SDL_Texture* texture = (SDL_Texture*)cog_map_get(&textures, sprite->tex_id);
+    cog_graphics_sdl2_draw_texture(texture, sprite->pos, sprite->dim, sprite->tex_pos, sprite->tex_dim, sprite->rot);
 }
 
 void cog_graphics_sdl2_init(cog_window* win) {
@@ -120,7 +126,14 @@ void cog_graphics_sdl2_init(cog_window* win) {
 }
 
 void cog_graphics_sdl2_draw_text(cog_text* text) {
-    //TODO
+    cog_text_sdl2* text_sdl2 = cog_text_sdl2_get(text->id);
+    SDL_Color text_color = {.r=text->col.r, .g=text->col.g, .b=text->col.b, .a=text->col.a};
+	SDL_Surface* text_surface = TTF_RenderText_Solid(text_sdl2->face, text->str, text_color );
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+    cog_pos2 tex_pos = (cog_pos2){.x=0.0, .y=0.0};
+    cog_dim2 tex_dim = (cog_dim2){.w=1.0, .h=1.0};
+    double text_rot = 0.0;
+    cog_graphics_sdl2_draw_texture(texture, text->pos, text->scale, tex_pos, tex_dim, text_rot);
 }
 
 uint32_t cog_graphics_sdl2_load_texture(const char* filename, int* width, int* height) {
