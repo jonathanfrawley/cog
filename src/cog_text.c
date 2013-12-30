@@ -12,10 +12,11 @@
 #include "cog_text_freetype.h"
 #endif
 
+#define COG_TEXT_LAYER 3
+
 typedef struct {
     void (*text_init)(void);
     cog_text_id(*text_add)(cog_text_id id);
-    cog_text* (*text_get)(cog_text_id id);
     void (*text_remove)(cog_text_id id);
     void (*text_set_face)(cog_text_id id, cog_string path, double pt_size);
 } cog_text_renderer;
@@ -25,12 +26,19 @@ static cog_list activetexts;    //text drawn(active) at the moment
 static cog_map texts;
 static cog_text_id textcnt;
 
-static const cog_string default_path = "media/font/04B_03__.ttf";
-//static uint32_t default_pt_size = 48;
+static cog_color default_color = {.r=1,.g=1,.b=1,.a=1};
 
 cog_text_id cog_text_add() {
     cog_text_id id = textcnt++;
     renderer.text_add(id);
+
+    cog_text* text = COG_STRUCT_MALLOC(cog_text);
+    text->layer = COG_TEXT_LAYER;
+    text->id = id;
+    text->col = default_color;
+    strcpy(text->str, "");
+    cog_map_put(&texts, text->id, (cog_dataptr) text);
+    cog_list_append(&activetexts, (cog_dataptr) & (text->id));
     return id;
 }
 
@@ -84,19 +92,18 @@ void cog_text_init(void) {
     /*
     renderer->text_init = cog_text_sdl2_init;
     renderer->text_add = cog_text_sdl2_add;
-    renderer->text_get = cog_text_sdl2_get;
     renderer->text_remove = cog_text_sdl2_remove;
     renderer->text_set_face = cog_text_sdl2_set_face;
     */
 #else
     renderer.text_init = cog_text_freetype_init;
     renderer.text_add = cog_text_freetype_add;
-    renderer.text_get = cog_text_freetype_get;
     renderer.text_remove = cog_text_freetype_remove;
     renderer.text_set_face = cog_text_freetype_set_face;
 #endif
     //TODO
     //cog_text_set_face(default_path, default_pt_size);
+    renderer.text_init();
     cog_map_init(&texts);
     cog_list_init(&activetexts, sizeof(cog_text_id));
 }

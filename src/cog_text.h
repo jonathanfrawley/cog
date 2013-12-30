@@ -4,8 +4,6 @@
 #include "cog_core.h"
 #include "cog_types.h"
 
-#define COG_TEXT_LAYER 3
-
 typedef struct {
     cog_text_id id;
     //User attributes

@@ -123,10 +123,6 @@ void cog_graphics_sdl2_draw_text(cog_text* text) {
     //TODO
 }
 
-uint32_t cog_graphics_sdl2_gen_tex_id() {
-    return 0; //Not sure...
-}
-
 uint32_t cog_graphics_sdl2_load_texture(const char* filename, int* width, int* height) {
     SDL_Texture* img = IMG_LoadTexture(renderer, filename);
     int id = texture_cnt;

@@ -19,6 +19,7 @@
 #include <cog_log.h>
 #include <cog_math.h>
 #include <cog_main.h>
+#include <cog_text_freetype.h>
 
 GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, int* height);
 cog_window* window;
@@ -91,9 +92,10 @@ void cog_graphics_opengl_init(cog_window* win) {
 }
 
 void cog_graphics_opengl_draw_text(cog_text* text) {
+    cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, text->tex_id);
+    glBindTexture(GL_TEXTURE_2D, text_ft->tex_id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -102,13 +104,13 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     const char* p;
-    FT_GlyphSlot g = text->face->glyph;
+    FT_GlyphSlot g = text_ft->face->glyph;
     double x = text->pos.x;
     double y = text->pos.y;
     double sx = text->scale.w;
     double sy = text->scale.h;
     double scalar_y = 0.15; //TODO : Figure out a more generic way to find scale
-    double row_height = text->face->descender * sy * scalar_y;
+    double row_height = text_ft->face->descender * sy * scalar_y;
     for(p = text->str; *p; p++) {
         int new_line = x > (text->pos.x + text->dim.w) || (*p) == '\n';
         if(new_line) {
@@ -118,7 +120,7 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
                 continue;
             }
         }
-        if(FT_Load_Char(text->face, *p, FT_LOAD_RENDER)) {
+        if(FT_Load_Char(text_ft->face, *p, FT_LOAD_RENDER)) {
             continue;
         }
         glTexImage2D(

@@ -18,7 +18,6 @@ typedef struct {
     void (*draw_sprite)(cog_sprite* sprite);
     void (*draw_text)(cog_text* text);
     uint32_t (*load_texture)(const char* filename, int* width, int* height);
-    uint32_t (*gen_tex_id)();
     void (*flush)(void);
 } cog_renderer;
 
@@ -36,10 +35,6 @@ void cog_graphics_draw_text(cog_text* text) {
     r.draw_text(text);
 }
 
-uint32_t cog_graphics_gen_tex_id() {
-    return r.gen_tex_id();
-}
-
 uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height) {
     return r.load_texture(filename, width, height);
 }
@@ -50,7 +45,6 @@ void cog_graphics_init(cog_window* win) {
     r.draw_sprite = cog_graphics_sdl2_draw_sprite;
     r.init = cog_graphics_sdl2_init;
     r.draw_text = cog_graphics_sdl2_draw_text;
-    r.gen_tex_id = cog_graphics_sdl2_gen_tex_id;
     r.load_texture = cog_graphics_sdl2_load_texture;
     r.clear = cog_graphics_sdl2_clear;
     r.flush = cog_graphics_sdl2_flush;
@@ -58,7 +52,6 @@ void cog_graphics_init(cog_window* win) {
     r.draw_sprite = cog_graphics_opengl_draw_sprite;
     r.init = cog_graphics_opengl_init;
     r.draw_text = cog_graphics_opengl_draw_text;
-    r.gen_tex_id = cog_graphics_opengl_gen_tex_id;
     r.load_texture = cog_graphics_opengl_load_texture;
     r.clear = cog_graphics_opengl_clear;
     r.flush = cog_graphics_opengl_flush;

@@ -1,35 +1,25 @@
 #include "cog_text_freetype.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 #include "cog_graphics.h"
+#include "cog_graphics_opengl.h"
+#include "cog_log.h"
+#include "cog_map.h"
 #include "cog_text.h"
-
-/*-----------------------------------------------------------------------------
- *  Represents some text_freetype
- *-----------------------------------------------------------------------------*/
-typedef struct {
-    cog_text_id id;
-    uint32_t tex_id;
-    FT_Face face;
-} cog_text_freetype;
 
 static FT_Library font_library;
 static FT_Face default_face;
 
 static cog_map text_freetypes;
-static cog_color default_color = {.r=1,.g=1,.b=1,.a=1};
+
+static const cog_string default_path = "media/font/04B_03__.ttf";
+static uint32_t default_pt_size = 48;
 
 cog_text_freetype_id cog_text_freetype_add(cog_text_id id) {
     cog_text_freetype* text_freetype = COG_STRUCT_MALLOC(cog_text_freetype);
-    text_freetype->tex_id = cog_graphics_gen_tex_id();
+    text_freetype->id = id;
+    text_freetype->tex_id = cog_graphics_opengl_gen_tex_id();
     text_freetype->face = default_face;
-    text_freetype->layer = COG_TEXT_LAYER;
-    text_freetype->col = default_color;
-    strcpy(text_freetype->str, "");
-    cog_map_put(&text_freetypes, text_freetype->id, (cog_dataptr) text_freetype);
-    cog_list_append(&activetext_freetypes, (cog_dataptr) & (text_freetype->id));
+    cog_map_put(&text_freetypes, id, (cog_dataptr) text_freetype);
     return text_freetype->id;
 }
 
@@ -62,6 +52,6 @@ void cog_text_freetype_init(void) {
     if(FT_Init_FreeType(&font_library)) {
         cog_errorf("Could not init freetype library");
     }
-    cog_text_freetype_load_face(default_path, default_pt_size);
+    default_face = cog_text_freetype_load_face(default_path, default_pt_size);
     cog_map_init(&text_freetypes);
 }

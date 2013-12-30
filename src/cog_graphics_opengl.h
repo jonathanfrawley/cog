@@ -13,4 +13,7 @@ uint32_t cog_graphics_opengl_load_texture(const char* filename, int* width, int*
 void cog_graphics_opengl_clear();
 void cog_graphics_opengl_flush();
 
+//internal
+uint32_t cog_graphics_opengl_gen_tex_id();
+
 #endif // COG_GRAPHICS_OPENGL
