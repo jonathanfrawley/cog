@@ -131,7 +131,7 @@ void cog_graphics_sdl2_draw_text(cog_text* text) {
     SDL_Color text_color = {.r=text->col.r, .g=text->col.g, .b=text->col.b, .a=text->col.a};
     SDL_Surface* text_surface = TTF_RenderText_Solid(text_sdl2->face, text->str, text_color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-
+    /*
     cog_pos2 tex_pos = (cog_pos2) {
         .x=0.0, .y=0.0
     };
@@ -142,18 +142,22 @@ void cog_graphics_sdl2_draw_text(cog_text* text) {
         .w=text_surface->w, .h=text_surface->h
     };
     double text_rot = 0.0;
-
-    cog_graphics_sdl2_draw_texture(texture, text->pos, dim, tex_pos, tex_dim, text_rot);
-    
-    /*
-    //XXX:TMP
-	//Set rendering space and render to screen
-	SDL_Rect renderQuad = { 100, 100, text_surface->w, text_surface->h };
-
-	//Render to screen
-	SDL_RenderCopyEx(renderer, texture, NULL, &renderQuad, 0.0, NULL, SDL_FLIP_NONE );
-    SDL_SetRenderDrawColor(renderer, 0x48, 0x00, 0x00, 0xFF);
     */
+    //cog_graphics_sdl2_draw_texture(texture, text->pos, dim, tex_pos, tex_dim, text_rot);
+    //XXX:TMP
+    //Set rendering space and render to screen
+    cog_dim2 sdl2_dim_tmp = scale_dim2(text->dim, (cog_dim2) {
+        .w=2.0f, .h=2.0f
+    });
+    cog_dim2 sdl2_dim = scale_dim2(sdl2_dim_tmp, win_dim);
+    cog_pos2 sdl2_pos = cog_graphics_sdl2_get_sdl2_pos(text->pos, sdl2_dim);
+    sdl2_pos.x += text_surface->w * 0.30;
+    sdl2_pos.y -= text_surface->h * 0.5;
+    SDL_Rect renderQuad = (SDL_Rect){.x=sdl2_pos.x, .y=sdl2_pos.y, .w=text_surface->w, .h=text_surface->h};
+
+    //Render to screen
+    SDL_RenderCopyEx(renderer, texture, NULL, &renderQuad, 0.0, 0, SDL_FLIP_NONE );
+    SDL_SetRenderDrawColor(renderer, 0x48, 0x00, 0x00, 0xFF);
 }
 
 uint32_t cog_graphics_sdl2_load_texture(const char* filename, int* width, int* height) {
