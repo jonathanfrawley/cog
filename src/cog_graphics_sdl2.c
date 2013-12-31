@@ -32,7 +32,7 @@ cog_dim2 scale_dim2(cog_dim2 dim1, cog_dim2 dim2) {
     return res;
 }
 
-void cog_graphics_sdl2_draw_texture(SDL_Texture* texture, cog_pos2 pos, cog_dim2 dim, cog_pos2 tex_pos, cog_dim2 tex_dim, double rot) {
+cog_pos2 cog_graphics_sdl2_get_sdl2_pos(cog_pos2 cog_pos, cog_dim2 sdl2_dim) {
     // Input sprite coord system:
     //        *----------* (1,1)
     //        |    .(0,0)|
@@ -56,15 +56,11 @@ void cog_graphics_sdl2_draw_texture(SDL_Texture* texture, cog_pos2 pos, cog_dim2
     //               (0,0)*----------* (2*SCREEN_WIDTH,0)
     //                    |    .(x,y)|
     // (0,2*SCREEN_HEIGHT)*----------* (2*SCREEN_WIDTH,2*SCREEN_HEIGHT)
-    //    4) Transform back (Subtract SCREEN_WIDTH from x axis and SCREEN_HEIGHT on y axis)
+    //    4) Transform back (Subtract quarter of size of texture back)
     //               (0,0)*----------* (SCREEN_WIDTH,0)
     //                    |    .(x,y)|
     // (0,SCREEN_HEIGHT)*----------* (SCREEN_WIDTH,SCREEN_HEIGHT)
-    cog_dim2 sdl2_dim_tmp = scale_dim2(dim, (cog_dim2) {
-        .w=2.0f, .h=2.0f
-    });
-    cog_dim2 sdl2_dim = scale_dim2(sdl2_dim_tmp, win_dim);
-    cog_pos2 sdl2_pos = pos;
+    cog_pos2 sdl2_pos = cog_pos;
     //2)
     sdl2_pos.y *= -1.0;
     //1)
@@ -74,11 +70,17 @@ void cog_graphics_sdl2_draw_texture(SDL_Texture* texture, cog_pos2 pos, cog_dim2
     sdl2_pos.x *= (win_dim.w * 0.5);
     sdl2_pos.y *= (win_dim.h * 0.5);
     //4)
-    sdl2_pos.x -= (win_dim.w * 0.5);
-    sdl2_pos.y -= (win_dim.h * 0.5);
-    //5)?
-    sdl2_pos.x += (win_dim.w * 0.5) - sdl2_dim.w*(0.25);
-    sdl2_pos.y += (win_dim.h * 0.5) - sdl2_dim.h*(0.25);
+    sdl2_pos.x -= sdl2_dim.w*(0.25);
+    sdl2_pos.y -= sdl2_dim.h*(0.25);
+    return sdl2_pos;
+}
+
+void cog_graphics_sdl2_draw_texture(SDL_Texture* texture, cog_pos2 pos, cog_dim2 dim, cog_pos2 tex_pos, cog_dim2 tex_dim, double rot) {
+    cog_dim2 sdl2_dim_tmp = scale_dim2(dim, (cog_dim2) {
+        .w=2.0f, .h=2.0f
+    });
+    cog_dim2 sdl2_dim = scale_dim2(sdl2_dim_tmp, win_dim);
+    cog_pos2 sdl2_pos = cog_graphics_sdl2_get_sdl2_pos(pos, sdl2_dim);
     int tex_w, tex_h;
     SDL_QueryTexture(texture, NULL, NULL, &tex_w, &tex_h);
     cog_dim2 sdl2_tex_full_dim;
@@ -105,7 +107,6 @@ void cog_graphics_sdl2_draw_texture(SDL_Texture* texture, cog_pos2 pos, cog_dim2
     SDL_Rect fillRect = { x, y, WIDTH, HEIGHT};
     SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
     SDL_RenderFillRect(renderer, &fillRect);
-    SDL_SetRenderDrawColor(renderer, 0x48, 0x00, 0x00, 0xFF);
 }
 
 void cog_graphics_sdl2_draw_sprite(cog_sprite* sprite) {
@@ -130,14 +131,29 @@ void cog_graphics_sdl2_draw_text(cog_text* text) {
     SDL_Color text_color = {.r=text->col.r, .g=text->col.g, .b=text->col.b, .a=text->col.a};
     SDL_Surface* text_surface = TTF_RenderText_Solid(text_sdl2->face, text->str, text_color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+
     cog_pos2 tex_pos = (cog_pos2) {
         .x=0.0, .y=0.0
     };
     cog_dim2 tex_dim = (cog_dim2) {
         .w=1.0, .h=1.0
     };
+    cog_dim2 dim = (cog_dim2) {
+        .w=text_surface->w, .h=text_surface->h
+    };
     double text_rot = 0.0;
-    cog_graphics_sdl2_draw_texture(texture, text->pos, text->scale, tex_pos, tex_dim, text_rot);
+
+    cog_graphics_sdl2_draw_texture(texture, text->pos, dim, tex_pos, tex_dim, text_rot);
+    
+    /*
+    //XXX:TMP
+	//Set rendering space and render to screen
+	SDL_Rect renderQuad = { 100, 100, text_surface->w, text_surface->h };
+
+	//Render to screen
+	SDL_RenderCopyEx(renderer, texture, NULL, &renderQuad, 0.0, NULL, SDL_FLIP_NONE );
+    SDL_SetRenderDrawColor(renderer, 0x48, 0x00, 0x00, 0xFF);
+    */
 }
 
 uint32_t cog_graphics_sdl2_load_texture(const char* filename, int* width, int* height) {
@@ -149,6 +165,7 @@ uint32_t cog_graphics_sdl2_load_texture(const char* filename, int* width, int* h
 }
 
 void cog_graphics_sdl2_clear(void) {
+    SDL_SetRenderDrawColor(renderer, 0x48, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
 }
 
