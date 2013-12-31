@@ -9,6 +9,7 @@ TODO general
  - Good readable definition of all keycodes (enum?)
  - Normalisation of vectors built-in
  - Make shutdown more safe -> Deallocate memory and call shutdown functions in correct order
+ - Status of SDL2 port: Anims, sprites and sound working. Mysterious crash on text example and text offsets are incorrect.
 
 Done Tasks cog
 ==============
@@ -18,7 +19,7 @@ Done Tasks cog
 2) Finish animation implementation.
     - Rendering in main loop.
 3) Sound
-4) Physics [MAYBE]
+4) Basic linear physics
 XXX) Function to take animation frame seq in.
 
 3.25) Get list iteration more sensibly implemented. DONE

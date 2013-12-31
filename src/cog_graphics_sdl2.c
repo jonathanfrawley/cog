@@ -153,10 +153,11 @@ void cog_graphics_sdl2_draw_text(cog_text* text) {
     cog_pos2 sdl2_pos = cog_graphics_sdl2_get_sdl2_pos(text->pos, sdl2_dim);
     sdl2_pos.x += text_surface->w * 0.30;
     sdl2_pos.y -= text_surface->h * 0.5;
-    SDL_Rect renderQuad = (SDL_Rect){.x=sdl2_pos.x, .y=sdl2_pos.y, .w=text_surface->w, .h=text_surface->h};
-
+    SDL_Rect renderQuad = (SDL_Rect) {
+        .x=sdl2_pos.x, .y=sdl2_pos.y, .w=text_surface->w, .h=text_surface->h
+    };
     //Render to screen
-    SDL_RenderCopyEx(renderer, texture, NULL, &renderQuad, 0.0, 0, SDL_FLIP_NONE );
+    SDL_RenderCopyEx(renderer, texture, NULL, &renderQuad, 0.0, 0, SDL_FLIP_NONE);
     SDL_SetRenderDrawColor(renderer, 0x48, 0x00, 0x00, 0xFF);
 }
 
