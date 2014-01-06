@@ -1,9 +1,9 @@
 #include "cog_snd.h"
 
 #ifdef USE_SDL
-#include <cog_snd_sdl2.h>
+#include "cog_snd_sdl2.h"
 #else
-#include <cog_snd_al.h>
+#include "cog_snd_al.h"
 #endif
 #include "cog_core.h"
 #include "cog_list.h"

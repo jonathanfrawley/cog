@@ -4,12 +4,12 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
-#include <cog_log.h>
-#include <cog_main.h>
-#include <cog_map.h>
-#include <cog_math.h>
-#include <cog_text_sdl2.h>
-#include <cog_window.h>
+#include "cog_log.h"
+#include "cog_main.h"
+#include "cog_map.h"
+#include "cog_math.h"
+#include "cog_text_sdl2.h"
+#include "cog_window.h"
 
 static cog_map textures;
 static uint32_t texture_cnt;

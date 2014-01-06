@@ -3,7 +3,6 @@
 #include <math.h>
 #include <stdarg.h>
 #include <assert.h>
-#include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 

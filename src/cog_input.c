@@ -102,8 +102,6 @@ void cog_input_check_keys(void) {
                     }
                 }
             }
-            cog_debugf("value %d", event.jaxis.value);
-            cog_debugf("axis %d", event.jaxis.axis);
         }
     }
 }
