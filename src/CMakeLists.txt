@@ -8,8 +8,8 @@ find_package(SDL2 REQUIRED)
 find_package(PythonLibs)
 
 #xml dep
-add_subdirectory(../libs/xml.c ../build_libs)
-INCLUDE_DIRECTORIES(../libs/xml.c/src)
+find_package(LibXml2 REQUIRED)
+INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
 
 if(BUILD_SDL)
     find_package(SDL2_image REQUIRED)
@@ -33,7 +33,7 @@ else()
     INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIRS})
     find_package(ALUT REQUIRED)
     find_package(OpenAL REQUIRED)
-    SET(COG_DEPS ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES})
+    SET(COG_DEPS ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${LIBXML2_LIBRARIES})
     SET(cog_srcs cog_anim.c cog_core.c cog_graphics.c cog_graphics_opengl.c cog_input.c cog_list.c cog_log.c cog_main.c cog_map.c cog_math.c cog_snd_al.c cog_snd.c cog_sprite.c cog_state.c cog_test.c cog_text.c cog_text_freetype.c cog_window.c)
 endif()
 
@@ -83,7 +83,7 @@ target_link_libraries(cog_test_input cog)
 add_executable(cog_test_grid ${TEST_DIR}/test_grid.c)
 target_link_libraries(cog_test_grid cog)
 add_executable(cog_test_tiled ${TEST_DIR}/test_tiled.c)
-target_link_libraries(cog_test_tiled cog xml)
+target_link_libraries(cog_test_tiled cog)
 
 # Installation
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
