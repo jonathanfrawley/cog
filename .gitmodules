@@ -1,0 +1,3 @@
+[submodule "libs/xml.c"]
+	path = libs/xml.c
+	url = https://github.com/ooxi/xml.c.git

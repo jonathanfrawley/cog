@@ -7,6 +7,10 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 find_package(SDL2 REQUIRED)
 find_package(PythonLibs)
 
+#xml dep
+add_subdirectory(../libs/xml.c ../build_libs)
+INCLUDE_DIRECTORIES(../libs/xml.c/src)
+
 if(BUILD_SDL)
     find_package(SDL2_image REQUIRED)
     find_package(SDL2_mixer REQUIRED)
@@ -42,7 +46,7 @@ add_custom_command(TARGET ALL PRE_BUILD
     COMMAND swig -python cog.i)
 
 #These are gcc specific, not sure they will generalise...
-add_definitions(-std=c99 -Werror -O0 -Wall -g)
+add_definitions(-std=c99 -O0 -Wall -g)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -78,6 +82,8 @@ add_executable(cog_test_input ${TEST_DIR}/test_input.c)
 target_link_libraries(cog_test_input cog)
 add_executable(cog_test_grid ${TEST_DIR}/test_grid.c)
 target_link_libraries(cog_test_grid cog)
+add_executable(cog_test_tiled ${TEST_DIR}/test_tiled.c)
+target_link_libraries(cog_test_tiled cog xml)
 
 # Installation
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
