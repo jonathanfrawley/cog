@@ -38,6 +38,7 @@ void cog_graphics_draw_text(cog_text* text) {
 }
 
 uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height) {
+    //Cache textures so we don't load the same thing twice.
     void* item = cog_map_get_hash(&sprite_cache, filename);
     if(item != 0) {
         return *(uint32_t*)item;

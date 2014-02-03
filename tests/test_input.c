@@ -11,7 +11,7 @@ typedef struct entity {
 cog_sprite_id joystick_sprite;
 
 void entity_init(entity* obj) {
-    obj->anim = cog_anim_add("media/kitten_anim.png", 3);
+    obj->anim = cog_anim_add("media/kitten_anim.png", 3, 3);
     cog_anim_set(obj->anim, (cog_anim) {
         .dim = (cog_dim2) {.w=0.3, .h=0.3},
         .pos = (cog_pos2) {.x=0, .y=0},

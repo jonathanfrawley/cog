@@ -14,20 +14,20 @@ static cog_list active_anims;   //anims drawn(active) at the moment
 /*-----------------------------------------------------------------------------
  * Assumes animation is a single 1D animation frame.
  *-----------------------------------------------------------------------------*/
-cog_anim_id cog_anim_add(const char* img, int n_frames) {
+cog_anim_id cog_anim_add(const char* img, uint32_t rows, uint32_t cols) {
     cog_anim* anim = COG_STRUCT_MALLOC(cog_anim);
     anim->id = animcnt++;
     anim->layer = COG_ANIM_LAYER;
     cog_list_init(&anim->frames, sizeof(cog_sprite));
-    anim->n_frames = n_frames;
-    double w_frame = ((double) 1.0f / n_frames);
-    double h_frame = 1.0f;
+    anim->n_frames = rows * cols;
+    double h_frame = (1.0 / (double)rows);
+    double w_frame = (1.0 / (double)cols);
     //Load nimages sprites in, with offset dependant on frame number.
-    for(int i = 0; i < n_frames; i++) {
+    for(int i = 0; i < anim->n_frames; i++) {
         cog_sprite_id sid = cog_sprite_add_inactive(img);
         cog_sprite* sprite = cog_sprite_get(sid);
-        sprite->tex_pos.x = i * w_frame;
-        sprite->tex_pos.y = 0.0f;
+        sprite->tex_pos.x = (i % cols) * w_frame;
+        sprite->tex_pos.y = (i / cols) * h_frame;
         sprite->tex_dim.w = w_frame;
         sprite->tex_dim.h = h_frame;
         cog_list_append(&(anim->frames), sprite);
