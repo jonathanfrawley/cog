@@ -14,7 +14,66 @@
 #include <stdio.h>
 #include <libxml2/libxml/xmlreader.h>
 
+#include <cog_list.h>
+
 #ifdef LIBXML_READER_ENABLED
+
+typedef struct cog_tiled_image {
+    char* source;
+    int width;
+    int height;
+} cog_tiled_image;
+
+typedef struct cog_tiled_tileset {
+    int firstgid;
+    char* name;
+    int width;
+    int height;
+    cog_tiled_image image;
+} cog_tiled_tileset;
+
+typedef struct cog_tiled_property {
+    char* name;
+    char* value;
+} cog_tiled_property;
+
+typedef struct cog_tiled_tile {
+    int gid;
+} cog_tiled_tile;
+
+typedef struct cog_tiled_data {
+    cog_list tiles;
+} cog_tiled_data;
+
+typedef struct cog_tiled_object {
+    char* name;
+    int x;
+    int y;
+    int width;
+    int height;
+} cog_tiled_object;
+
+typedef struct cog_tiled_objectgroup {
+    char* name;
+    int width;
+    int height;
+    cog_list objects;
+} cog_tiled_objectgroup;
+
+typedef struct cog_tiled_layer {
+    cog_list properties;
+    cog_tiled_data data;
+    cog_list objectgroups;
+} cog_tiled_layer;
+
+typedef struct cog_tiled_map {
+    int width;
+    int height;
+    int tile_width;
+    int tile_height;
+    cog_tiled_tileset tileset;
+    cog_list layers;
+} cog_tiled_map;
 
 /**
  * processNode:
