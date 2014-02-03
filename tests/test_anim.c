@@ -46,6 +46,14 @@ int main(int argc, char* argv[]) {
     });
     cog_anim_set_frames(anim, 0, 1, 2, 3, 4, 5, 6, 7);
 
+    cog_anim_id tileset = cog_anim_add("media/tileset.png", 2, 2);
+    cog_anim_set(tileset, (cog_anim) {
+        .dim = (cog_dim2) {.w=0.3, .h=0.3},
+        .pos = (cog_pos2) {.x=-0.3, .y=-0.3},
+        .paused = COG_TRUE
+    });
+    cog_anim_set_frames(tileset, 0, 1, 2, 3);
+    uint32_t frame_no = 0;
     for(int i = 0; i < N_ENTITIES; i++) {
         entity_init(&myentity[i]);
     }
@@ -54,5 +62,18 @@ int main(int argc, char* argv[]) {
             entity_update(&myentity[i]);
         }
         cog_loopstep();
+
+        if(cog_input_key_pressed()) {
+            uint32_t key = cog_input_key_code_pressed();
+            cog_debugf("key is %d", key);
+            if(key == 'a') {
+                frame_no = (frame_no - 1) % 4;
+            }
+            if(key == 'd') {
+                frame_no = (frame_no + 1) % 4;
+            }
+            cog_debugf("Setting frame to %d", frame_no);
+            cog_anim_set_frame(tileset, frame_no);
+        }
     }
 }

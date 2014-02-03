@@ -98,6 +98,11 @@ void cog_anim_set_frames(cog_anim_id id, int frame0, ...) {
     va_end(ap);
 }
 
+void cog_anim_set_frame(cog_anim_id id, uint32_t frame) {
+    cog_anim* anim = cog_anim_get(id);
+    anim->current_frame = frame;
+}
+
 /*-----------------------------------------------------------------------------
  *  Internal
  *-----------------------------------------------------------------------------*/
@@ -124,7 +129,7 @@ void cog_anim_draw_layer(uint32_t layer) {
     COG_LIST_FOREACH(&active_anims) {
         //draw current sprite
         cog_anim* anim = cog_anim_get(*(cog_anim_id*) curr->data);
-        if(anim->paused || anim->finished || (anim->layer != layer)) {
+        if(anim->finished || (anim->layer != layer)) {
             continue;
         }
         //find active frame to render

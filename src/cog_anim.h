@@ -36,6 +36,7 @@ void cog_anim_remove(cog_anim_id id);
 void cog_anim_removeall(void);
 void cog_anim_set(cog_anim_id id, cog_anim src);
 void cog_anim_set_frames(cog_anim_id id, int frame0, ...);
+void cog_anim_set_frame(cog_anim_id id, uint32_t frame);
 
 /*-----------------------------------------------------------------------------
  *  Internal
