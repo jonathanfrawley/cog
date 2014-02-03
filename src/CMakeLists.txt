@@ -46,7 +46,7 @@ add_custom_command(TARGET ALL PRE_BUILD
     COMMAND swig -python cog.i)
 
 #These are gcc specific, not sure they will generalise...
-add_definitions(-std=c99 -O0 -Wall -g)
+add_definitions(-std=c99 -O0 -Wall -g -DDEBUG)
 
 set(CMAKE_BUILD_TYPE Debug)
 

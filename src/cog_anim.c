@@ -94,7 +94,6 @@ void cog_anim_set_frames(cog_anim_id id, int frame0, ...) {
     va_start(ap, frame0);
     for(int i = frame0; i >= 0; i = va_arg(ap, int)) {
         cog_list_append(&(anim->frames), (cog_dataptr) & frame0);
-//        cog_list_append(&(anim->frames), (cog_dataptr)&frame0);
     }
     va_end(ap);
 }

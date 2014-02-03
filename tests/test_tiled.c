@@ -16,8 +16,6 @@
 
 #include <cog_list.h>
 
-#ifdef LIBXML_READER_ENABLED
-
 typedef struct cog_tiled_image {
     char* source;
     int width;
@@ -177,8 +175,9 @@ static void streamFile(const char *filename) {
 }
 
 int main(int argc, char **argv) {
-    if (argc != 2)
+    if (argc != 2) {
         return(1);
+    }
 
     /*
      * this initialize the library and check potential ABI mismatches
@@ -199,11 +198,3 @@ int main(int argc, char **argv) {
     xmlMemoryDump();
     return(0);
 }
-
-#else
-int main(void) {
-    fprintf(stderr, "XInclude support not compiled in\n");
-    exit(1);
-}
-#endif
-

@@ -5,6 +5,7 @@
 void* cog_map_get_recurse(cog_map_elem* elem, uint32_t key);
 void cog_map_put_recurse(cog_map_elem* elem, uint32_t key, void* data);
 void cog_map_remove_recurse(cog_map_elem* elem, uint32_t key);
+uint32_t cog_map_hash(const char* key);
 
 void cog_map_init(cog_map* map) {
     int i;
@@ -22,6 +23,44 @@ void* cog_map_get(cog_map* map, uint32_t key) {
     return cog_map_get_recurse(elem, key);
 }
 
+void cog_map_put(cog_map* map, uint32_t key, void* data) {
+    uint32_t idx = key % COG_MAP_SIZE;  //TODO:Improve.
+    cog_map_elem* elem = map->elems[idx];
+    if(elem == COG_NULL) {
+        //First elem in linked list
+        cog_map_elem* newelem =
+            (cog_map_elem*) cog_malloc(sizeof(cog_map_elem));
+        newelem->key = key;
+        newelem->data = data;
+        newelem->next = 0;
+        map->elems[idx] = newelem;
+    } else {
+        //Find element in linked list bucket.
+        cog_map_put_recurse(elem, key, data);
+    }
+}
+
+void cog_map_remove(cog_map* map, uint32_t key) {
+    uint32_t idx = key % COG_MAP_SIZE;  //TODO:Improve.
+    cog_map_elem* elem = map->elems[idx];
+    if(elem == COG_NULL) {
+        //Work done
+        return;
+    } else {
+        //Find element in linked list bucket.
+        cog_map_remove_recurse(elem, key);
+    }
+}
+
+void cog_map_put_hash(cog_map* map, const char* key, void* data) {
+    return cog_map_put(map, cog_map_hash(key), data);
+}
+
+void* cog_map_get_hash(cog_map* map, const char* key) {
+    return cog_map_get(map, cog_map_hash(key));
+}
+//Private Functions
+
 void* cog_map_get_recurse(cog_map_elem* elem, uint32_t key) {
     if(elem == COG_NULL) {
         return COG_NULL;
@@ -37,20 +76,19 @@ void* cog_map_get_recurse(cog_map_elem* elem, uint32_t key) {
     }
 }
 
-void cog_map_put(cog_map* map, uint32_t key, void* data) {
-    uint32_t idx = key % COG_MAP_SIZE;  //TODO:Improve.
-    cog_map_elem* elem = map->elems[idx];
-    if(elem == COG_NULL) {
-        //First elem in linked list
-        cog_map_elem* newelem =
-            (cog_map_elem*) cog_malloc(sizeof(cog_map_elem));
-        newelem->key = key;
-        newelem->data = data;
-        newelem->next = 0;
-        map->elems[idx] = newelem;
+void cog_map_remove_recurse(cog_map_elem* elem, uint32_t key) {
+    if(elem->key == key) {
+        elem->key = 0;
+        elem = COG_NULL;
+        //TODO:Maybe free here too?
+        return;
     } else {
-        //Find element in linked list bucket.
-        cog_map_put_recurse(elem, key, data);
+        if(elem->next == COG_NULL) {
+            //done
+            return;
+        } else {
+            cog_map_remove_recurse(elem->next, key);
+        }
     }
 }
 
@@ -73,30 +111,13 @@ void cog_map_put_recurse(cog_map_elem* elem, uint32_t key, void* data) {
     }
 }
 
-void cog_map_remove(cog_map* map, uint32_t key) {
-    uint32_t idx = key % COG_MAP_SIZE;  //TODO:Improve.
-    cog_map_elem* elem = map->elems[idx];
-    if(elem == COG_NULL) {
-        //Work done
-        return;
-    } else {
-        //Find element in linked list bucket.
-        cog_map_remove_recurse(elem, key);
-    }
-}
+uint32_t cog_map_hash(const char* key) {
+    uint32_t hash = 5381;
+    int c;
 
-void cog_map_remove_recurse(cog_map_elem* elem, uint32_t key) {
-    if(elem->key == key) {
-        elem->key = 0;
-        elem = COG_NULL;
-        //TODO:Maybe free here too?
-        return;
-    } else {
-        if(elem->next == COG_NULL) {
-            //done
-            return;
-        } else {
-            cog_map_remove_recurse(elem->next, key);
-        }
+    while (c = *key++) {
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
     }
+
+    return hash;
 }

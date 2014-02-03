@@ -4,6 +4,7 @@
 #include "cog_anim.h"
 #include "cog_core.h"
 #include "cog_list.h"
+#include "cog_map.h"
 #include "cog_math.h"
 #include "cog_sprite.h"
 #ifdef USE_SDL
@@ -22,6 +23,7 @@ typedef struct {
 } cog_renderer;
 
 static cog_renderer r;
+static cog_map sprite_cache;
 
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
@@ -36,7 +38,15 @@ void cog_graphics_draw_text(cog_text* text) {
 }
 
 uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height) {
-    return r.load_texture(filename, width, height);
+    void* item = cog_map_get_hash(&sprite_cache, filename);
+    if(item != 0) {
+        return *(uint32_t*)item;
+    } else {
+        uint32_t* tex_id = cog_malloc(sizeof(uint32_t));
+        (*tex_id) = r.load_texture(filename, width, height);
+        cog_map_put_hash(&sprite_cache, filename, (cog_dataptr)tex_id);
+        return (*tex_id);
+    }
 }
 
 
@@ -57,6 +67,7 @@ void cog_graphics_init(cog_window* win) {
     r.flush = cog_graphics_opengl_flush;
 #endif
     r.init(win);
+    cog_map_init(&sprite_cache);
 }
 
 void cog_graphics_render(cog_window* window) {
