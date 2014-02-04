@@ -7,6 +7,6 @@ void cog_snd_al_init(void);
 void cog_snd_al_add(const char* fname, cog_snd_id id);
 void cog_snd_al_play(cog_snd_id id);
 void cog_snd_al_stop(cog_snd_id id);
-void cog_snd_al_shutdown();
+void cog_snd_al_quit();
 
 #endif

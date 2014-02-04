@@ -39,6 +39,6 @@ void cog_snd_al_stop(cog_snd_id id) {
     alSourceStop(snd->source);
 }
 
-void cog_snd_al_shutdown() {
+void cog_snd_al_quit() {
     alutExit();
 }

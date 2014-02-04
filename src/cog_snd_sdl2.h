@@ -8,6 +8,6 @@ void cog_snd_sdl2_add(const char* fname, cog_snd_id id);
 void cog_snd_sdl2_add_mus(const char* fname, cog_snd_id id);
 void cog_snd_sdl2_play(cog_snd_id id);
 void cog_snd_sdl2_stop(cog_snd_id id);
-void cog_snd_sdl2_shutdown();
+void cog_snd_sdl2_quit();
 
 #endif

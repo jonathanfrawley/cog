@@ -68,5 +68,5 @@ void cog_snd_sdl2_stop(cog_snd_id id) {
     }
 }
 
-void cog_snd_sdl2_shutdown() {
+void cog_snd_sdl2_quit() {
 }
