@@ -1,20 +1,34 @@
-/**
- * section: xmlReader
- * synopsis: Parse an XML file with an xmlReader
- * purpose: Demonstrate the use of xmlReaderForFile() to parse an XML file
- *          and dump the informations about the nodes found in the process.
- *          (Note that the XMLReader functions require libxml2 version later
- *          than 2.6.)
- * usage: reader1 <filename>
- * test: reader1 test2.xml > reader1.tmp && diff reader1.tmp $(srcdir)/reader1.res
- * author: Daniel Veillard
- * copy: see Copyright for the status of this software.
- */
-
 #include <stdio.h>
 #include <libxml2/libxml/xmlreader.h>
 
+#include <cog_anim.h>
 #include <cog_list.h>
+#include <cog_main.h>
+
+
+//tileset_w is tileset.image.width / tileset.tilewidth, same for h
+void cog_tiled_load_background(double x, double y, double w, double h, 
+        const char* tileset_path, int32_t tileset_w, int32_t tileset_h, 
+        int32_t tile_layer_w, int32_t tile_layer_h, int32_t* ids, int32_t n_ids, cog_list* out_anims) {
+    double elem_w = w / (double)tile_layer_w;
+    double elem_h = h / (double)tile_layer_h;
+    for(int i=0;i<n_ids;i++) {
+        cog_anim_id anim = cog_anim_add(tileset_path, tileset_h, tileset_w);
+        cog_anim_set(anim, (cog_anim) {
+            .dim = (cog_dim2) {.w=elem_w, .h=elem_h},
+            .pos = (cog_pos2) {.x=x+((i % tile_layer_w) * elem_w), .y=y+((i / tile_layer_h) * elem_h)},
+            //.pos = (cog_pos2) {.x=i*0.3, .y=i*0.3},
+            .paused = COG_TRUE
+        });
+        cog_debugf("id %d ", ids[i]-1);
+        cog_debugf("elem_h %lf ", elem_h);
+        cog_debugf("elem_w %lf ", elem_w);
+        cog_debugf("x %lf ",(i % tile_layer_w) * elem_w);
+        cog_debugf("y %lf ",(i / tile_layer_h) * elem_h);
+        cog_anim_set_frames(anim, ids[i]-1);
+        cog_anim_set_frame(anim, ids[i]-1);
+    }
+}
 
 typedef struct cog_tiled_image {
     char* source;
@@ -74,17 +88,13 @@ typedef struct cog_tiled_map {
 } cog_tiled_map;
 
 /**
- * processNode:
- * @reader: the xmlReader
- *
- * Dump information about the current node
- */
 static void processNode(xmlTextReaderPtr reader) {
     const xmlChar *name, *value;
 
     name = xmlTextReaderConstName(reader);
-    if (name == NULL)
-    name = BAD_CAST "--";
+    if (name == NULL) {
+        name = BAD_CAST "--";
+    }
 
     //printf("NAME : <%s> \n", name);
     if(xmlStrEqual("map", name)) {
@@ -128,32 +138,8 @@ static void processNode(xmlTextReaderPtr reader) {
         printf("width is <%s>\n", xmlTextReaderGetAttribute(reader, "width"));
         printf("height is <%s>\n", xmlTextReaderGetAttribute(reader, "height"));
     }
-
-    //value = xmlTextReaderConstValue(reader);
-/*
-    printf("%d %d %s %d %d", 
-        xmlTextReaderDepth(reader),
-        xmlTextReaderNodeType(reader),
-        name,
-        xmlTextReaderIsEmptyElement(reader),
-        xmlTextReaderHasValue(reader));
-    if(value == NULL) {
-        printf("\n");
-    } else {
-        if (xmlStrlen(value) > 40)
-            printf(" %.40s...\n", value);
-        else
-        printf(" %s\n", value);
-    }
-*/
 }
 
-/**
- * streamFile:
- * @filename: the file name to parse
- *
- * Parse and print information about an XML file.
- */
 static void streamFile(const char *filename) {
     xmlTextReaderPtr reader;
     int ret;
@@ -173,28 +159,27 @@ static void streamFile(const char *filename) {
         fprintf(stderr, "Unable to open %s\n", filename);
     }
 }
-
+*/
 int main(int argc, char **argv) {
+
+    cog_init();
+
+    int32_t ids[] = { 1, 2, 3, 4 };
+    cog_list out_anims;
+    cog_list_init(&out_anims, sizeof(cog_anim_id));
+    cog_tiled_load_background(0.0, 0.0, 0.5, 0.5, 
+        "media/tileset.png", 2, 2, 2, 2, ids, 4, &out_anims);
+    while(!cog_hasquit()) {
+        cog_loopstep();
+    }
+    /*
     if (argc != 2) {
         return(1);
     }
-
-    /*
-     * this initialize the library and check potential ABI mismatches
-     * between the version it was compiled for and the actual shared
-     * library used.
-     */
     LIBXML_TEST_VERSION
 
     streamFile(argv[1]);
-
-    /*
-     * Cleanup function for the XML library.
-     */
     xmlCleanupParser();
-    /*
-     * this is to debug memory for regression tests
-     */
     xmlMemoryDump();
-    return(0);
+    */
 }
