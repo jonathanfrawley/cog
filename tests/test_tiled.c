@@ -16,15 +16,14 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         cog_anim_id anim = cog_anim_add(tileset_path, tileset_h, tileset_w);
         cog_anim_set(anim, (cog_anim) {
             .dim = (cog_dim2) {.w=elem_w, .h=elem_h},
-            .pos = (cog_pos2) {.x=x+((i % tile_layer_w) * elem_w), .y=y+((i / tile_layer_h) * elem_h)},
-            //.pos = (cog_pos2) {.x=i*0.3, .y=i*0.3},
+            .pos = (cog_pos2) {.x=(i%tile_layer_w)*elem_w*2, .y=(i/tile_layer_h)*elem_h*2},
             .paused = COG_TRUE
         });
         cog_debugf("id %d ", ids[i]-1);
         cog_debugf("elem_h %lf ", elem_h);
         cog_debugf("elem_w %lf ", elem_w);
-        cog_debugf("x %lf ",(i % tile_layer_w) * elem_w);
-        cog_debugf("y %lf ",(i / tile_layer_h) * elem_h);
+        cog_debugf("x %lf ",x+((i % tile_layer_w) * elem_w));
+        cog_debugf("y %lf ",y+((i / tile_layer_h) * elem_h));
         cog_anim_set_frames(anim, ids[i]-1);
         cog_anim_set_frame(anim, ids[i]-1);
     }
