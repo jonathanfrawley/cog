@@ -3,6 +3,7 @@
 //#include <libxml2/libxml/xmlreader.h>
 
 #include <cog_anim.h>
+#include <cog_core.h>
 #include <cog_log.h>
 #include <cog_list.h>
 #include <cog_main.h>
@@ -12,6 +13,7 @@
 void cog_tiled_load_background(double x, double y, double w, double h, 
         const char* tileset_path, int32_t tileset_w, int32_t tileset_h, 
         int32_t tile_layer_w, int32_t tile_layer_h, int32_t* ids, int32_t n_ids, cog_list* out_anims) {
+    //Load in so the x, y is in the top-left and
     double elem_w = w / (double)tile_layer_w;
     double elem_h = h / (double)tile_layer_h;
     for(int i=0;i < n_ids;i++) {
@@ -19,14 +21,14 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         cog_anim_id anim = cog_anim_add(tileset_path, tileset_h, tileset_w);
         cog_anim_set(anim, (cog_anim) {
             .dim = (cog_dim2) {.w=elem_w, .h=elem_h},
-            .pos = (cog_pos2) {.x=(i%tile_layer_w)*elem_w*2, .y=-(i/tile_layer_h)*elem_h*2},
+            .pos = (cog_pos2) {.x=x + (i%tile_layer_w)*elem_w*2 + elem_w, .y=y - ((i/tile_layer_h)*elem_h*2 + elem_h)},
             .paused = COG_TRUE
         });
         cog_debugf("id %d ", ids[i]-1);
         cog_debugf("elem_h %lf ", elem_h);
         cog_debugf("elem_w %lf ", elem_w);
         cog_debugf("x %lf ",x+((i % tile_layer_w) * elem_w));
-        cog_debugf("y %lf ",y+((i / tile_layer_h) * elem_h));
+        cog_debugf("y %lf ",y-((i / tile_layer_h) * elem_h));
         cog_anim_set_frames(anim, id);
         cog_anim_set_frame(anim, id);
     }
@@ -163,7 +165,7 @@ static void streamFile(const char *filename) {
 }
 */
 
-void read_in_tiled_map(const char* tiled_json_filename) {
+int32_t* read_in_tiled_map(const char* tiled_json_filename, int32_t* data_size) {
     json_error_t error;
     json_t* json = json_load_file(tiled_json_filename, 0, &error);
     if(!json) {
@@ -177,26 +179,42 @@ void read_in_tiled_map(const char* tiled_json_filename) {
         json_t* layers_json = json_object_get(json, "layers");
         json_t* layer0_json = json_array_get(layers_json, 0);
         json_t* layer0_data_json = json_object_get(layer0_json, "data");
-        for(int i = 0; i < json_array_size(layer0_data_json); i++) {
+        int32_t size = json_array_size(layer0_data_json);
+        (*data_size) = size;
+        int32_t* data_arr = (int32_t*)cog_malloc(size*sizeof(int32_t));
+        for(int i = 0; i < size ; i++) {
             json_t* array_entry_json = json_array_get(layer0_data_json, i);
-            int32_t i = json_integer_value(array_entry_json);
-            cog_debugf("i is %d", i);
+            int32_t val = json_integer_value(array_entry_json);
+            data_arr[i] = val;
+            cog_debugf("val is %d", val);
         }
+        json_decref(json);
+        return data_arr;
     }
+    return 0;
 }
 
 int main(int argc, char **argv) {
 
     cog_init();
 
-    int32_t ids[] = { 1, 2, 3, 4 };
+    //int32_t ids[] = { 1, 2, 3, 4 };
+    int32_t size;
+    int32_t* ids = read_in_tiled_map("test.json", &size);
+    for(int i = 0; i < size ; i++) {
+        cog_debugf("i is %d", ids[i]);
+    }
     cog_list out_anims;
     cog_list_init(&out_anims, sizeof(cog_anim_id));
-    cog_tiled_load_background(0.0, 0.0, 0.5, 0.5, 
-        "media/tileset.png", 2, 2, 2, 2, ids, 4, &out_anims);
+    cog_tiled_load_background(-1.0, 1.0, 1.0, 1.0, 
+        "media/tileset.png", 2, 2, 4, 4, ids, size, &out_anims);
+    /*
+void cog_tiled_load_background(double x, double y, double w, double h, 
+        const char* tileset_path, int32_t tileset_w, int32_t tileset_h, 
+        int32_t tile_layer_w, int32_t tile_layer_h, int32_t* ids, int32_t n_ids, cog_list* out_anims) {
+        */
 
 
-    read_in_tiled_map("level.json");
 
     while(!cog_hasquit()) {
         cog_loopstep();
