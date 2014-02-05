@@ -172,6 +172,16 @@ void read_in_tiled_map(const char* tiled_json_filename) {
         json_t* width_json = json_object_get(json, "width");
         double width = json_number_value(width_json);
         cog_infof("Parsed in width %lf", width);
+
+        //Parsing in layers
+        json_t* layers_json = json_object_get(json, "layers");
+        json_t* layer0_json = json_array_get(layers_json, 0);
+        json_t* layer0_data_json = json_object_get(layer0_json, "data");
+        for(int i = 0; i < json_array_size(layer0_data_json); i++) {
+            json_t* array_entry_json = json_array_get(layer0_data_json, i);
+            int32_t i = json_integer_value(array_entry_json);
+            cog_debugf("i is %d", i);
+        }
     }
 }
 
