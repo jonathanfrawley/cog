@@ -6,6 +6,9 @@ project(cog C)
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 find_package(SDL2 REQUIRED)
 find_package(PythonLibs)
+find_package(PkgConfig)
+#pkg_check_modules(JANSSON required jansson)
+find_library(JANSSON_LIBRARY NAMES jansson)
 
 #xml dep
 find_package(LibXml2 REQUIRED)
@@ -33,7 +36,7 @@ else()
     INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIRS})
     find_package(ALUT REQUIRED)
     find_package(OpenAL REQUIRED)
-    SET(COG_DEPS ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${LIBXML2_LIBRARIES})
+    SET(COG_DEPS ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${LIBXML2_LIBRARIES} ${JANSSON_LIBRARY})
     SET(cog_srcs cog_anim.c cog_core.c cog_graphics.c cog_graphics_opengl.c cog_input.c cog_list.c cog_log.c cog_main.c cog_map.c cog_math.c cog_snd_al.c cog_snd.c cog_sprite.c cog_state.c cog_test.c cog_text.c cog_text_freetype.c cog_window.c)
 endif()
 

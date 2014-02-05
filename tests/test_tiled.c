@@ -1,7 +1,9 @@
 #include <stdio.h>
-#include <libxml2/libxml/xmlreader.h>
+#include <jansson.h>
+//#include <libxml2/libxml/xmlreader.h>
 
 #include <cog_anim.h>
+#include <cog_log.h>
 #include <cog_list.h>
 #include <cog_main.h>
 
@@ -12,7 +14,8 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         int32_t tile_layer_w, int32_t tile_layer_h, int32_t* ids, int32_t n_ids, cog_list* out_anims) {
     double elem_w = w / (double)tile_layer_w;
     double elem_h = h / (double)tile_layer_h;
-    for(int i=0;i<n_ids;i++) {
+    for(int i=0;i < n_ids;i++) {
+        int32_t id = ids[i] - 1;
         cog_anim_id anim = cog_anim_add(tileset_path, tileset_h, tileset_w);
         cog_anim_set(anim, (cog_anim) {
             .dim = (cog_dim2) {.w=elem_w, .h=elem_h},
@@ -24,8 +27,8 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         cog_debugf("elem_w %lf ", elem_w);
         cog_debugf("x %lf ",x+((i % tile_layer_w) * elem_w));
         cog_debugf("y %lf ",y+((i / tile_layer_h) * elem_h));
-        cog_anim_set_frames(anim, ids[i]-1);
-        cog_anim_set_frame(anim, ids[i]-1);
+        cog_anim_set_frames(anim, id);
+        cog_anim_set_frame(anim, id);
     }
 }
 
@@ -159,6 +162,19 @@ static void streamFile(const char *filename) {
     }
 }
 */
+
+void read_in_tiled_map(const char* tiled_json_filename) {
+    json_error_t error;
+    json_t* json = json_load_file(tiled_json_filename, 0, &error);
+    if(!json) {
+        cog_errorf("Could not load json file %s : %s", tiled_json_filename, error.text);
+    } else {
+        json_t* width_json = json_object_get(json, "width");
+        double width = json_number_value(width_json);
+        cog_infof("Parsed in width %lf", width);
+    }
+}
+
 int main(int argc, char **argv) {
 
     cog_init();
@@ -168,6 +184,10 @@ int main(int argc, char **argv) {
     cog_list_init(&out_anims, sizeof(cog_anim_id));
     cog_tiled_load_background(0.0, 0.0, 0.5, 0.5, 
         "media/tileset.png", 2, 2, 2, 2, ids, 4, &out_anims);
+
+
+    read_in_tiled_map("level.json");
+
     while(!cog_hasquit()) {
         cog_loopstep();
     }
