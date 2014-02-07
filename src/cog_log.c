@@ -18,7 +18,6 @@ void cog_errorf(const char* log_msg, ...) {
     __android_log_print(ANDROID_LOG_ERROR, "cog", buf);
 #endif
     assert(0);
-
 }
 
 void cog_debugf(const char* log_msg, ...) {

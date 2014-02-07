@@ -27,7 +27,8 @@ cog_anim_id cog_anim_add(const char* img, uint32_t rows, uint32_t cols) {
         cog_sprite_id sid = cog_sprite_add_inactive(img);
         cog_sprite* sprite = cog_sprite_get(sid);
         sprite->tex_pos.x = (i % cols) * w_frame;
-        sprite->tex_pos.y = (i / cols) * h_frame;
+        sprite->tex_pos.y = ((cols - 1) - (i / cols)) * h_frame;
+        cog_debugf("texy is i is %d %lf", i, sprite->tex_pos.y);
         sprite->tex_dim.w = w_frame;
         sprite->tex_dim.h = h_frame;
         cog_list_append(&(anim->frames), sprite);

@@ -18,6 +18,9 @@ void cog_tiled_load_background(double x, double y, double w, double h,
     double elem_h = h / (double)tile_layer_h;
     for(int i=0;i < n_ids;i++) {
         int32_t id = ids[i] - 1;
+        if(id == -1) {
+            continue;
+        }
         cog_anim_id anim = cog_anim_add(tileset_path, tileset_h, tileset_w);
         cog_anim_set(anim, (cog_anim) {
             .dim = (cog_dim2) {.w=elem_w, .h=elem_h},
@@ -206,6 +209,10 @@ int main(int argc, char **argv) {
     }
     cog_list out_anims;
     cog_list_init(&out_anims, sizeof(cog_anim_id));
+    /*
+    cog_tiled_load_background(-1.0, 1.0, 1.0, 1.0, 
+        "media/tileset.png", 2, 2, 32, 32, ids, size, &out_anims);
+        */
     cog_tiled_load_background(-1.0, 1.0, 1.0, 1.0, 
         "media/tileset.png", 2, 2, 4, 4, ids, size, &out_anims);
     /*
