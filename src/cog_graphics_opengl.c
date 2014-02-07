@@ -24,10 +24,16 @@
 GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, int* height);
 cog_window* window;
 
+
+void cog_graphics_opengl_set_camera_pos(cog_pos2* pos) {
+    glTranslatef(-pos->x, -pos->y, 0.0);
+}
+
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite) {
+    glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
-    glLoadIdentity();
+    //glLoadIdentity();
     glTranslatef(sprite->pos.x, sprite->pos.y, 0.0);
     glRotatef(cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
     double w = sprite->dim.w;
@@ -312,6 +318,7 @@ uint32_t cog_graphics_opengl_load_texture(const char* filename, int* width, int*
 
 void cog_graphics_opengl_clear() {
     glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
 }
 
 void cog_graphics_opengl_flush() {

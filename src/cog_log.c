@@ -8,7 +8,10 @@
 #include <android/log.h>
 #endif
 
+#define LOGGING
+
 void cog_errorf(const char* log_msg, ...) {
+#ifdef LOGGING
     va_list ap;
     va_start(ap, log_msg);
     char buf[COG_MAX_BUF];
@@ -17,10 +20,12 @@ void cog_errorf(const char* log_msg, ...) {
 #ifdef __ANDROID__
     __android_log_print(ANDROID_LOG_ERROR, "cog", buf);
 #endif
+#endif
     assert(0);
 }
 
 void cog_debugf(const char* log_msg, ...) {
+#ifdef LOGGING
     va_list ap;
     va_start(ap, log_msg);
     char buf[COG_MAX_BUF];
@@ -29,9 +34,11 @@ void cog_debugf(const char* log_msg, ...) {
 #ifdef __ANDROID__
     __android_log_print(ANDROID_LOG_DEBUG, "cog", buf);
 #endif
+#endif
 }
 
 void cog_infof(const char* log_msg, ...) {
+#ifdef LOGGING
     va_list ap;
     va_start(ap, log_msg);
     char buf[COG_MAX_BUF];
@@ -39,5 +46,6 @@ void cog_infof(const char* log_msg, ...) {
     printf("INFO: %s \n", buf);
 #ifdef __ANDROID__
     __android_log_print(ANDROID_LOG_INFO, "cog", buf);
+#endif
 #endif
 }

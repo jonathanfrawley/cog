@@ -19,11 +19,13 @@ typedef struct {
     void (*draw_sprite)(cog_sprite* sprite);
     void (*draw_text)(cog_text* text);
     uint32_t (*load_texture)(const char* filename, int* width, int* height);
+    void (*set_camera_pos)(cog_pos2* pos);
     void (*flush)(void);
 } cog_renderer;
 
 static cog_renderer r;
 static cog_map sprite_cache;
+static cog_pos2 camera_pos;
 
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
@@ -57,6 +59,7 @@ void cog_graphics_init(cog_window* win) {
     r.init = cog_graphics_sdl2_init;
     r.draw_text = cog_graphics_sdl2_draw_text;
     r.load_texture = cog_graphics_sdl2_load_texture;
+    r.set_camera_pos = 0; //TODO: Implement
     r.clear = cog_graphics_sdl2_clear;
     r.flush = cog_graphics_sdl2_flush;
 #else
@@ -64,16 +67,19 @@ void cog_graphics_init(cog_window* win) {
     r.init = cog_graphics_opengl_init;
     r.draw_text = cog_graphics_opengl_draw_text;
     r.load_texture = cog_graphics_opengl_load_texture;
+    r.set_camera_pos = cog_graphics_opengl_set_camera_pos;
     r.clear = cog_graphics_opengl_clear;
     r.flush = cog_graphics_opengl_flush;
 #endif
     r.init(win);
     cog_map_init(&sprite_cache);
+    camera_pos.x = 1.0;
 }
 
 void cog_graphics_render(cog_window* window) {
     //Clear color buffer
     r.clear();
+    r.set_camera_pos(&camera_pos);
     //PASTE
     for(int i = 0; i < COG_LAYER_MAX; i++) {
         cog_sprite_draw_layer(i);
@@ -81,4 +87,12 @@ void cog_graphics_render(cog_window* window) {
         cog_text_draw_layer(i);
     }
     r.flush();
+}
+
+void cog_graphics_cam_set(cog_pos2* pos) {
+    camera_pos = (*pos);
+}
+
+void cog_graphics_cam_get(cog_pos2* pos) {
+    (*pos) = camera_pos;
 }
