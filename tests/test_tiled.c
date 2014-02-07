@@ -203,18 +203,18 @@ int main(int argc, char **argv) {
 
     //int32_t ids[] = { 1, 2, 3, 4 };
     int32_t size;
-    int32_t* ids = read_in_tiled_map("test.json", &size);
+    int32_t* ids = read_in_tiled_map("test2.json", &size);
     for(int i = 0; i < size ; i++) {
         cog_debugf("i is %d", ids[i]);
     }
     cog_list out_anims;
     cog_list_init(&out_anims, sizeof(cog_anim_id));
-    /*
     cog_tiled_load_background(-1.0, 1.0, 1.0, 1.0, 
         "media/tileset.png", 2, 2, 32, 32, ids, size, &out_anims);
-        */
+    /*
     cog_tiled_load_background(-1.0, 1.0, 1.0, 1.0, 
         "media/tileset.png", 2, 2, 4, 4, ids, size, &out_anims);
+        */
     /*
 void cog_tiled_load_background(double x, double y, double w, double h, 
         const char* tileset_path, int32_t tileset_w, int32_t tileset_h, 
