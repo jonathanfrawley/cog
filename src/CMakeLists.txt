@@ -49,7 +49,7 @@ add_custom_command(TARGET ALL PRE_BUILD
     COMMAND swig -python cog.i)
 
 #These are gcc specific, not sure they will generalise...
-add_definitions(-std=c99 -O0 -Wall -g -DDEBUG)
+add_definitions(-std=c99 -O0 -Wall -g -DDEBUG -pg) #-pg is for profiling
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -66,6 +66,10 @@ target_link_libraries(cog m ${COG_DEPS})
 
 set(TEST_DIR ../tests)
 include_directories("${CMAKE_SOURCE_DIR}" "${TEST_DIR}")
+
+add_definitions(-std=c99 -O0 -Wall -g -DDEBUG -pg) #-pg is for profiling
+set(CMAKE_EXE_LINKER_FLAGS -pg)
+
 
 add_executable(cog_test ${TEST_DIR}/test.c)
 target_link_libraries(cog_test cog)
