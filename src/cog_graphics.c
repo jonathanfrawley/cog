@@ -16,6 +16,7 @@
 typedef struct {
     void (*init)(cog_window*);
     void (*clear)(void);
+    void (*draw)(void);
     void (*draw_sprite)(cog_sprite* sprite, uint32_t idx);
     void (*draw_text)(cog_text* text);
     uint32_t (*load_texture)(const char* filename, int* width, int* height);
@@ -50,6 +51,7 @@ uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height
         uint32_t* tex_id = cog_malloc(sizeof(uint32_t));
         (*tex_id) = r.load_texture(filename, width, height);
         cog_map_put_hash(&sprite_cache, filename, (cog_dataptr)tex_id);
+        cog_list_append(&texture_list, (cog_dataptr)tex_id);
         return (*tex_id);
     }
 }
@@ -65,6 +67,7 @@ void cog_graphics_init(cog_window* win) {
     r.clear = cog_graphics_sdl2_clear;
     r.flush = cog_graphics_sdl2_flush;
 #else
+    r.draw = cog_graphics_opengl_draw;
     r.draw_sprite = cog_graphics_opengl_draw_sprite;
     r.init = cog_graphics_opengl_init;
     r.draw_text = cog_graphics_opengl_draw_text;
@@ -76,20 +79,26 @@ void cog_graphics_init(cog_window* win) {
 #endif
     r.init(win);
     cog_map_init(&sprite_cache);
-    cog_list_init(&texture_list);
-    camera_pos.x = 1.0;
+    cog_list_init(&texture_list, sizeof(uint32_t));
+    //camera_pos.x = 1.0;
 }
 
 void cog_graphics_render(cog_window* window) {
     //Clear color buffer
     r.clear();
     r.set_camera_pos(&camera_pos);
-    r.prepare(cog_sprite_len() + cog_anim_len());
     for(int i = 0; i < COG_LAYER_MAX; i++) {
-        uint32_t global_idx = 0;
-        for() {
-            global_idx += cog_sprite_draw_layer(i, tex_id, global_idx);
-            global_idx += cog_anim_draw_layer(i, tex_id, global_idx);
+        COG_LIST_FOREACH(&texture_list) {
+            uint32_t tex_id = *((uint32_t*)curr->data);
+            uint32_t cnt = cog_sprite_len(tex_id, i) + cog_anim_len(tex_id, i);
+            if(cnt > 0) {
+                r.prepare(cog_sprite_len(tex_id, i) + cog_anim_len(tex_id, i));
+                cog_debugf("cnt is %d", cnt);
+                uint32_t global_idx = 0;
+                global_idx += cog_sprite_draw_layer(i, tex_id, global_idx);
+                global_idx += cog_anim_draw_layer(i, tex_id, global_idx);
+                r.draw();
+            }
         }
         cog_text_draw_layer(i);
     }

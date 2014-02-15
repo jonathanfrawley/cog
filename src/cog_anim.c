@@ -26,6 +26,7 @@ cog_anim_id cog_anim_add(const char* img, uint32_t rows, uint32_t cols) {
     for(int i = 0; i < anim->n_frames; i++) {
         cog_sprite_id sid = cog_sprite_add_inactive(img);
         cog_sprite* sprite = cog_sprite_get(sid);
+        anim->tex_id = sprite->tex_id;
         sprite->tex_pos.x = (i % cols) * w_frame;
         sprite->tex_pos.y = ((cols - 1) - (i / cols)) * h_frame;
         cog_debugf("texy is i is %d %lf", i, sprite->tex_pos.y);
@@ -62,8 +63,15 @@ cog_anim* cog_anim_get(cog_anim_id id) {
     return (cog_anim*) cog_map_get(&anims, id);
 }
 
-uint32_t cog_anim_len() {
-    return cog_list_len(&active_anims);
+uint32_t cog_anim_len(uint32_t tex_id, uint32_t layer) {
+    uint32_t cnt = 0;
+    COG_LIST_FOREACH(&active_anims) {
+        cog_anim* anim = cog_anim_get(*(cog_anim_id*)curr->data);
+        if(anim->tex_id == tex_id && anim->layer == layer) {
+            cnt++;
+        }
+    }
+    return cnt;
 }
 
 void cog_anim_remove(cog_anim_id id) {
@@ -129,13 +137,13 @@ double cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1) {
                           (anim0->pos.y - sprite1->pos.y)));
 }
 
-uint32_t cog_anim_draw_layer(uint32_t layer, uint32_t idx_global) {
+uint32_t cog_anim_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t idx_global) {
     uint32_t idx = 0;
     //Draw anims
     COG_LIST_FOREACH(&active_anims) {
         //draw current sprite
         cog_anim* anim = cog_anim_get(*(cog_anim_id*) curr->data);
-        if(anim->layer != layer ||  anim->finished) {
+        if(anim->layer != layer || (anim->tex_id == tex_id) || anim->finished) {
             continue;
         }
         //find active frame to render

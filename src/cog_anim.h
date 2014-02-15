@@ -11,6 +11,7 @@
  *-----------------------------------------------------------------------------*/
 typedef struct {
     cog_anim_id id;
+    uint32_t tex_id;
     uint32_t layer;
     uint32_t current_frame;
     uint32_t current_frame_millis;
@@ -32,7 +33,7 @@ cog_anim_id cog_anim_add(const char* img, uint32_t rows, uint32_t n_frames);
 bool cog_anim_collides_anim(cog_anim_id id0, cog_anim_id id1);
 bool cog_anim_collides_sprite(cog_anim_id id0, cog_sprite_id id1);
 cog_anim* cog_anim_get(cog_anim_id);
-uint32_t cog_anim_len();;
+uint32_t cog_anim_len(uint32_t tex_id, uint32_t layer);
 void cog_anim_remove(cog_anim_id id);
 void cog_anim_removeall(void);
 void cog_anim_set(cog_anim_id id, cog_anim src);
@@ -44,7 +45,7 @@ void cog_anim_set_frame(cog_anim_id id, uint32_t frame);
  *-----------------------------------------------------------------------------*/
 double cog_anim_dist_anim(cog_anim_id id0, cog_anim_id id1);
 double cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1);
-uint32_t cog_anim_draw_layer(uint32_t layer, uint32_t idx_global);
+uint32_t cog_anim_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t idx_global);
 void cog_anim_init();
 void cog_anim_update(uint32_t deltamillis);
 

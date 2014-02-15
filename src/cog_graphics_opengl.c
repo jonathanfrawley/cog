@@ -378,7 +378,7 @@ void cog_graphics_opengl_clear() {
     glLoadIdentity();
 }
 
-void cog_graphics_opengl_flush() {
+void cog_graphics_opengl_draw() {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -386,7 +386,8 @@ void cog_graphics_opengl_flush() {
     glDrawElements(GL_TRIANGLES, 6 * sprite_amount, GL_UNSIGNED_INT, indices);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    //glDisable(GL_TEXTURE_2D);
+}
 
+void cog_graphics_opengl_flush() {
     SDL_GL_SwapWindow(window->window);
 }
