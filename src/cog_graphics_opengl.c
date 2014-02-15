@@ -29,15 +29,69 @@ void cog_graphics_opengl_set_camera_pos(cog_pos2* pos) {
     glTranslatef(-pos->x, -pos->y, 0.0);
 }
 
-void cog_graphics_opengl_draw_sprite(cog_sprite* sprite) {
-    glPushMatrix();
+static GLfloat* vertices;
+static GLfloat* tex;
+static GLuint* indices;
+static uint32_t vertex_amount = 12;
+static uint32_t tex_amount = 8;
+static uint32_t index_amount = 6;
+static uint32_t sprite_amount;
+
+void cog_graphics_opengl_prepare(uint32_t amount) {
+    vertices = (GLfloat*)cog_malloc(sizeof(GLfloat) * vertex_amount * amount);
+    tex = (GLfloat*)cog_malloc(sizeof(GLfloat) * tex_amount * amount);
+    indices = (GLuint*)cog_malloc(sizeof(GLuint) * index_amount * amount);
+    sprite_amount = amount;
+}
+
+void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
+    //glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     //glLoadIdentity();
-    glTranslatef(sprite->pos.x, sprite->pos.y, 0.0);
-    glRotatef(cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
+    //glTranslatef(sprite->pos.x, sprite->pos.y, 0.0);
+    //glRotatef(cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
+    //TODO: Replace translate and rotation here with other stuff.
+    uint32_t offset = idx * vertex_amount;
     double w = sprite->dim.w;
     double h = sprite->dim.h;
+    double x_offset = sprite->pos.x;
+    double y_offset = sprite->pos.y;
+    //double x_offset = 0.5 * idx;
+    //double y_offset = 0;
+    //cog_debugf("offset %d", offset);
+    //cog_debugf("xoff %lf", x_offset);
+    //cog_debugf("yoff %lf", y_offset);
+    vertices[offset + 0] = -1.0f * w + x_offset;
+    vertices[offset + 1] = 1.0f * h + y_offset;
+    vertices[offset + 2] = 0;
+    vertices[offset + 3] = 1.0f * w + x_offset;
+    vertices[offset + 4] = 1.0f * h + y_offset;
+    vertices[offset + 5] = 0;
+    vertices[offset + 6] = 1.0f * w + x_offset;
+    vertices[offset + 7] = -1.0f * h + y_offset;
+    vertices[offset + 8] = 0;
+    vertices[offset + 9] = -1.0f * w + x_offset;
+    vertices[offset + 10] = -1.0f * h + y_offset;
+    vertices[offset + 11] = 0;
+    offset = idx * tex_amount;
+    tex[offset + 0] = sprite->tex_pos.x;
+    tex[offset + 1] = sprite->tex_pos.y + sprite->tex_dim.h;
+    tex[offset + 2] = sprite->tex_pos.x + sprite->tex_dim.w;
+    tex[offset + 3] = sprite->tex_pos.y + sprite->tex_dim.h;
+    tex[offset + 4] = sprite->tex_pos.x + sprite->tex_dim.w;
+    tex[offset + 5] = sprite->tex_pos.y;
+    tex[offset + 6] = sprite->tex_pos.x;
+    tex[offset + 7] = sprite->tex_pos.y;
+    offset = idx * index_amount;
+    uint32_t idx_offset = idx * 4;
+    indices[offset + 0] = idx_offset + 3;
+    indices[offset + 1] = idx_offset + 0;
+    indices[offset + 2] = idx_offset + 1;
+    indices[offset + 3] = idx_offset + 3;
+    indices[offset + 4] = idx_offset + 1;
+    indices[offset + 5] = idx_offset + 2;
+/*
     GLfloat vertices[] = {
         -1.0f * w, 1.0f * h, 0,
         1.0f * w, 1.0f * h, 0,
@@ -54,6 +108,8 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite) {
     GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
                           3, 1, 2       // second triangle (bottom left - top right - bottom right)
                         };
+*/
+/*
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -62,7 +118,8 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite) {
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisable(GL_TEXTURE_2D);
-    glPopMatrix();
+*/
+    //glPopMatrix();
 }
 
 void cog_graphics_opengl_init(cog_window* win) {
@@ -322,5 +379,14 @@ void cog_graphics_opengl_clear() {
 }
 
 void cog_graphics_opengl_flush() {
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glDrawElements(GL_TRIANGLES, 6 * sprite_amount, GL_UNSIGNED_INT, indices);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    //glDisable(GL_TEXTURE_2D);
+
     SDL_GL_SwapWindow(window->window);
 }

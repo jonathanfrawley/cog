@@ -7,8 +7,8 @@ void cog_window_init(cog_window* window) {
         cog_errorf(SDL_GetError());
     }
     //TODO: Get from yaml conf.
-    int width = 600;
-    int height = 600;
+    int width = 640;
+    int height = 480;
 #ifdef USE_SDL
     int flags = SDL_RENDERER_ACCELERATED;
 #else

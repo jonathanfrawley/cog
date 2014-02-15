@@ -43,6 +43,7 @@ static uint32_t framedrawcounter;
 static uint32_t lastframetime;
 static uint32_t frametimecounter;
 static uint32_t frameupdatecounter;
+static uint32_t render_time;
 
 //implementations
 void cog_init(void) {
@@ -96,28 +97,33 @@ void cog_update() {
     frameupdatecounter++;
     lastframetime = SDL_GetTicks() - starttime;
     starttime = SDL_GetTicks();
-    //Useful logging every second.
-    frametimecounter += lastframetime;
-    if(frametimecounter >= 1000) {
-#ifdef DEBUG
-        cog_debugf("nupdates <%d>, ndraws <%d>", frameupdatecounter,
-                   framedrawcounter);
-#endif //DEBUG
-        frametimecounter = 0;
-        framedrawcounter = 0;
-        frameupdatecounter = 0;
-    }
     cog_input_check_keys();
     cog_input_check_mouse();
     cog_anim_update(delta_millis);
     cog_sprite_update(delta_millis);
+    //Useful logging every second.
+    frametimecounter += lastframetime;
+    if(frametimecounter >= 1000) {
+#ifdef DEBUG
+        cog_debugf("nupdates <%d>, ndraws <%d>, render_time <%d> cog_map_get_counter <%d> cog_map_get_timer <%lf>", frameupdatecounter,
+                   framedrawcounter, render_time, cog_map_get_counter(), cog_map_get_timer());
+#endif //DEBUG
+        frametimecounter = 0;
+        framedrawcounter = 0;
+        frameupdatecounter = 0;
+        cog_map_reset_counter();
+        cog_map_reset_timer();
+    }
 }
 
 //This is to allow the user to control the mainloop
 void cog_loopstep() {
     cog_update();
     framedrawcounter++;
+    uint32_t start_render = SDL_GetTicks();
     cog_graphics_render(&window);
+    uint32_t end_render = SDL_GetTicks();
+    render_time = end_render - start_render;
     cog_window_update(&window);
 }
 

@@ -3,7 +3,7 @@
 
 #include "cog_types.h"
 
-#define COG_MAP_SIZE 255
+#define COG_MAP_SIZE 25500
 
 typedef struct cog_map_elem {
     int key;
@@ -21,5 +21,12 @@ void* cog_map_get_hash(cog_map* map, const char* key);
 void cog_map_put(cog_map*, uint32_t, void*);
 void cog_map_put_hash(cog_map* map, const char* key, void* data);
 void cog_map_remove(cog_map*, uint32_t);
+
+
+//Internal
+void cog_map_reset_counter();
+uint32_t cog_map_get_counter();
+void cog_map_reset_timer();
+double cog_map_get_timer();
 
 #endif // COG_MAP_H

@@ -16,23 +16,25 @@
 typedef struct {
     void (*init)(cog_window*);
     void (*clear)(void);
-    void (*draw_sprite)(cog_sprite* sprite);
+    void (*draw_sprite)(cog_sprite* sprite, uint32_t idx);
     void (*draw_text)(cog_text* text);
     uint32_t (*load_texture)(const char* filename, int* width, int* height);
+    void (*prepare)(uint32_t amount);
     void (*set_camera_pos)(cog_pos2* pos);
     void (*flush)(void);
 } cog_renderer;
 
 static cog_renderer r;
 static cog_map sprite_cache;
+static cog_list texture_list;
 static cog_pos2 camera_pos;
 
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
-void cog_graphics_draw_sprite(cog_sprite* sprite) {
-    r.draw_sprite(sprite);
+void cog_graphics_draw_sprite(cog_sprite* sprite, uint32_t idx) {
+    r.draw_sprite(sprite, idx);
 }
 
 void cog_graphics_draw_text(cog_text* text) {
@@ -67,12 +69,14 @@ void cog_graphics_init(cog_window* win) {
     r.init = cog_graphics_opengl_init;
     r.draw_text = cog_graphics_opengl_draw_text;
     r.load_texture = cog_graphics_opengl_load_texture;
+    r.prepare = cog_graphics_opengl_prepare;
     r.set_camera_pos = cog_graphics_opengl_set_camera_pos;
     r.clear = cog_graphics_opengl_clear;
     r.flush = cog_graphics_opengl_flush;
 #endif
     r.init(win);
     cog_map_init(&sprite_cache);
+    cog_list_init(&texture_list);
     camera_pos.x = 1.0;
 }
 
@@ -80,10 +84,13 @@ void cog_graphics_render(cog_window* window) {
     //Clear color buffer
     r.clear();
     r.set_camera_pos(&camera_pos);
-    //PASTE
+    r.prepare(cog_sprite_len() + cog_anim_len());
     for(int i = 0; i < COG_LAYER_MAX; i++) {
-        cog_sprite_draw_layer(i);
-        cog_anim_draw_layer(i);
+        uint32_t global_idx = 0;
+        for() {
+            global_idx += cog_sprite_draw_layer(i, tex_id, global_idx);
+            global_idx += cog_anim_draw_layer(i, tex_id, global_idx);
+        }
         cog_text_draw_layer(i);
     }
     r.flush();

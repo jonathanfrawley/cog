@@ -91,6 +91,8 @@ add_executable(cog_test_grid ${TEST_DIR}/test_grid.c)
 target_link_libraries(cog_test_grid cog)
 add_executable(cog_test_tiled ${TEST_DIR}/test_tiled.c)
 target_link_libraries(cog_test_tiled cog)
+add_executable(cog_test_map ${TEST_DIR}/test_map.c)
+target_link_libraries(cog_test_map cog)
 
 # Installation
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")

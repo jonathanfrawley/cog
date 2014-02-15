@@ -62,6 +62,10 @@ cog_anim* cog_anim_get(cog_anim_id id) {
     return (cog_anim*) cog_map_get(&anims, id);
 }
 
+uint32_t cog_anim_len() {
+    return cog_list_len(&active_anims);
+}
+
 void cog_anim_remove(cog_anim_id id) {
     COG_LIST_FOREACH(&active_anims) {
         if(*((cog_anim_id*) curr->data) == id) {
@@ -125,12 +129,13 @@ double cog_anim_dist_sprite(cog_anim_id id0, cog_sprite_id id1) {
                           (anim0->pos.y - sprite1->pos.y)));
 }
 
-void cog_anim_draw_layer(uint32_t layer) {
+uint32_t cog_anim_draw_layer(uint32_t layer, uint32_t idx_global) {
+    uint32_t idx = 0;
     //Draw anims
     COG_LIST_FOREACH(&active_anims) {
         //draw current sprite
         cog_anim* anim = cog_anim_get(*(cog_anim_id*) curr->data);
-        if(anim->finished || (anim->layer != layer)) {
+        if(anim->layer != layer ||  anim->finished) {
             continue;
         }
         //find active frame to render
@@ -146,8 +151,11 @@ void cog_anim_draw_layer(uint32_t layer) {
         sprite->dim.w = anim->dim.w;
         sprite->dim.h = anim->dim.h;
         sprite->rot = anim->rot;
-        cog_graphics_draw_sprite(sprite);
+        //TODO: Update
+        cog_graphics_draw_sprite(sprite, idx_global + idx);
+        idx++;
     }
+    return idx;
 }
 
 void cog_anim_init() {

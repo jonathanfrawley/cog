@@ -46,6 +46,10 @@ cog_sprite* cog_sprite_get(cog_sprite_id id) {
     return (cog_sprite*) cog_map_get(&sprites, id);
 }
 
+uint32_t cog_sprite_len() {
+    return cog_list_len(&active_sprites);
+}
+
 void cog_sprite_remove(cog_sprite_id id) {
     COG_LIST_FOREACH(&active_sprites) {
         if(*((cog_sprite_id*) curr->data) == id) {
@@ -98,7 +102,8 @@ double cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b) {
                          (asprite->pos.y - bsprite->pos.y));
 }
 
-void cog_sprite_draw_layer(uint32_t layer) {
+uint32_t cog_sprite_draw_layer(uint32_t layer, uint32_t global_idx) {
+    uint32_t idx = 0;
     //Draw sprites
     COG_LIST_FOREACH(&active_sprites) {
         //draw current sprite if it is on the correct layer
@@ -107,9 +112,11 @@ void cog_sprite_draw_layer(uint32_t layer) {
                                      *)
                                     curr->data));
         if(curr_sprite->layer == layer) {
-            cog_graphics_draw_sprite(curr_sprite);
+            cog_graphics_draw_sprite(curr_sprite, global_idx + idx);
+            idx++;
         }
     }
+    return idx;
 }
 
 void cog_sprite_update(double timedelta) {
