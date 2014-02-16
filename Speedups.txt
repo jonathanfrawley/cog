@@ -1,0 +1,4 @@
+
+1) Frame rate was around 7-8 FPS. This was due to the number of times rendering was called (once per animation or sprite)
+2) Changed it to be 1 draw call (batch up all vertices, indices and tex coords) + change from using GLByte to GlUInt for indices (too large). This resulted in around 25 FPS.
+3) This previous change was hampered by the counting of how many sprites are there for each texture. When I keep a running total when adding and removing animations and sprites this went up to 50FPS. :)
