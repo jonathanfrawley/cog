@@ -101,6 +101,7 @@ void cog_update() {
     cog_input_check_mouse();
     cog_anim_update(delta_millis);
     cog_sprite_update(delta_millis);
+    cog_graphics_update(delta_millis);
     //Useful logging every second.
     frametimecounter += lastframetime;
     if(frametimecounter >= 1000) {
@@ -121,7 +122,7 @@ void cog_loopstep() {
     cog_update();
     framedrawcounter++;
     uint32_t start_render = SDL_GetTicks();
-    //cog_graphics_render(&window);
+    cog_graphics_render(&window);
     uint32_t end_render = SDL_GetTicks();
     render_time = end_render - start_render;
     cog_window_update(&window);

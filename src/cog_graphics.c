@@ -28,6 +28,7 @@ typedef struct {
 static cog_renderer r;
 static cog_map sprite_cache;
 static cog_list texture_list;
+static cog_vec2 camera_vel;
 static cog_pos2 camera_pos;
 
 /*-----------------------------------------------------------------------------
@@ -84,6 +85,11 @@ void cog_graphics_init(cog_window* win) {
     //camera_pos.x = 1.0;
 }
 
+void cog_graphics_update(double timestep) {
+    camera_pos.x += camera_vel.x * timestep;
+    camera_pos.y += camera_vel.y * timestep;
+}
+
 void cog_graphics_render(cog_window* window) {
     //Clear color buffer
     r.clear();
@@ -111,4 +117,12 @@ void cog_graphics_cam_set(cog_pos2* pos) {
 
 void cog_graphics_cam_get(cog_pos2* pos) {
     (*pos) = camera_pos;
+}
+
+void cog_graphics_cam_vel_set(cog_vec2* vel) {
+    camera_vel = (*vel);
+}
+
+void cog_graphics_cam_vel_get(cog_vec2* vel) {
+    (*vel) = camera_vel;
 }

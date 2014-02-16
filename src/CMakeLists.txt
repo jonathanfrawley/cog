@@ -50,7 +50,6 @@ add_custom_command(TARGET ALL PRE_BUILD
 
 #These are gcc specific, not sure they will generalise...
 add_definitions(-std=c99 -O0 -Wall -g -DDEBUG -pg) #-pg is for profiling
-
 set(CMAKE_BUILD_TYPE Debug)
 
 add_library(cog ${cog_srcs})

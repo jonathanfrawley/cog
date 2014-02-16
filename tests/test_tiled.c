@@ -235,22 +235,41 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         if(cog_input_key_pressed()) {
             uint32_t key = cog_input_key_code_pressed();
             cog_debugf("key is %d", key);
-            cog_pos2 cam_pos;
-            cog_graphics_cam_get(&cam_pos);
-            double delta = 0.1;
+            cog_vec2 cam_vel;
+            cog_graphics_cam_vel_get(&cam_vel);
+            double delta = 0.001;
             if(key == 'w') {
-                cam_pos.y += delta;
+                cam_vel.y = delta;
             }
             if(key == 'a') {
-                cam_pos.x -= delta;
+                cam_vel.x = -delta;
             }
             if(key == 's') {
-                cam_pos.y -= delta;
+                cam_vel.y = -delta;
             }
             if(key == 'd') {
-                cam_pos.x += delta;
+                cam_vel.x = delta;
             }
-            cog_graphics_cam_set(&cam_pos);
+            cog_graphics_cam_vel_set(&cam_vel);
+        }
+
+        if(cog_input_key_depressed()) {
+            uint32_t key = cog_input_key_code_pressed();
+            cog_vec2 cam_vel;
+            cog_graphics_cam_vel_get(&cam_vel);
+            if(key == 'w') {
+                cam_vel.y = 0;
+            }
+            if(key == 'a') {
+                cam_vel.x = 0;
+            }
+            if(key == 's') {
+                cam_vel.y = 0;
+            }
+            if(key == 'd') {
+                cam_vel.x = 0;
+            }
+            cog_graphics_cam_vel_set(&cam_vel);
         }
     }
     /*
