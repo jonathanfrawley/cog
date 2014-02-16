@@ -11,6 +11,7 @@
 static cog_list active_sprites; //sprites drawn(active) at the moment
 static cog_map sprites;
 static cog_sprite_id spritecnt;
+static cog_map tex_sprite_lens;
 
 cog_sprite_id cog_sprite_add(const char* img) {
     cog_sprite_id id = cog_sprite_add_inactive(img);

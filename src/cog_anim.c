@@ -7,9 +7,14 @@
 #include "cog_math.h"
 #include "cog_sprite.h"
 
+#define MAX_KEY 255
+
 static cog_anim_id animcnt;
 static cog_map anims;
 static cog_list active_anims;   //anims drawn(active) at the moment
+static cog_map tex_anim_lens;
+
+void cog_anim_get_len_key(char* buf, uint32_t tex_id, uint32_t layer);
 
 /*-----------------------------------------------------------------------------
  * Assumes animation is a single 1D animation frame.
@@ -34,6 +39,15 @@ cog_anim_id cog_anim_add(const char* img, uint32_t rows, uint32_t cols) {
         cog_list_append(&(anim->frames), sprite);
     }
     cog_map_put(&anims, anim->id, (void*) anim);
+    char key[MAX_KEY];
+    cog_anim_get_len_key(key, anim->tex_id, anim->layer);
+    uint32_t* tex_anim_len = cog_map_get_hash(&tex_anim_lens, key);
+    if(tex_anim_len == 0) {
+        tex_anim_len = (uint32_t*)cog_malloc(sizeof(uint32_t));
+    }
+    (*tex_anim_len)++;
+    cog_map_put_hash(&tex_anim_lens, key, tex_anim_len);
+
     cog_list_append(&active_anims, (cog_dataptr) & (anim->id));
     return anim->id;
 }
@@ -62,21 +76,36 @@ cog_anim* cog_anim_get(cog_anim_id id) {
     return (cog_anim*) cog_map_get(&anims, id);
 }
 
+void cog_anim_get_len_key(char* buf, uint32_t tex_id, uint32_t layer) {
+    sprintf(buf, "%d:%d", tex_id, layer);
+}
+
 uint32_t cog_anim_len(uint32_t tex_id, uint32_t layer) {
-    uint32_t cnt = 0;
-    COG_LIST_FOREACH(&active_anims) {
-        cog_anim* anim = cog_anim_get(*(cog_anim_id*)curr->data);
-        if(anim->tex_id == tex_id && anim->layer == layer) {
-            cnt++;
-        }
+    char key[MAX_KEY];
+    cog_anim_get_len_key(key, tex_id, layer);
+    uint32_t* result = cog_map_get_hash(&tex_anim_lens, key);
+    if(result == 0) {
+        return 0;
+    } else {
+        return *result;
     }
-    return cnt;
 }
 
 void cog_anim_remove(cog_anim_id id) {
     COG_LIST_FOREACH(&active_anims) {
         if(*((cog_anim_id*) curr->data) == id) {
             cog_list_remove(&active_anims, curr->data);
+            //BUG: Update len here with removal
+            char key[MAX_KEY];
+            cog_anim* anim = cog_anim_get(id);
+            cog_anim_get_len_key(key, anim->tex_id, anim->layer);
+            uint32_t* tex_anim_len = cog_map_get_hash(&tex_anim_lens, key);
+            if(tex_anim_len == 0) {
+                tex_anim_len = (uint32_t*)cog_malloc(sizeof(uint32_t));
+            } else {
+                (*tex_anim_len)--;
+            }
+            cog_map_put_hash(&tex_anim_lens, key, tex_anim_len);
             break;
         }
     }
@@ -167,6 +196,7 @@ uint32_t cog_anim_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t idx_globa
 
 void cog_anim_init() {
     cog_map_init(&anims);
+    cog_map_init(&tex_anim_lens);
     cog_list_init(&active_anims, sizeof(cog_sprite_id));
 }
 
