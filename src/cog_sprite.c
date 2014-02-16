@@ -8,15 +8,27 @@
 #include "cog_map.h"
 #include "cog_math.h"
 
+#define MAX_KEY 255
+
 static cog_list active_sprites; //sprites drawn(active) at the moment
 static cog_map sprites;
 static cog_sprite_id spritecnt;
 static cog_map tex_sprite_lens;
 
+void cog_sprite_get_len_key(char* buf, uint32_t tex_id, uint32_t layer);
+
 cog_sprite_id cog_sprite_add(const char* img) {
     cog_sprite_id id = cog_sprite_add_inactive(img);
     cog_sprite* sprite = cog_sprite_get(id);
     cog_list_append(&active_sprites, (cog_dataptr) & (sprite->id));
+    char key[MAX_KEY];
+    cog_sprite_get_len_key(key, sprite->tex_id, sprite->layer);
+    uint32_t* tex_sprite_len = cog_map_get_hash(&tex_sprite_lens, key);
+    if(tex_sprite_len == 0) {
+        tex_sprite_len = (uint32_t*)cog_malloc(sizeof(uint32_t));
+    }
+    (*tex_sprite_len)++;
+    cog_map_put_hash(&tex_sprite_lens, key, tex_sprite_len);
     return id;
 }
 
@@ -49,20 +61,29 @@ cog_sprite* cog_sprite_get(cog_sprite_id id) {
 }
 
 uint32_t cog_sprite_len(uint32_t tex_id, uint32_t layer) {
-    uint32_t cnt = 0;
-    COG_LIST_FOREACH(&active_sprites) {
-        cog_sprite* sprite = cog_sprite_get(*(cog_sprite_id*)curr->data);
-        if(sprite->tex_id == tex_id && sprite->layer == layer) {
-            cnt++;
-        }
+    char key[MAX_KEY];
+    cog_sprite_get_len_key(key, tex_id, layer);
+    uint32_t* result = cog_map_get_hash(&tex_sprite_lens, key);
+    if(result == 0) {
+        return 0;
+    } else {
+        return *result;
     }
-    return cnt;
 }
 
 void cog_sprite_remove(cog_sprite_id id) {
     COG_LIST_FOREACH(&active_sprites) {
         if(*((cog_sprite_id*) curr->data) == id) {
             cog_list_remove(&active_sprites, curr->data);
+            cog_sprite* sprite = cog_sprite_get(id);
+            char key[MAX_KEY];
+            cog_sprite_get_len_key(key, sprite->tex_id, sprite->layer);
+            uint32_t* tex_sprite_len = cog_map_get_hash(&tex_sprite_lens, key);
+            if(tex_sprite_len == 0) {
+                tex_sprite_len = (uint32_t*)cog_malloc(sizeof(uint32_t));
+            }
+            (*tex_sprite_len)--;
+            cog_map_put_hash(&tex_sprite_lens, key, tex_sprite_len);
             break;
         }
     }
@@ -87,6 +108,7 @@ void cog_sprite_set(cog_sprite_id id, cog_sprite src) {
  *-----------------------------------------------------------------------------*/
 void cog_sprite_init(void) {
     cog_map_init(&sprites);
+    cog_map_init(&tex_sprite_lens);
     cog_list_init(&active_sprites, sizeof(cog_sprite_id));
 }
 
@@ -127,6 +149,11 @@ uint32_t cog_sprite_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t global_
     }
     return idx;
 }
+
+void cog_sprite_get_len_key(char* buf, uint32_t tex_id, uint32_t layer) {
+    sprintf(buf, "%d:%d", tex_id, layer);
+}
+
 
 void cog_sprite_update(double timedelta) {
     COG_LIST_FOREACH(&active_sprites) {
