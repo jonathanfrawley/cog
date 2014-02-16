@@ -4,6 +4,7 @@
 #include "cog_core.h"
 #include "cog_graphics.h"
 #include "cog_list.h"
+#include "cog_log.h"
 #include "cog_map.h"
 #include "cog_math.h"
 
@@ -111,7 +112,6 @@ double cog_sprite_dist_sprite(cog_sprite_id a, cog_sprite_id b) {
 
 uint32_t cog_sprite_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t global_idx) {
     uint32_t idx = 0;
-    /*
     //Draw sprites
     COG_LIST_FOREACH(&active_sprites) {
         //draw current sprite if it is on the correct layer
@@ -124,7 +124,6 @@ uint32_t cog_sprite_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t global_
             idx++;
         }
     }
-    */
     return idx;
 }
 

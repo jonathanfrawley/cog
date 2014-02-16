@@ -57,11 +57,6 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     double h = sprite->dim.h;
     double x_offset = sprite->pos.x;
     double y_offset = sprite->pos.y;
-    //double x_offset = 0.5 * idx;
-    //double y_offset = 0;
-    //cog_debugf("offset %d", offset);
-    //cog_debugf("xoff %lf", x_offset);
-    //cog_debugf("yoff %lf", y_offset);
     vertices[offset + 0] = -1.0f * w + x_offset;
     vertices[offset + 1] = 1.0f * h + y_offset;
     vertices[offset + 2] = 0;
@@ -386,6 +381,9 @@ void cog_graphics_opengl_draw() {
     glDrawElements(GL_TRIANGLES, 6 * sprite_amount, GL_UNSIGNED_INT, indices);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    cog_free(vertices);
+    cog_free(tex);
+    cog_free(indices);
 }
 
 void cog_graphics_opengl_flush() {

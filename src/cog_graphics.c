@@ -52,6 +52,7 @@ uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height
         (*tex_id) = r.load_texture(filename, width, height);
         cog_map_put_hash(&sprite_cache, filename, (cog_dataptr)tex_id);
         cog_list_append(&texture_list, (cog_dataptr)tex_id);
+        cog_debugf("Inserting tex_id %d into list for filename %s", *tex_id, filename);
         return (*tex_id);
     }
 }
@@ -92,8 +93,7 @@ void cog_graphics_render(cog_window* window) {
             uint32_t tex_id = *((uint32_t*)curr->data);
             uint32_t cnt = cog_sprite_len(tex_id, i) + cog_anim_len(tex_id, i);
             if(cnt > 0) {
-                r.prepare(cog_sprite_len(tex_id, i) + cog_anim_len(tex_id, i));
-                cog_debugf("cnt is %d", cnt);
+                r.prepare(cnt);
                 uint32_t global_idx = 0;
                 global_idx += cog_sprite_draw_layer(i, tex_id, global_idx);
                 global_idx += cog_anim_draw_layer(i, tex_id, global_idx);
