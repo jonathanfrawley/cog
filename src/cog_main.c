@@ -121,7 +121,7 @@ void cog_loopstep() {
     cog_update();
     framedrawcounter++;
     uint32_t start_render = SDL_GetTicks();
-    cog_graphics_render(&window);
+    //cog_graphics_render(&window);
     uint32_t end_render = SDL_GetTicks();
     render_time = end_render - start_render;
     cog_window_update(&window);

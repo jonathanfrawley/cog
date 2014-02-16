@@ -14,6 +14,7 @@ void cog_list_init(cog_list* list, uint32_t size) {
     list->data = COG_LIST_ENDSENTINAL;
     list->next = list;
     list->size = size;
+    list->len = 0;
 }
 
 void cog_list_append(cog_list* list, cog_dataptr data) {
@@ -31,6 +32,7 @@ void cog_list_append(cog_list* list, cog_dataptr data) {
     newnode->data = (cog_dataptr) cog_malloc(list->size);
     cog_memcpy(newnode->data, data, list->size);
     prev->next = newnode;
+    list->len++;
 }
 
 void cog_list_remove(cog_list* list, cog_dataptr data) {
@@ -43,6 +45,7 @@ void cog_list_remove(cog_list* list, cog_dataptr data) {
             prev->next = curr->next;
             cog_free(curr->data);
             cog_free(curr);
+            list->len--;
             break;
         }
     }
@@ -53,14 +56,11 @@ void cog_list_removeall(cog_list* list) {
         cog_free(curr->data);
         cog_free(curr);
     }
+    list->len = 0;
 }
 
 uint32_t cog_list_len(cog_list* list) {
-    uint32_t cnt = 0;
-    COG_LIST_FOREACH(list) {
-        cnt++;
-    }
-    return cnt;
+    return list->len;
 }
 
 cog_dataptr cog_list_pop(cog_list* list) {

@@ -16,12 +16,13 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         if(id == -1) {
             continue;
         }
+        /*
         cog_sprite_id sprite = cog_sprite_add(tileset_path);
         cog_sprite_set(sprite, (cog_sprite) {
             .dim = (cog_dim2) {.w=elem_w, .h=elem_h},
             .pos = (cog_pos2) {.x=x + (i%tile_layer_w)*elem_w*2 + elem_w, .y=y - ((i/tile_layer_h)*elem_h*2 + elem_h)},
         });
-        /*
+        */
         cog_anim_id anim = cog_anim_add(tileset_path, tileset_h, tileset_w);
         cog_anim_set(anim, (cog_anim) {
             .dim = (cog_dim2) {.w=elem_w, .h=elem_h},
@@ -35,7 +36,6 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         cog_debugf("y %lf ",y-((i / tile_layer_h) * elem_h));
         cog_anim_set_frames(anim, id);
         cog_anim_set_frame(anim, id);
-        */
     }
 }
 
