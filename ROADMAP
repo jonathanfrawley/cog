@@ -1,0 +1,4 @@
+ - Fix rotations
+ - Add some simple tweens
+ - Add ability to plug in update funcs
+ - Maybe rethink state changes to be more flixel-like?
