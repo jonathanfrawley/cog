@@ -1,4 +1,5 @@
- - Fix rotations
+ - [DONE] Fix rotations
  - Add some simple tweens
  - Add ability to plug in update funcs
+ - Add importing of objects in flixel
  - Maybe rethink state changes to be more flixel-like?
