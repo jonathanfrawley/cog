@@ -22,7 +22,6 @@ void cog_map_put(cog_map*, uint32_t, void*);
 void cog_map_put_hash(cog_map* map, const char* key, void* data);
 void cog_map_remove(cog_map*, uint32_t);
 
-
 //Internal
 void cog_map_reset_counter();
 uint32_t cog_map_get_counter();
