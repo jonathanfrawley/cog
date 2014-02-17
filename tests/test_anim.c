@@ -12,12 +12,12 @@ void entity_init(entity* obj) {
     for(int i=0; i<10;i++) {
         obj->anim = cog_anim_add("media/kitten_anim.png", 1, 3);
         cog_anim_set(obj->anim, (cog_anim) {
-            .dim = (cog_dim2) {.w=0.3, .h=0.3},
-            .pos = (cog_pos2) {.x=0 + (0.00001*i), .y=0},
-            .vel = (cog_vec2) {.x=0.0001, .y=0.0003},
-            .transition_millis = 150,
-             .looped = COG_TRUE,
-              .ang_vel = COG_PI/14000
+                .dim = (cog_dim2) {.w=0.3, .h=0.3},
+                .pos = (cog_pos2) {.x=0, .y=0},
+                .vel = (cog_vec2) {.x=0.3, .y=0.9},
+                .transition_time = 0.15,
+                .looped = COG_TRUE,
+                .ang_vel = COG_PI/1,
         });
         cog_anim_set_frames(obj->anim, 0, 1, 2);
     }
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
     cog_anim_set(anim, (cog_anim) {
         .dim = (cog_dim2) {.w=0.3, .h=0.3},
         .pos = (cog_pos2) {.x=0.3, .y=0.3},
-        .transition_millis = 1000,
+        .transition_time = 1.0,
         .looped = COG_TRUE
     });
     cog_anim_set_frames(anim, 0, 1, 2, 3, 4, 5, 6, 7);

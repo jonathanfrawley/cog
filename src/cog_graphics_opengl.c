@@ -45,18 +45,13 @@ void cog_graphics_opengl_prepare(uint32_t amount) {
 }
 
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
-    //glPushMatrix();
-    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
-    //glLoadIdentity();
-    //glTranslatef(sprite->pos.x, sprite->pos.y, 0.0);
-    //glRotatef(cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
-    //TODO: Replace translate and rotation here with other stuff.
     uint32_t offset = idx * vertex_amount;
     double w = sprite->dim.w;
     double h = sprite->dim.h;
     double x_offset = sprite->pos.x;
     double y_offset = sprite->pos.y;
+    //Do rotation and transformation ourselves.
     double rot = sprite->rot + COG_PI/4;
     vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
     vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
@@ -148,6 +143,7 @@ void cog_graphics_opengl_init(cog_window* win) {
     glLoadIdentity();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
 }
 
 void cog_graphics_opengl_draw_text(cog_text* text) {
@@ -222,7 +218,6 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
     }
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisable(GL_TEXTURE_2D);
     //Restore alpha to normal
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glPopMatrix();

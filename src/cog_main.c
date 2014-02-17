@@ -99,9 +99,10 @@ void cog_update() {
     starttime = SDL_GetTicks();
     cog_input_check_keys();
     cog_input_check_mouse();
-    cog_anim_update(delta_millis);
-    cog_sprite_update(delta_millis);
-    cog_graphics_update(delta_millis);
+    double timestep = (double)delta_millis / 1000.0;
+    cog_anim_update(timestep);
+    cog_sprite_update(timestep);
+    cog_graphics_update(timestep);
     //Useful logging every second.
     frametimecounter += lastframetime;
     if(frametimecounter >= 1000) {

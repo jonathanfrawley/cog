@@ -118,7 +118,7 @@ void cog_anim_removeall(void) {
 
 void cog_anim_set(cog_anim_id id, cog_anim src) {
     cog_anim* anim = cog_anim_get(id);
-    anim->transition_millis = src.transition_millis;
+    anim->transition_time = src.transition_time;
     anim->looped = src.looped;
     anim->paused = src.paused;
     anim->pos = src.pos;
@@ -127,6 +127,7 @@ void cog_anim_set(cog_anim_id id, cog_anim src) {
     anim->vel = src.vel;
     anim->ang_vel = src.ang_vel;
     anim->finished = src.finished;
+    anim->update_func = src.update_func;
 }
 
 void cog_anim_set_frames(cog_anim_id id, int frame0, ...) {
@@ -200,7 +201,7 @@ void cog_anim_init() {
     cog_list_init(&active_anims, sizeof(cog_sprite_id));
 }
 
-void cog_anim_update(uint32_t delta_millis) {
+void cog_anim_update(double timestep) {
     COG_LIST_FOREACH(&active_anims) {
         //Draw current sprite
         cog_anim_id id = *((cog_anim_id*) curr->data);
@@ -208,10 +209,10 @@ void cog_anim_update(uint32_t delta_millis) {
         if(this_anim->paused) {
             continue;
         }
-        this_anim->current_frame_millis += delta_millis;
-        if(this_anim->current_frame_millis >= this_anim->transition_millis) {
+        this_anim->current_frame_time += timestep;
+        if(this_anim->current_frame_time >= this_anim->transition_time) {
             this_anim->current_frame++;
-            this_anim->current_frame_millis = this_anim->current_frame_millis - this_anim->transition_millis;   //Diff
+            this_anim->current_frame_time = this_anim->current_frame_time - this_anim->transition_time;   //Diff
             if(this_anim->current_frame >= this_anim->n_frames) {
                 if(this_anim->looped) {
                     this_anim->current_frame = 0;
@@ -224,8 +225,11 @@ void cog_anim_update(uint32_t delta_millis) {
     //Do physics
     COG_LIST_FOREACH(&active_anims) {
         cog_anim* this_anim = cog_anim_get(*(cog_anim_id*) curr->data);
-        this_anim->pos.x += delta_millis * this_anim->vel.x;
-        this_anim->pos.y += delta_millis * this_anim->vel.y;
-        this_anim->rot += delta_millis * this_anim->ang_vel;
+        this_anim->pos.x += timestep * this_anim->vel.x;
+        this_anim->pos.y += timestep * this_anim->vel.y;
+        this_anim->rot += timestep * this_anim->ang_vel;
+        if(this_anim->update_func != 0) {
+            this_anim->update_func(timestep, this_anim);
+        }
     }
 }

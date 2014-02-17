@@ -101,6 +101,7 @@ void cog_sprite_set(cog_sprite_id id, cog_sprite src) {
     sprite->rot = src.rot;
     sprite->vel = src.vel;
     sprite->ang_vel = src.ang_vel;
+    sprite->update_func = src.update_func;
 }
 
 /*-----------------------------------------------------------------------------
@@ -155,15 +156,18 @@ void cog_sprite_get_len_key(char* buf, uint32_t tex_id, uint32_t layer) {
 }
 
 
-void cog_sprite_update(double timedelta) {
+void cog_sprite_update(double timestep) {
     COG_LIST_FOREACH(&active_sprites) {
         cog_sprite* curr_sprite = (cog_sprite*) cog_map_get(&sprites,
                                   *((cog_sprite_id
                                      *)
                                     curr->data));
         //do physics update for current sprite
-        curr_sprite->pos.x += timedelta * curr_sprite->vel.x;
-        curr_sprite->pos.y += timedelta * curr_sprite->vel.y;
-        curr_sprite->rot += timedelta * curr_sprite->ang_vel;
+        curr_sprite->pos.x += timestep * curr_sprite->vel.x;
+        curr_sprite->pos.y += timestep * curr_sprite->vel.y;
+        curr_sprite->rot += timestep * curr_sprite->ang_vel;
+        if(curr_sprite->update_func != 0) {
+            curr_sprite->update_func(timestep, curr_sprite);
+        }
     }
 }
