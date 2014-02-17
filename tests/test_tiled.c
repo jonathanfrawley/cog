@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <jansson.h>
-//#include <libxml2/libxml/xmlreader.h>
 
 #include <cog.h>
 
@@ -16,24 +15,19 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         if(id == -1) {
             continue;
         }
-        /*
-        cog_sprite_id sprite = cog_sprite_add(tileset_path);
-        cog_sprite_set(sprite, (cog_sprite) {
-            .dim = (cog_dim2) {.w=elem_w, .h=elem_h},
-            .pos = (cog_pos2) {.x=x + (i%tile_layer_w)*elem_w*2 + elem_w, .y=y - ((i/tile_layer_h)*elem_h*2 + elem_h)},
-        });
-        */
         cog_anim_id anim = cog_anim_add(tileset_path, tileset_h, tileset_w);
         cog_anim_set(anim, (cog_anim) {
             .dim = (cog_dim2) {.w=elem_w, .h=elem_h},
             .pos = (cog_pos2) {.x=x + (i%tile_layer_w)*elem_w*2 + elem_w, .y=y - ((i/tile_layer_h)*elem_h*2 + elem_h)},
             .paused = COG_TRUE
         });
+        /*
         cog_debugf("id %d ", ids[i]-1);
         cog_debugf("elem_h %lf ", elem_h);
         cog_debugf("elem_w %lf ", elem_w);
         cog_debugf("x %lf ",x+((i % tile_layer_w) * elem_w));
         cog_debugf("y %lf ",y-((i / tile_layer_h) * elem_h));
+        */
         cog_anim_set_frames(anim, id);
         cog_anim_set_frame(anim, id);
     }
@@ -96,79 +90,6 @@ typedef struct cog_tiled_map {
     cog_list layers;
 } cog_tiled_map;
 
-/**
-static void processNode(xmlTextReaderPtr reader) {
-    const xmlChar *name, *value;
-
-    name = xmlTextReaderConstName(reader);
-    if (name == NULL) {
-        name = BAD_CAST "--";
-    }
-
-    //printf("NAME : <%s> \n", name);
-    if(xmlStrEqual("map", name)) {
-        printf("Parsing map...\n");
-        int attrib_cnt = xmlTextReaderAttributeCount(reader);
-        //printf("Attrib cnt %d ", attrib_cnt);
-        printf("width is <%s>\n", xmlTextReaderGetAttribute(reader, "width"));
-        printf("height is <%s>\n", xmlTextReaderGetAttribute(reader, "height"));
-        printf("tilewidth is <%s>\n", xmlTextReaderGetAttribute(reader, "tilewidth"));
-        printf("tileheight is <%s>\n", xmlTextReaderGetAttribute(reader, "tileheight"));
-    } else if(xmlStrEqual("tileset", name)) {
-        printf("Parsing tileset...\n");
-        printf("firstgid is <%s>\n", xmlTextReaderGetAttribute(reader, "firstgid"));
-        printf("name is <%s>\n", xmlTextReaderGetAttribute(reader, "name"));
-        printf("tilewidth is <%s>\n", xmlTextReaderGetAttribute(reader, "tilewidth"));
-        printf("tileheight is <%s>\n", xmlTextReaderGetAttribute(reader, "tileheight"));
-    } else if(xmlStrEqual("image", name)) {
-        printf("Parsing image...\n");
-        printf("source is <%s>\n", xmlTextReaderGetAttribute(reader, "source"));
-        printf("width is <%s>\n", xmlTextReaderGetAttribute(reader, "width"));
-        printf("height is <%s>\n", xmlTextReaderGetAttribute(reader, "height"));
-    } else if(xmlStrEqual("layer", name)) {
-        printf("Parsing layer...\n");
-        printf("name is <%s>\n", xmlTextReaderGetAttribute(reader, "name"));
-        printf("width is <%s>\n", xmlTextReaderGetAttribute(reader, "width"));
-        printf("height is <%s>\n", xmlTextReaderGetAttribute(reader, "height"));
-    } else if(xmlStrEqual("data", name)) {
-        printf("Parsing data...\n");
-        printf("data is <%s>\n", xmlTextReaderConstValue(reader));
-        //TODO: All children
-    } else if(xmlStrEqual("objectgroup", name)) {
-        printf("Parsing objectgroup...\n");
-        printf("name is <%s>\n", xmlTextReaderGetAttribute(reader, "name"));
-        printf("width is <%s>\n", xmlTextReaderGetAttribute(reader, "width"));
-        printf("height is <%s>\n", xmlTextReaderGetAttribute(reader, "height"));
-    } else if(xmlStrEqual("object", name)) {
-        printf("Parsing object...\n");
-        printf("name is <%s>\n", xmlTextReaderGetAttribute(reader, "name"));
-        printf("x is <%s>\n", xmlTextReaderGetAttribute(reader, "x"));
-        printf("y is <%s>\n", xmlTextReaderGetAttribute(reader, "y"));
-        printf("width is <%s>\n", xmlTextReaderGetAttribute(reader, "width"));
-        printf("height is <%s>\n", xmlTextReaderGetAttribute(reader, "height"));
-    }
-}
-
-static void streamFile(const char *filename) {
-    xmlTextReaderPtr reader;
-    int ret;
-
-    reader = xmlReaderForFile(filename, NULL, 0);
-    if (reader != NULL) {
-        ret = xmlTextReaderRead(reader);
-        while (ret == 1) {
-            processNode(reader);
-            ret = xmlTextReaderRead(reader);
-        }
-        xmlFreeTextReader(reader);
-        if (ret != 0) {
-            fprintf(stderr, "%s : failed to parse\n", filename);
-        }
-    } else {
-        fprintf(stderr, "Unable to open %s\n", filename);
-    }
-}
-*/
 
 int32_t* read_in_tiled_map(const char* tiled_json_filename, int32_t* data_size) {
     json_error_t error;
@@ -191,7 +112,7 @@ int32_t* read_in_tiled_map(const char* tiled_json_filename, int32_t* data_size) 
             json_t* array_entry_json = json_array_get(layer0_data_json, i);
             int32_t val = json_integer_value(array_entry_json);
             data_arr[i] = val;
-            cog_debugf("val is %d", val);
+            //cog_debugf("val is %d", val);
         }
         json_decref(json);
         return data_arr;
@@ -203,30 +124,15 @@ int main(int argc, char **argv) {
 
     cog_init();
 
-    //int32_t ids[] = { 1, 2, 3, 4 };
     int32_t size;
     int32_t* ids = read_in_tiled_map("level.json", &size);
-    for(int i = 0; i < size ; i++) {
-        cog_debugf("i is %d", ids[i]);
-    }
+    //for(int i = 0; i < size ; i++) {
+    //    cog_debugf("i is %d", ids[i]);
+    //}
     cog_list out_anims;
     cog_list_init(&out_anims, sizeof(cog_anim_id));
     cog_tiled_load_background(-1.0, 1.0, 10.0, 10.0, 
         "media/tileset.png", 2, 2, 100, 100, ids, size, &out_anims);
-    /*
-    cog_tiled_load_background(-1.0, 1.0, 1.0, 1.0, 
-        "media/tileset.png", 2, 2, 32, 32, ids, size, &out_anims);
-        */
-    /*
-    cog_tiled_load_background(-1.0, 1.0, 1.0, 1.0, 
-        "media/tileset.png", 2, 2, 4, 4, ids, size, &out_anims);
-        */
-    /*
-void cog_tiled_load_background(double x, double y, double w, double h, 
-        const char* tileset_path, int32_t tileset_w, int32_t tileset_h, 
-        int32_t tile_layer_w, int32_t tile_layer_h, int32_t* ids, int32_t n_ids, cog_list* out_anims) {
-        */
-
 
 
     while(!cog_hasquit()) {
@@ -236,7 +142,7 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         cog_graphics_cam_vel_get(&cam_vel);
         if(cog_input_key_pressed()) {
             uint32_t key = cog_input_key_code_pressed();
-            double delta = 0.001;
+            double delta = 1.0;
             if(key == 'w') {
                 cam_vel.y = delta;
             }
@@ -267,14 +173,4 @@ void cog_tiled_load_background(double x, double y, double w, double h,
         }
         cog_graphics_cam_vel_set(&cam_vel);
     }
-    /*
-    if (argc != 2) {
-        return(1);
-    }
-    LIBXML_TEST_VERSION
-
-    streamFile(argv[1]);
-    xmlCleanupParser();
-    xmlMemoryDump();
-    */
 }

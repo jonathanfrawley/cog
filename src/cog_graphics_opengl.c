@@ -47,11 +47,13 @@ void cog_graphics_opengl_prepare(uint32_t amount) {
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     uint32_t offset = idx * vertex_amount;
-    double w = sprite->dim.w;
-    double h = sprite->dim.h;
+    //1.5 here is due to cos and sin rotation below.
+    double w = sprite->dim.w * 1.5;
+    double h = sprite->dim.h * 1.5;
     double x_offset = sprite->pos.x;
     double y_offset = sprite->pos.y;
     //Do rotation and transformation ourselves.
+    //Rotate by PI/4 because..
     double rot = sprite->rot + COG_PI/4;
     vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
     vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
@@ -82,35 +84,6 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     indices[offset + 3] = idx_offset + 3;
     indices[offset + 4] = idx_offset + 1;
     indices[offset + 5] = idx_offset + 2;
-/*
-    GLfloat vertices[] = {
-        -1.0f * w, 1.0f * h, 0,
-        1.0f * w, 1.0f * h, 0,
-        1.0f * w, -1.0f * h, 0,
-        -1.0f * w, -1.0f * h, 0,
-    };
-    GLfloat tex[] = {
-        sprite->tex_pos.x, sprite->tex_pos.y + sprite->tex_dim.h,
-        sprite->tex_pos.x + sprite->tex_dim.w,
-        sprite->tex_pos.y + sprite->tex_dim.h,
-        sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y,
-        sprite->tex_pos.x, sprite->tex_pos.y
-    };
-    GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
-                          3, 1, 2       // second triangle (bottom left - top right - bottom right)
-                        };
-*/
-/*
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, tex);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisable(GL_TEXTURE_2D);
-*/
-    //glPopMatrix();
 }
 
 void cog_graphics_opengl_init(cog_window* win) {
