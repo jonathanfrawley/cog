@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="64" tileheight="48">
+ <tileset firstgid="1" name="Tileset" tilewidth="64" tileheight="48">
+  <image source="../../1gam/stormhold/assets/tiled/tileset.png" width="640" height="480"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="100" height="100">
+  <properties>
+   <property name="tileset" value="Tileset"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztkTGSwzAMxJz/f/raeC6SZVLWLmVgBk0KR1x8juP4oJXf/PrtCvX7d/PXtqM704Meu0sPL1us6jHjGw5mmfUGh284mIUe9KBHG3rQgx5t6EEPerShBz3o0YYetXs8iXrLyj3Ud7uahR702Nks9NA1c/vWW6WHl/Twkh5ejmwYRX1bRUe2i6K+raIj20VR31bRke2iqG+r6Mh2UdS3VXRkuyjq2yo6sl0U9W1qM9CDHrur3KFqgxXQgx7K/57VI9pQfcPbe1TQ5aYo6nfT44z63W/qoX7TTj2yqHehxzPvqOZTO7Cv1270yO32FOr7nHRAvYGT7OYlW3tJDy/p4SU9vKSHl/Twkh5e9npkUN9V1d5+GdR3VbW3Xwb1XVXt7ZdBfVdVe/tlyLwl+53K9u7OQA+vHjtBDy926JF5S/Y7K7ahBz0yKHekx3/UW1bvMRv1lvQ4o96SHmfUW1btgfSoIj28pIeX9PCSHl7Sw0t6eEkPL+nhJT289qOH13708NqPHl770WPOflfQgx6Y35ce9Jh55x3oQY+7/61464ydItCDHnf/W/FWuIYeXih7rGq68sZKztgpgvrunY2gfvPORlC/GRFr+QezISEy
+  </data>
+ </layer>
+ <objectgroup name="Player" width="100" height="100">
+  <object x="128" y="96" width="64" height="48"/>
+ </objectgroup>
+ <objectgroup name="bunker" width="100" height="100">
+  <object name="bunker" x="128" y="1248" width="125" height="99"/>
+  <object name="bunker" x="576" y="2688" width="191" height="136"/>
+  <object x="128" y="1440" width="100" height="98"/>
+  <object x="465" y="1433" width="184" height="112"/>
+  <object x="1216" y="3168" width="202" height="151"/>
+  <object x="1216" y="2688" width="222" height="177"/>
+  <object x="960" y="3168" width="180" height="152"/>
+ </objectgroup>
+ <objectgroup name="door0" width="100" height="100">
+  <object name="door0" x="640" y="1632" width="128" height="48"/>
+ </objectgroup>
+ <objectgroup name="door1" width="100" height="100">
+  <object name="door1" x="1472" y="2928" width="59" height="83"/>
+ </objectgroup>
+ <objectgroup name="goal" width="100" height="100">
+  <object x="128" y="4416" width="64" height="48"/>
+ </objectgroup>
+ <objectgroup name="bomb" width="100" height="100">
+  <object name="bomb" x="2112" y="240" width="64" height="48"/>
+  <object name="bomb" x="512" y="48" width="62" height="32"/>
+  <object x="640" y="1824" width="39" height="58"/>
+  <object x="640" y="1920" width="33" height="82"/>
+  <object x="5376" y="288" width="64" height="48"/>
+  <object x="5504" y="288" width="64" height="48"/>
+  <object x="5632" y="288" width="64" height="48"/>
+  <object x="5760" y="288" width="64" height="48"/>
+  <object x="5888" y="288" width="64" height="48"/>
+  <object x="6016" y="288" width="64" height="48"/>
+  <object x="6144" y="288" width="64" height="48"/>
+  <object x="3392" y="3840" width="64" height="48"/>
+ </objectgroup>
+ <objectgroup name="spider" width="100" height="100">
+  <object x="1472" y="4464" width="64"/>
+ </objectgroup>
+</map>

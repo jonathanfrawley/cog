@@ -1,0 +1,14 @@
+ - [DONE] Fix rotations
+ - [DONE] Add ability to plug in update funcs
+ - Add some simple tweens
+  >> Features wanted:
+   -> Want to be able to change pos, rot, vel, ang_vel, alpha of a sprite or anim over a period of time.
+   -> Have 4 types:
+    == PERSIST Once and stay around at end
+    == LOOPING After complete start at start
+    == PINGPONG After complete start at end and go backwards, then go back and continue from start, and so on.
+    == ONESHOT Once and die at end
+   -> Model after gokit : http://forum.unity3d.com/threads/133823-Prime31-GoKit-Tween-Library-Live
+ - Add importing of objects in tiled
+ - Finish off tiled importer
+ - Maybe rethink state changes to be more flixel-like?

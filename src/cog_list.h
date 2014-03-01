@@ -20,6 +20,7 @@ typedef struct cog_list {
     struct cog_list* next;
     cog_dataptr data;
     uint32_t size;              //size of data member
+    uint32_t len;
 } cog_list;
 
 //List structure:

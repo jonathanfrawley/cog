@@ -17,7 +17,6 @@ typedef int cog_anim_id;
 typedef int cog_snd_id;
 typedef int cog_sprite_id;
 typedef int cog_text_id;
-typedef int cog_text_multiline_id;
 typedef void* cog_dataptr;
 typedef char* cog_string;
 

@@ -3,7 +3,6 @@
 #include <math.h>
 #include <stdarg.h>
 #include <assert.h>
-#include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 
@@ -44,6 +43,7 @@ static uint32_t framedrawcounter;
 static uint32_t lastframetime;
 static uint32_t frametimecounter;
 static uint32_t frameupdatecounter;
+static uint32_t render_time;
 
 //implementations
 void cog_init(void) {
@@ -54,7 +54,7 @@ void cog_init(void) {
     cog_anim_init();
     cog_window_init(&window);
     cog_input_init(&window);
-    cog_graphics_init();
+    cog_graphics_init(&window);
     cog_text_init();
     starttime = SDL_GetTicks();
     //init rng
@@ -97,37 +97,43 @@ void cog_update() {
     frameupdatecounter++;
     lastframetime = SDL_GetTicks() - starttime;
     starttime = SDL_GetTicks();
+    cog_input_check_keys();
+    cog_input_check_mouse();
+    double timestep = (double)delta_millis / 1000.0;
+    cog_anim_update(timestep);
+    cog_sprite_update(timestep);
+    cog_graphics_update(timestep);
     //Useful logging every second.
     frametimecounter += lastframetime;
     if(frametimecounter >= 1000) {
 #ifdef DEBUG
-        cog_debugf("nupdates <%d>, ndraws <%d>", frameupdatecounter,
-                   framedrawcounter);
+        cog_debugf("nupdates <%d>, ndraws <%d>, render_time <%d> cog_map_get_counter <%d> cog_map_get_timer <%lf>", frameupdatecounter,
+                   framedrawcounter, render_time, cog_map_get_counter(), cog_map_get_timer());
 #endif //DEBUG
         frametimecounter = 0;
         framedrawcounter = 0;
         frameupdatecounter = 0;
+        cog_map_reset_counter();
+        cog_map_reset_timer();
     }
-    cog_input_check_keys();
-    cog_input_check_mouse();
-    cog_anim_update(delta_millis);
-    cog_sprite_update(delta_millis);
 }
 
 //This is to allow the user to control the mainloop
 void cog_loopstep() {
     cog_update();
     framedrawcounter++;
+    uint32_t start_render = SDL_GetTicks();
     cog_graphics_render(&window);
+    uint32_t end_render = SDL_GetTicks();
+    render_time = end_render - start_render;
     cog_window_update(&window);
 }
 
 void cog_quit() {
     game.finished = 1;
     cog_input_quit();
+    cog_snd_quit();
     cog_window_quit(&window);
-    //TODO:Add more cleanup here.
-    alutExit();
 }
 
 bool cog_hasquit() {

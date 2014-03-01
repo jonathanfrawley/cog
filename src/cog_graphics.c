@@ -1,347 +1,128 @@
 #include "cog_graphics.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include <png.h>
-
 #include "cog.h"
 #include "cog_anim.h"
 #include "cog_core.h"
 #include "cog_list.h"
+#include "cog_map.h"
 #include "cog_math.h"
 #include "cog_sprite.h"
+#ifdef USE_SDL
+#include "cog_graphics_sdl2.h"
+#else
+#include "cog_graphics_opengl.h"
+#endif
 
-void cog_graphics_hwinit(void);
-//file io
-void cog_graphics_read_file(char* buf, char* filename);
-//rendering
-void cog_graphics_render();
-GLuint cog_graphics_load_texture_png(const char* file_name, int* width, int* height);
+typedef struct {
+    void (*init)(cog_window*);
+    void (*clear)(void);
+    void (*draw)(void);
+    void (*draw_sprite)(cog_sprite* sprite, uint32_t idx);
+    void (*draw_text)(cog_text* text);
+    uint32_t (*load_texture)(const char* filename, int* width, int* height);
+    void (*prepare)(uint32_t amount);
+    void (*set_camera_pos)(cog_pos2* pos);
+    void (*flush)(void);
+} cog_renderer;
+
+static cog_renderer r;
+static cog_map sprite_cache;
+static cog_list texture_list;
+static cog_vec2 camera_vel;
+static cog_pos2 camera_pos;
 
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
-void cog_graphics_draw_sprite(cog_sprite* sprite) {
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
-    glLoadIdentity();
-    glTranslatef(sprite->pos.x, sprite->pos.y, 0.0);
-    glRotatef(cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
-    double w = sprite->dim.w;
-    double h = sprite->dim.h;
-    GLfloat vertices[] = {
-        -1.0f * w, 1.0f * h, 0,
-        1.0f * w, 1.0f * h, 0,
-        1.0f * w, -1.0f * h, 0,
-        -1.0f * w, -1.0f * h, 0,
-    };
-    GLfloat tex[] = {
-        sprite->tex_pos.x, sprite->tex_pos.y + sprite->tex_dim.h,
-        sprite->tex_pos.x + sprite->tex_dim.w,
-        sprite->tex_pos.y + sprite->tex_dim.h,
-        sprite->tex_pos.x + sprite->tex_dim.w, sprite->tex_pos.y,
-        sprite->tex_pos.x, sprite->tex_pos.y
-    };
-    GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
-                          3, 1, 2       // second triangle (bottom left - top right - bottom right)
-                        };
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, tex);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisable(GL_TEXTURE_2D);
-    glPopMatrix();
+void cog_graphics_draw_sprite(cog_sprite* sprite, uint32_t idx) {
+    r.draw_sprite(sprite, idx);
 }
 
 void cog_graphics_draw_text(cog_text* text) {
-    glPushMatrix();
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, text->tex_id);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    const char* p;
-    FT_GlyphSlot g = text->face->glyph;
-    double x = text->pos.x;
-    double y = text->pos.y;
-    double sx = text->scale.w;
-    double sy = text->scale.h;
-    double scalar_y = 0.15; //TODO : Figure out a more generic way to find scale
-    double row_height = text->face->descender * sy * scalar_y;
-    for(p = text->str; *p; p++) {
-        int new_line = x > (text->pos.x + text->dim.w) || (*p) == '\n';
-        if(new_line) {
-            x = text->pos.x;
-            y += row_height;
-            if((*p) == '\n') {
-                continue;
-            }
-        }
-        if(FT_Load_Char(text->face, *p, FT_LOAD_RENDER)) {
-            continue;
-        }
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_ALPHA,
-            g->bitmap.width,
-            g->bitmap.rows,
-            0,
-            GL_ALPHA,
-            GL_UNSIGNED_BYTE,
-            g->bitmap.buffer
-        );
-        double x2 = x + g->bitmap_left * sx;
-        //double y2 = y + g->bitmap_top * sy;
-        double y2 = -y - g->bitmap_top * sy;
-        double w = g->bitmap.width * sx;
-        double h = g->bitmap.rows * sy;
-        glPushMatrix();
-        glEnable(GL_TEXTURE_2D);
-        glLoadIdentity();
-        cog_color c = text->col;
-        glColor4f(c.r, c.g, c.b, c.a);
-        //glColor4f(c.r, c.g, c.b, 0.0);
-        GLfloat vertices[] = {
-            x2, -y2, 0, //top left
-            x2 + w, -y2, 0, //top right
-            x2 + w, -y2 - h, 0, //bottom right
-            x2, -y2 - h, 0 //bottom left
-        };
-        GLfloat tex[] = {0, 0, 1, 0, 1, 1, 0, 1};
-        GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
-                              3, 1, 2       // second triangle (bottom left - top right - bottom right)
-                            };
-        glTexCoordPointer(2, GL_FLOAT, 0, tex);
-        glVertexPointer(3, GL_FLOAT, 0, vertices);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-        x += (g->advance.x >> 6) * sx;
-        y += (g->advance.y >> 6) * sy;
-    }
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisable(GL_TEXTURE_2D);
-    //Restore alpha to normal
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-    glPopMatrix();
+    r.draw_text(text);
 }
 
-GLuint cog_graphics_gen_tex_id() {
-    GLuint tex_id;
-    glGenTextures(1, &tex_id);
-    return tex_id;
+uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height) {
+    //Cache textures so we don't load the same thing twice.
+    void* item = cog_map_get_hash(&sprite_cache, filename);
+    if(item != 0) {
+        return *(uint32_t*)item;
+    } else {
+        uint32_t* tex_id = cog_malloc(sizeof(uint32_t));
+        (*tex_id) = r.load_texture(filename, width, height);
+        cog_map_put_hash(&sprite_cache, filename, (cog_dataptr)tex_id);
+        cog_list_append(&texture_list, (cog_dataptr)tex_id);
+        cog_debugf("Inserting tex_id %d into list for filename %s", *tex_id, filename);
+        return (*tex_id);
+    }
 }
 
-/*-----------------------------------------------------------------------------
- * Loads a transparent png image as a texure and uploads it to the GPU.
- * Returns: A reference to the texture which can be passed to glBindTexture
- *
- * Notes:
- * Source: https://github.com/DavidEGrayson/ahrs-visualizer/blob/master/png_texture.cpp
- * License: https://github.com/DavidEGrayson/ahrs-visualizer/blob/master/LICENSE.txt
- *-----------------------------------------------------------------------------*/
-GLuint cog_graphics_load_texture_png(const char* file_name, int* width, int* height) {
-    png_byte header[8];
-    FILE* fp = fopen(file_name, "rb");
-    if(fp == 0) {
-        perror(file_name);
-        return 0;
-    }
-    // read the header
-    fread(header, 1, 8, fp);
-    if(png_sig_cmp(header, 0, 8)) {
-        cog_errorf("error: %s is not a PNG.\n", file_name);
-        fclose(fp);
-        return 0;
-    }
-    png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    if(!png_ptr) {
-        cog_errorf("error: png_create_read_struct returned 0.\n");
-        fclose(fp);
-        return 0;
-    }
-    // create png info struct
-    png_infop info_ptr = png_create_info_struct(png_ptr);
-    if(!info_ptr) {
-        cog_errorf("error: png_create_info_struct returned 0.\n");
-        png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-        fclose(fp);
-        return 0;
-    }
-    // create png info struct
-    png_infop end_info = png_create_info_struct(png_ptr);
-    if(!end_info) {
-        cog_errorf("error: png_create_info_struct returned 0.\n");
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        fclose(fp);
-        return 0;
-    }
-    // the code in this if statement gets called if libpng encounters an error
-    if(setjmp(png_jmpbuf(png_ptr))) {
-        cog_errorf("error from libpng\n");
-        png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-        fclose(fp);
-        return 0;
-    }
-    // init png reading
-    png_init_io(png_ptr, fp);
-    // let libpng know you already read the first 8 bytes
-    png_set_sig_bytes(png_ptr, 8);
-    // read all the info up to the image data
-    png_read_info(png_ptr, info_ptr);
-    // variables to pass to get info
-    int bit_depth, color_type;
-    png_uint_32 temp_width, temp_height;
-    // get info about png
-    png_get_IHDR(png_ptr, info_ptr, &temp_width, &temp_height, &bit_depth, &color_type,
-                 NULL, NULL, NULL);
-    if(width) {
-        *width = temp_width;
-    }
-    if(height) {
-        *height = temp_height;
-    }
-    //printf("%s: %lux%lu %d\n", file_name, temp_width, temp_height, color_type);
-    if(bit_depth != 8) {
-        cog_errorf("%s: Unsupported bit depth %d. Must be 8.\n", file_name, bit_depth);
-        return 0;
-    }
-    GLint format;
-    switch(color_type) {
-        case PNG_COLOR_TYPE_RGB:
-            format = GL_RGB;
-            break;
-        case PNG_COLOR_TYPE_RGB_ALPHA:
-            format = GL_RGBA;
-            break;
-        default:
-            cog_errorf("%s: Unknown libpng color type %d.\n", file_name, color_type);
-            return 0;
-    }
-    // Update the png info struct.
-    png_read_update_info(png_ptr, info_ptr);
-    // Row size in bytes.
-    int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-    // glTexImage2d requires rows to be 4-byte aligned
-    rowbytes += 3 - ((rowbytes-1) % 4);
-    // Allocate the image_data as a big block, to be given to opengl
-    png_byte* image_data = (png_byte*)malloc(rowbytes * temp_height * sizeof(png_byte)+15);
-    if(image_data == NULL) {
-        cog_errorf("error: could not allocate memory for PNG image data\n");
-        png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-        fclose(fp);
-        return 0;
-    }
-    // row_pointers is for pointing to image_data for reading the png with libpng
-    png_byte** row_pointers = (png_byte**)malloc(temp_height * sizeof(png_byte*));
-    if(row_pointers == NULL) {
-        cog_errorf("error: could not allocate memory for PNG row pointers\n");
-        png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-        free(image_data);
-        fclose(fp);
-        return 0;
-    }
-    // set the individual row_pointers to point at the correct offsets of image_data
-    for(unsigned int i = 0; i < temp_height; i++) {
-        row_pointers[temp_height - 1 - i] = image_data + i * rowbytes;
-    }
-    // read the png into image_data through row_pointers
-    png_read_image(png_ptr, row_pointers);
-    // Generate the OpenGL texture object
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, temp_width, temp_height, 0, format, GL_UNSIGNED_BYTE, image_data);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // clean up
-    png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-    free(image_data);
-    free(row_pointers);
-    fclose(fp);
-    return texture;
+
+void cog_graphics_init(cog_window* win) {
+#ifdef USE_SDL
+    r.draw_sprite = cog_graphics_sdl2_draw_sprite;
+    r.init = cog_graphics_sdl2_init;
+    r.draw_text = cog_graphics_sdl2_draw_text;
+    r.load_texture = cog_graphics_sdl2_load_texture;
+    r.set_camera_pos = 0; //TODO: Implement
+    r.clear = cog_graphics_sdl2_clear;
+    r.flush = cog_graphics_sdl2_flush;
+#else
+    r.draw = cog_graphics_opengl_draw;
+    r.draw_sprite = cog_graphics_opengl_draw_sprite;
+    r.init = cog_graphics_opengl_init;
+    r.draw_text = cog_graphics_opengl_draw_text;
+    r.load_texture = cog_graphics_opengl_load_texture;
+    r.prepare = cog_graphics_opengl_prepare;
+    r.set_camera_pos = cog_graphics_opengl_set_camera_pos;
+    r.clear = cog_graphics_opengl_clear;
+    r.flush = cog_graphics_opengl_flush;
+#endif
+    r.init(win);
+    cog_map_init(&sprite_cache);
+    cog_list_init(&texture_list, sizeof(uint32_t));
+    //camera_pos.x = 1.0;
 }
 
-GLuint cog_graphics_load_texture(char* filename, int* width, int* height) {
-    return cog_graphics_load_texture_png(filename, 0, 0);
-}
-
-void cog_graphics_init(void) {
-    cog_graphics_hwinit();
-}
-
-void cog_graphics_hwinit(void) {
-    GLenum error = GL_NO_ERROR;
-    //Initialize Projection Matrix
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    //Check for error
-    error = glGetError();
-    if(error != GL_NO_ERROR) {
-        printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-    }
-    //Initialize Modelview Matrix
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    //Check for error
-    error = glGetError();
-    if(error != GL_NO_ERROR) {
-        printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-    }
-    //Initialize clear color
-    glClearColor(0.3f, 0.f, 0.f, 1.f);
-    //Check for error
-    error = glGetError();
-    if(error != GL_NO_ERROR) {
-        printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-    }
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
-
-void cog_graphics_read_file(char* buf, char* filename) {
-    FILE* fp;
-    fp = fopen(filename, "r");
-    if(fp == 0) {
-        fprintf(stderr, "Can't open file %s", filename);
-        perror("Exiting");
-    }
-    fseek(fp, 0, SEEK_END);
-    int filesize = ftell(fp);
-    rewind(fp);
-    if(filesize > COG_MAX_FILE_BUF) {
-        perror("File too big to be read in");
-        goto cleanup;
-    }
-    int amountread = fread(buf,
-                           sizeof(char),
-                           COG_MAX_FILE_BUF,
-                           fp);
-    if(amountread != filesize) {
-        perror("Error reading in file.");
-        goto cleanup;
-    }
-cleanup:
-    fclose(fp);
+void cog_graphics_update(double timestep) {
+    camera_pos.x += camera_vel.x * timestep;
+    camera_pos.y += camera_vel.y * timestep;
 }
 
 void cog_graphics_render(cog_window* window) {
     //Clear color buffer
-    glClear(GL_COLOR_BUFFER_BIT);
-    //PASTE
+    r.clear();
+    r.set_camera_pos(&camera_pos);
     for(int i = 0; i < COG_LAYER_MAX; i++) {
-        cog_sprite_draw_layer(i);
-        cog_anim_draw_layer(i);
+        COG_LIST_FOREACH(&texture_list) {
+            uint32_t tex_id = *((uint32_t*)curr->data);
+            uint32_t cnt = cog_sprite_len(tex_id, i) + cog_anim_len(tex_id, i);
+            if(cnt > 0) {
+                r.prepare(cnt);
+                uint32_t global_idx = 0;
+                global_idx += cog_sprite_draw_layer(i, tex_id, global_idx);
+                global_idx += cog_anim_draw_layer(i, tex_id, global_idx);
+                r.draw();
+            }
+        }
         cog_text_draw_layer(i);
     }
+    r.flush();
+}
+
+void cog_graphics_cam_set(cog_pos2* pos) {
+    camera_pos = (*pos);
+}
+
+void cog_graphics_cam_get(cog_pos2* pos) {
+    (*pos) = camera_pos;
+}
+
+void cog_graphics_cam_vel_set(cog_vec2* vel) {
+    camera_vel = (*vel);
+}
+
+void cog_graphics_cam_vel_get(cog_vec2* vel) {
+    (*vel) = camera_vel;
 }
