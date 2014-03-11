@@ -42,4 +42,10 @@ typedef struct cog_color {
     double a;
 } cog_color;
 
+typedef struct cog_config {
+    uint32_t window_w;
+    uint32_t window_h;
+    bool fullscreen;
+} cog_config;
+
 #endif // COG_TYPES_H

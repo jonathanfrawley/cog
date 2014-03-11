@@ -46,13 +46,13 @@ static uint32_t frameupdatecounter;
 static uint32_t render_time;
 
 //implementations
-void cog_init(void) {
+void _cog_init(cog_config config) {
     //Init cog
     game.finished = 0;
     cog_snd_init();
     cog_sprite_init();
     cog_anim_init();
-    cog_window_init(&window);
+    cog_window_init(config, &window);
     cog_input_init(&window);
     cog_graphics_init(&window);
     cog_text_init();

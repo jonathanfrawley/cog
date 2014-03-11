@@ -4,7 +4,9 @@
 #include "cog_types.h"
 
 bool cog_hasquit();
-void cog_init();
+void cog_configure(cog_config config);
+#define cog_init(...) _cog_init((cog_config){__VA_ARGS__})
+void _cog_init();
 void cog_loopstep();
 void cog_mainloop();
 void cog_quit();

@@ -6,6 +6,8 @@
 #include "eglport.h"
 #endif
 
+#include <cog_types.h>
+
 typedef struct cog_window {
     SDL_Window* window;
     SDL_GLContext glcontext;
@@ -17,7 +19,7 @@ typedef struct cog_window {
 /*-----------------------------------------------------------------------------
  *  Initialise a window.
  *-----------------------------------------------------------------------------*/
-void cog_window_init(cog_window* window);
+void cog_window_init(cog_config config, cog_window* window);
 
 /*-----------------------------------------------------------------------------
  *  Main update.
