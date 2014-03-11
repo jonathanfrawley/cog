@@ -1,7 +1,8 @@
 #include "cog_state.h"
 
-#include "cog_types.h"
 #include "cog_core.h"
+#include "cog_log.h"
+#include "cog_types.h"
 
 cog_state_fsm* cog_state_fsm_alloc(void) {
     cog_state_fsm* obj = COG_STRUCT_MALLOC(cog_state_fsm);
@@ -31,16 +32,27 @@ void cog_state_fsm_add_transitions(cog_state_fsm* fsm,
 
 void cog_state_fsm_update(cog_state_fsm* fsm) {
     cog_event* event = cog_list_pop(&fsm->events);
+    //If no event fired, call the current state's transition function.
+    //Keeps the game going in the current state.
     if(event == COG_NULL) {
-        return;
-    }
-    COG_LIST_FOREACH(&fsm->transitions) {
-        cog_state_transition* transition =
-            (cog_state_transition*) curr->data;
-        if(transition->state == fsm->currentstate) {
-            if(transition->event == (*event)) {
-                fsm->currentstate = transition->transition_fn();
-                break;
+        COG_LIST_FOREACH(&fsm->transitions) {
+            cog_state_transition* transition =
+                (cog_state_transition*) curr->data;
+            if(transition->event == COG_E_DUMMY) {
+                if(transition->state == fsm->currentstate) {
+                    transition->transition_fn((cog_state_info){.initial=false});
+                }
+            }
+        }
+    } else {
+        COG_LIST_FOREACH(&fsm->transitions) {
+            cog_state_transition* transition =
+                (cog_state_transition*) curr->data;
+            if(transition->state == fsm->currentstate) {
+                if(transition->event == (*event)) {
+                    fsm->currentstate = transition->transition_fn((cog_state_info){.initial=true});
+                    break;
+                }
             }
         }
     }
@@ -52,4 +64,5 @@ void cog_state_fsm_push_event(cog_state_fsm* fsm, cog_event event) {
 
 void cog_state_fsm_set_state(cog_state_fsm* fsm, cog_state state) {
     fsm->currentstate = state;
+    cog_state_fsm_push_event(fsm, COG_E_DUMMY);
 }
