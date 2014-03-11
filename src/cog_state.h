@@ -4,8 +4,8 @@
 #include "cog_types.h"
 #include "cog_list.h"
 
-typedef int cog_state;
-typedef int cog_event;
+typedef int32_t cog_state;
+typedef int32_t cog_event;
 
 #define COG_STATE_ERROR -255
 #define COG_E_DUMMY -1

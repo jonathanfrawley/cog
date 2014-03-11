@@ -13,10 +13,10 @@
 #define COG_TEXT_MAX 255
 
 //types
-typedef int cog_anim_id;
-typedef int cog_snd_id;
-typedef int cog_sprite_id;
-typedef int cog_text_id;
+typedef int32_t cog_anim_id;
+typedef int32_t cog_snd_id;
+typedef int32_t cog_sprite_id;
+typedef int32_t cog_text_id;
 typedef void* cog_dataptr;
 typedef char* cog_string;
 

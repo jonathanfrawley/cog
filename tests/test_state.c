@@ -13,22 +13,22 @@
 #define EVENT_TEST 0
 #define EVENT_TEST2 1
 
-int load_firstlevel(void) {
+int32_t load_firstlevel(void) {
     cog_debugf("loading first level...");
     return STATE_LEVEL_RUNNING;
 }
 
-int show_death_screen(void) {
+int32_t show_death_screen(void) {
     cog_debugf("showing death screen...");
     return STATE_END;
 }
 
-int cleanup_game(void) {
+int32_t cleanup_game(void) {
     cog_debugf("cleaning up game...");
     return STATE_FINISH;
 }
 
-int infinite_loop(void) {
+int32_t infinite_loop(void) {
     cog_debugf("infinite loop state at finish...");
     return STATE_FINISH;
 }

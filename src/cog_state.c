@@ -24,7 +24,7 @@ void cog_state_fsm_add_transition(cog_state_fsm* fsm,
 void cog_state_fsm_add_transitions(cog_state_fsm* fsm,
                                    cog_state_transition* transitions,
                                    uint32_t size) {
-    int i;
+    int32_t i;
     for(i = 0; i < size; i++) {
         cog_state_fsm_add_transition(fsm, &(transitions[i]));
     }
