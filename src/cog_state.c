@@ -4,9 +4,14 @@
 #include "cog_log.h"
 #include "cog_types.h"
 
+static cog_state_fsm* global_fsm;
+
 cog_state_fsm* cog_state_fsm_alloc(void) {
     cog_state_fsm* obj = COG_STRUCT_MALLOC(cog_state_fsm);
     cog_state_fsm_init(obj);
+    if(!global_fsm) {
+        global_fsm = obj; //Assuming global_fsm is first fsm created
+    }
     return obj;
 }
 
@@ -65,4 +70,10 @@ void cog_state_fsm_push_event(cog_state_fsm* fsm, cog_event event) {
 void cog_state_fsm_set_state(cog_state_fsm* fsm, cog_state state) {
     fsm->currentstate = state;
     cog_state_fsm_push_event(fsm, COG_E_DUMMY);
+}
+
+void cog_state_global_fsm_push_event(cog_event event) {
+    if(global_fsm) {
+        cog_state_fsm_push_event(global_fsm, event);
+    }
 }

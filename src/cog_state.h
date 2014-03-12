@@ -8,7 +8,9 @@ typedef int32_t cog_state;
 typedef int32_t cog_event;
 
 #define COG_STATE_ERROR -255
+
 #define COG_E_DUMMY -1
+#define COG_E_KEYDOWN -2
 
 typedef struct cog_state_info {
     bool initial;
@@ -61,5 +63,7 @@ void cog_state_fsm_push_event(cog_state_fsm* fsm, cog_event event);
  * Set the current state of the FSM.
  * */
 void cog_state_fsm_set_state(cog_state_fsm* fsm, cog_state state);
+
+void cog_state_global_fsm_push_event(cog_event event);
 
 #endif // COG_STATE_H

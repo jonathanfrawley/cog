@@ -67,6 +67,7 @@ void cog_input_check_keys(void) {
                 key_pressed = event.key.keysym.sym;
                 key_just_pressed = COG_TRUE;
             }
+            cog_state_global_fsm_push_event(COG_E_KEYDOWN);
         }
         if(event.type == SDL_KEYUP) {
             key_depressed = event.key.keysym.sym;
