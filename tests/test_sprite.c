@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
         .dim=(cog_dim2) {
             .w=1.0, .h=1.0
         },
-        .rot=0.0
+        .rot=COG_PI/2
     });
 
     while(!cog_hasquit()) {

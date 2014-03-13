@@ -54,6 +54,7 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     double y_offset = sprite->pos.y;
     //Do rotation and transformation ourselves.
     //Rotate by PI/4 because..
+    //TODO: Looks like the quads are getting stretched on rotation. Fix this somehow
     double rot = sprite->rot + COG_PI/4;
     vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
     vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
@@ -106,7 +107,7 @@ void cog_graphics_opengl_init(cog_window* win) {
         printf("Error initializing OpenGL! %s\n", gluErrorString(error));
     }
     //Initialize clear color
-    glClearColor(1.0f, 1.0f, 1.0f, 1.f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     //Check for error
     error = glGetError();
     if(error != GL_NO_ERROR) {
