@@ -14,10 +14,10 @@ void entity_init(entity* obj) {
         cog_anim_set(obj->anim, (cog_anim) {
                 .dim = (cog_dim2) {.w=0.3, .h=0.3},
                 .pos = (cog_pos2) {.x=0, .y=0},
-                .vel = (cog_vec2) {.x=0.3, .y=0.9},
+                .vel = (cog_vec2) {.x=0.1, .y=0.3},
                 .transition_time = 0.15,
                 .looped = COG_TRUE,
-                .ang_vel = COG_PI/1,
+                .ang_vel = COG_PI/10.0,
         });
         cog_anim_set_frames(obj->anim, 0, 1, 2);
     }
@@ -34,13 +34,14 @@ void entity_update(entity* obj) {
 }
 
 int main(int argc, char* argv[]) {
-    cog_init();
+    cog_init(.fullscreen = true);
     entity myentity[N_ENTITIES];
 
     cog_anim_id anim = cog_anim_add("media/2d_anim_test.png", 2, 4);
     cog_anim_set(anim, (cog_anim) {
         .dim = (cog_dim2) {.w=0.3, .h=0.3},
         .pos = (cog_pos2) {.x=0.3, .y=0.3},
+        .ang_vel = COG_PI/20.0,
         .transition_time = 1.0,
         .looped = COG_TRUE
     });

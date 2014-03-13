@@ -54,6 +54,7 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     double y_offset = sprite->pos.y;
     //Do rotation and transformation ourselves.
     //Rotate by PI/4 because..
+    //TODO: Looks like the quads are getting stretched on rotation. Fix this somehow
     double rot = sprite->rot + COG_PI/4;
     vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
     vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
@@ -106,7 +107,7 @@ void cog_graphics_opengl_init(cog_window* win) {
         printf("Error initializing OpenGL! %s\n", gluErrorString(error));
     }
     //Initialize clear color
-    glClearColor(0.3f, 0.f, 0.f, 1.f);
+    glClearColor(1.0f, 1.f, 1.f, 1.f);
     //Check for error
     error = glGetError();
     if(error != GL_NO_ERROR) {
@@ -322,8 +323,8 @@ GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, i
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, format, temp_width, temp_height, 0, format, GL_UNSIGNED_BYTE, image_data);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     // clean up
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
