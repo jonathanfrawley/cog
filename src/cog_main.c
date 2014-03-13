@@ -17,6 +17,7 @@
 #include "cog_sprite.h"
 #include "cog_snd.h"
 #include "cog_text.h"
+#include "cog_tween.h"
 #include "cog_window.h"
 
 //constants
@@ -103,6 +104,7 @@ void cog_update() {
     cog_anim_update(timestep);
     cog_sprite_update(timestep);
     cog_graphics_update(timestep);
+    cog_tween_update(timestep);
     //Useful logging every second.
     frametimecounter += lastframetime;
     if(frametimecounter >= 1000) {
