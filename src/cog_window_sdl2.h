@@ -4,9 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "cog_types.h"
-//#include "cog_window.h"
-struct cog_window;
-typedef struct cog_window cog_window;
+#include "cog_window.h"
 
 void cog_window_sdl2_init(cog_config config, cog_window* window);
 

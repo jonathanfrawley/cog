@@ -19,6 +19,10 @@ static cog_wm wm;
 
 void cog_window_init(cog_config config, cog_window* window) {
 #ifdef LEGACY_SDL
+    wm.init = cog_window_sdl_init;
+    wm.update = cog_window_sdl_update;
+    wm.quit = cog_window_sdl_quit;
+    wm.toggle_fullscreen = cog_window_sdl_toggle_fullscreen;
 #else
     wm.init = cog_window_sdl2_init;
     wm.update = cog_window_sdl2_update;
