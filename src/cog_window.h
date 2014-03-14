@@ -1,17 +1,19 @@
 #ifndef  COG_WINDOW_H
 #define  COG_WINDOW_H
 
-#include <SDL2/SDL.h>
+//#include <SDL2/SDL.h>
 #if defined(HAVE_GLES)
 #include "eglport.h"
 #endif
 
-#include <cog_types.h>
+#include "cog_types.h"
 
 typedef struct cog_window {
+/*
     SDL_Window* window;
     SDL_GLContext glcontext;
     SDL_Surface* screen_surface;
+*/
     double w;
     double h;
 } cog_window;
