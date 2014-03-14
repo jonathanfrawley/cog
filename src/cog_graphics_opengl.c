@@ -107,7 +107,7 @@ void cog_graphics_opengl_init(cog_window* win) {
         printf("Error initializing OpenGL! %s\n", gluErrorString(error));
     }
     //Initialize clear color
-    glClearColor(1.0f, 1.f, 1.f, 1.f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     //Check for error
     error = glGetError();
     if(error != GL_NO_ERROR) {
