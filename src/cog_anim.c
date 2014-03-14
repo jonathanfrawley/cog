@@ -1,5 +1,7 @@
 #include "cog_anim.h"
 
+#include "stdarg.h"
+
 #include "cog_core.h"
 #include "cog_log.h"
 #include "cog_graphics.h"

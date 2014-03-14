@@ -20,10 +20,10 @@
 #include <cog_math.h>
 #include <cog_main.h>
 #include <cog_text_freetype.h>
+#include <cog_window_sdl2.h>
 
 GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, int* height);
 cog_window* window;
-
 
 void cog_graphics_opengl_set_camera_pos(cog_pos2* pos) {
     glTranslatef(-pos->x, -pos->y, 0.0);
@@ -358,5 +358,5 @@ void cog_graphics_opengl_draw() {
 }
 
 void cog_graphics_opengl_flush() {
-    SDL_GL_SwapWindow(window->window);
+    SDL_GL_SwapWindow(cog_window_sdl2_get_window());
 }
