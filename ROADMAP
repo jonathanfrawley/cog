@@ -1,4 +1,14 @@
- - [DONE] Fix rotations
+#Emscripten support 
+ - [DONE] Get image rendering in emscripten with SDL1.2
+ - [DONE] Get image rotation and scaling working with SDL1.2
+ - [DONE] Get audio working with OpenAL or SDL1.2_mixer
+ - Get SDL1.2 working in cog again (Bringing up a window, make it another backend)
+ - Play a sound
+ - Get rendering working
+ - Get animations working
+
+#Other things
+- [DONE] Fix rotations
  - [DONE] Add ability to plug in update funcs
  - Add some simple tweens
   >> Features wanted:
