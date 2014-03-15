@@ -98,6 +98,8 @@ void main_loop(void) {
     loop_cnt++;
     if(cog_input_key_pressed()) {
         cog_debugf("Key pressed : %d", cog_input_key_code_pressed());
+        cog_snd_id snd = cog_snd_add("audio.wav"); //Remember to preload this!
+        cog_snd_play(snd);
     }
     if(cog_input_key_depressed()) {
         cog_debugf("Key depressed : %d", cog_input_key_code_pressed());

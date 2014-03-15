@@ -6,7 +6,7 @@
 
 #define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
 #ifdef USE_LEGACY_SDL
-#define SND_DISABLED 1
+#include "cog_snd_sdl2.h"
 #else
 #ifdef USE_SDL
 #include "cog_snd_sdl2.h"
@@ -30,9 +30,7 @@ static cog_snd_id cog_snd_cnt;
 //sound
 
 void cog_snd_init() {
-#if SND_DISABLED
-#else
-#ifdef USE_SDL
+#if defined(USE_SDL) || defined(USE_LEGACY_SDL)
     player.snd_init = cog_snd_sdl2_init;
     player.snd_add = cog_snd_sdl2_add;
     player.snd_add_mus = cog_snd_sdl2_add_mus;
@@ -49,7 +47,6 @@ void cog_snd_init() {
 #endif
     cog_list_init(&activesnds, sizeof(cog_snd_id));
     player.snd_init();
-#endif
 }
 
 cog_snd_id cog_snd_add(const char* fname) {

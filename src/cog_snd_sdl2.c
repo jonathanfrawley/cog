@@ -1,6 +1,12 @@
 #include "cog_snd_sdl2.h"
 
+#define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
+#ifdef USE_LEGACY_SDL
+#include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
+#else
 #include <SDL2/SDL_mixer.h>
+#endif
 
 #include "cog_core.h"
 #include "cog_log.h"
@@ -22,7 +28,9 @@ typedef struct {
 static cog_map snds;
 
 void cog_snd_sdl2_init(void) {
-    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+    //if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+    SDL_Init(SDL_INIT_AUDIO);
+    if(Mix_OpenAudio(0, 0, 0, 0) < 0) {
         cog_errorf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
     }
     cog_map_init(&snds);
@@ -31,6 +39,7 @@ void cog_snd_sdl2_init(void) {
 void cog_snd_sdl2_add(const char* fname, cog_snd_id id) {
     cog_snd_sdl2* snd = COG_STRUCT_MALLOC(cog_snd_sdl2);
     snd->snd = Mix_LoadWAV(fname);
+    //snd->snd = Mix_LoadWAV("audio.wav");
     if(snd->snd==0) {
         cog_errorf("Could not load sound : %s\n", Mix_GetError());
     }
