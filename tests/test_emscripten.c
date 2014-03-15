@@ -91,8 +91,17 @@ void render(void) {
     SDL_GL_SwapBuffers();
 }
 
+static int loop_cnt;
+
 void main_loop(void) {
-    cog_debugf("HI");
+    cog_loopstep();
+    loop_cnt++;
+    if(cog_input_key_pressed()) {
+        cog_debugf("Key pressed : %d", cog_input_key_code_pressed());
+    }
+    if(cog_input_key_depressed()) {
+        cog_debugf("Key depressed : %d", cog_input_key_code_pressed());
+    }
 }
 
 int main(int argc, char* argv[]) {
