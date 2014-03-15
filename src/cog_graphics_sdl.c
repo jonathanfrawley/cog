@@ -22,17 +22,18 @@ void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
         glScalef(sprite->dim.w, sprite->dim.h, 1.0f);
         int x_start = -1;
         int x_end = 1;
-        int y_start = -1.0;
+        int y_start = -1;
         int y_end = 1;
         double tex_x_start = sprite->tex_pos.x;
         double tex_x_end = sprite->tex_pos.x + sprite->tex_dim.w;
         double tex_y_start = sprite->tex_pos.y;
         double tex_y_end = sprite->tex_pos.y + sprite->tex_dim.h;
+        cog_debugf("x_start %lf x_end %lf tex_y_start %lf tex_y_end %lf", tex_x_start, tex_x_end, tex_y_start, tex_y_end);
         glBegin(GL_QUADS);
-        glTexCoord2i(tex_x_start, tex_y_start); glVertex3f(x_start, y_start, 0);
-        glTexCoord2i(tex_x_end, tex_y_start); glVertex3f(x_end, y_start, 0);
-        glTexCoord2i(tex_x_end, tex_y_end); glVertex3f(x_end, y_end, 0);
-        glTexCoord2i(tex_x_start, tex_y_end); glVertex3f(x_start, y_end, 0);
+        glTexCoord2f(tex_x_start, tex_y_start); glVertex3f(x_start, y_start, 0);
+        glTexCoord2f(tex_x_end, tex_y_start); glVertex3f(x_end, y_start, 0);
+        glTexCoord2f(tex_x_end, tex_y_end); glVertex3f(x_end, y_end, 0);
+        glTexCoord2f(tex_x_start, tex_y_end); glVertex3f(x_start, y_end, 0);
         glEnd();
     glPopMatrix();
 }
@@ -42,7 +43,6 @@ void cog_graphics_sdl_init(cog_window* window) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-1.0, 1.0, 1.0, -1.0, -1, 1);
-    //glOrtho( 0, 640, 480, 0, -1, 1 );
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glEnable(GL_BLEND);
@@ -63,11 +63,11 @@ uint32_t cog_graphics_sdl_load_texture(const char* filename, int* width, int* he
     if ((surface = IMG_Load(filename))) {
         // Check that the image's width is a power of 2
         if((surface->w & (surface->w - 1)) != 0 ) {
-            cog_errorf("image's width is not a power of 2\n");
+            cog_errorf("Image's width is not a power of 2\n");
         }
         // Also check if the height is a power of 2
         if((surface->h & (surface->h - 1)) != 0 ) {
-            cog_errorf("image's height is not a power of 2\n");
+            cog_errorf("Image's height is not a power of 2\n");
         }
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);

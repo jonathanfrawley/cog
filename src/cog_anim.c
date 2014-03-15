@@ -1,6 +1,6 @@
 #include "cog_anim.h"
 
-#include "stdarg.h"
+#include <stdio.h>
 
 #include "cog_core.h"
 #include "cog_log.h"
@@ -187,7 +187,6 @@ uint32_t cog_anim_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t idx_globa
         sprite->dim.w = anim->dim.w;
         sprite->dim.h = anim->dim.h;
         sprite->rot = anim->rot;
-        //TODO: Update
         cog_graphics_draw_sprite(sprite, idx_global + idx);
         idx++;
     }
