@@ -113,8 +113,16 @@ int main(int argc, char* argv[]) {
         cog_loopstep();
     }
 */
-    render();
-    emscripten_set_main_loop(main_loop, 0, 0);
+//    render();
+    cog_sprite_id id = cog_sprite_add("test0.png");
+    cog_sprite_set(id, (cog_sprite) {
+        .dim=(cog_dim2) {
+            .w=1.0, .h=1.0
+        },
+        .rot=COG_PI/2
+    });
+    //emscripten_set_main_loop(main_loop, 0, 0);
+    main_loop();
     cog_quit();
     return 0;
 }
