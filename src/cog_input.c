@@ -67,6 +67,7 @@ void cog_input_check_keys(void) {
             cog_quit();
         }
         if(event.type == SDL_KEYDOWN) {
+            cog_debugf("KEYDOWN");
             if(event.key.keysym.sym == SDLK_ESCAPE) {
                 cog_quit();
             } else {

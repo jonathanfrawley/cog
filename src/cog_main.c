@@ -78,11 +78,9 @@ void _cog_init(cog_config config) {
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
 void cog_main_loop() {
-#ifndef EMSCRIPTEN_ENABLED
     while(!game.finished) {
         cog_loopstep();
     }
-#endif
 }
 
 /* *
@@ -211,11 +209,11 @@ void cog_set_background(char* img) {
     sprite->dim.h = 1.0;
 }
 
-void cog_set_main_loop(void (*main_loop)(void)) {
-#ifdef EMSCRIPTEN_ENABLED 
-    emscripten_set_main_loop(main_loop, 0, 0);
-    main_loop_func = 0;
-#else
+void cog_start_main_loop(void (*main_loop)(void)) {
     main_loop_func = main_loop;
+#ifdef EMSCRIPTEN_ENABLED 
+    emscripten_set_main_loop(cog_loopstep, 0, 0);
+#else
+    cog_main_loop();
 #endif
 }
