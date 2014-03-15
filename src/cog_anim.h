@@ -40,7 +40,8 @@ uint32_t cog_anim_len(uint32_t tex_id, uint32_t layer);
 void cog_anim_remove(cog_anim_id id);
 void cog_anim_removeall(void);
 void cog_anim_set(cog_anim_id id, cog_anim src);
-void cog_anim_set_frames(cog_anim_id id, int frame0, ...);
+void cog_anim_set_frames_array(cog_anim_id id, int frames[]);
+#define cog_anim_set_frames(id, ...) cog_anim_set_frames_array(id, (int[]){__VA_ARGS__, COG_NULL})
 void cog_anim_set_frame(cog_anim_id id, uint32_t frame);
 
 /*-----------------------------------------------------------------------------

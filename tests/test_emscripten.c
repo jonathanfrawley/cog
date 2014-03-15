@@ -108,12 +108,6 @@ void main_loop(void) {
 
 int main(int argc, char* argv[]) {
     cog_init();
-/*
-    while(!cog_hasquit()) {
-        cog_loopstep();
-    }
-*/
-//    render();
     cog_sprite_id id = cog_sprite_add("test0.png");
 
     cog_sprite_set(id, (cog_sprite) {
@@ -122,19 +116,17 @@ int main(int argc, char* argv[]) {
         },
         .rot=COG_PI/2
     });
-    /*
-    cog_sprite_set(id, (cog_sprite) {
-        .pos=(cog_pos2) {
-            .x=0.1, .y=0.2
-        },
-        .dim=(cog_dim2) {
-            .w=0.5, .h=0.9
-        },
-        //.rot=COG_PI/4
+
+    cog_anim_id tileset = cog_anim_add("tileset.png", 2, 2);
+    cog_anim_set(tileset, (cog_anim) {
+        .dim = (cog_dim2) {.w=0.3, .h=0.3},
+        .pos = (cog_pos2) {.x=-0.3, .y=-0.3},
+        .transition_time = 1.0,
+        .looped = COG_TRUE
     });
-    */
-    //emscripten_set_main_loop(main_loop, 0, 0);
-    main_loop();
+    cog_anim_set_frames(tileset, 0, 1, 2, 3);
+    emscripten_set_main_loop(main_loop, 0, 0);
+    //main_loop();
     cog_quit();
     return 0;
 }
