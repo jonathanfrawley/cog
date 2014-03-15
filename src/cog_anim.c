@@ -137,15 +137,6 @@ void cog_anim_set_frames_array(cog_anim_id id, int frames[]) {
     for(int i=0;frames[i] != COG_NULL;i++) {
         cog_list_append(&(anim->frames), (cog_dataptr) & frames[i]);
     }
-    /*
-    va_list ap;
-    va_start(ap, frame0);
-    for(int i = frame0; i >= 0; i = va_arg(ap, int)) {
-        cog_debugf("HI");
-        cog_list_append(&(anim->frames), (cog_dataptr) & frame0);
-    }
-    va_end(ap);
-    */
 }
 
 void cog_anim_set_frame(cog_anim_id id, uint32_t frame) {
