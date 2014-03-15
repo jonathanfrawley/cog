@@ -8,8 +8,9 @@ void cog_configure(cog_config config);
 #define cog_init(...) _cog_init((cog_config){__VA_ARGS__})
 void _cog_init();
 void cog_loopstep();
-void cog_mainloop();
+void cog_main_loop();
 void cog_quit();
+void cog_set_main_loop(void (*main_loop)(void));
 void cog_sleep(uint32_t millis);
 void cog_sleepuntilupdate();
 uint32_t cog_time_delta_millis();

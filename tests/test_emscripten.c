@@ -36,7 +36,8 @@ int main(int argc, char* argv[]) {
         .looped = COG_TRUE
     });
     cog_anim_set_frames(tileset, 0, 1, 2, 3);
-    emscripten_set_main_loop(main_loop, 0, 0);
+    cog_set_main_loop(main_loop);
+    cog_main_loop();
     //main_loop();
     cog_quit();
     return 0;

@@ -1,6 +1,11 @@
 #include "cog_main.h"
 
+#define EMSCRIPTEN_ENABLED //TODO :Figure out how to pass this on emcc path
 #define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
+
+#ifdef EMSCRIPTEN_ENABLED
+#include <emscripten.h>
+#endif
 
 #include <math.h>
 #include <stdarg.h>
@@ -53,6 +58,7 @@ static uint32_t lastframetime;
 static uint32_t frametimecounter;
 static uint32_t frameupdatecounter;
 static uint32_t render_time;
+static void (*main_loop_func)(void);
 
 //implementations
 void _cog_init(cog_config config) {
@@ -71,10 +77,12 @@ void _cog_init(cog_config config) {
 }
 
 //This is the cog default loop, can be overrided by just using cog_loopstep instead.
-void cog_mainloop() {
+void cog_main_loop() {
+#ifndef EMSCRIPTEN_ENABLED
     while(!game.finished) {
         cog_loopstep();
     }
+#endif
 }
 
 /* *
@@ -113,6 +121,9 @@ void cog_update() {
     cog_sprite_update(timestep);
     cog_graphics_update(timestep);
 //    cog_tween_update(timestep); //TODO
+    if(main_loop_func) {
+        (*main_loop_func)();
+    }
     //Useful logging every second.
     frametimecounter += lastframetime;
     if(frametimecounter >= 1000) {
@@ -198,4 +209,13 @@ void cog_set_background(char* img) {
     sprite->pos.y = 0.0;
     sprite->dim.w = 1.0;
     sprite->dim.h = 1.0;
+}
+
+void cog_set_main_loop(void (*main_loop)(void)) {
+#ifdef EMSCRIPTEN_ENABLED 
+    emscripten_set_main_loop(main_loop, 0, 0);
+    main_loop_func = 0;
+#else
+    main_loop_func = main_loop;
+#endif
 }
