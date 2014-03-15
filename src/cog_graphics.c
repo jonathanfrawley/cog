@@ -7,10 +7,16 @@
 #include "cog_map.h"
 #include "cog_math.h"
 #include "cog_sprite.h"
+
+#define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
+#ifdef USE_LEGACY_SDL
+#define GRAPHICS_DISABLED 1
+#else
 #ifdef USE_SDL
 #include "cog_graphics_sdl2.h"
 #else
 #include "cog_graphics_opengl.h"
+#endif
 #endif
 
 typedef struct {
@@ -36,14 +42,23 @@ static cog_pos2 camera_pos;
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
 void cog_graphics_draw_sprite(cog_sprite* sprite, uint32_t idx) {
+#if GRAPHICS_DISABLED
+#else
     r.draw_sprite(sprite, idx);
+#endif
 }
 
 void cog_graphics_draw_text(cog_text* text) {
+#if GRAPHICS_DISABLED
+#else
     r.draw_text(text);
+#endif
 }
 
 uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height) {
+#if GRAPHICS_DISABLED
+    return 0;
+#else
     //Cache textures so we don't load the same thing twice.
     void* item = cog_map_get_hash(&sprite_cache, filename);
     if(item != 0) {
@@ -56,10 +71,13 @@ uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height
         cog_debugf("Inserting tex_id %d into list for filename %s", *tex_id, filename);
         return (*tex_id);
     }
+#endif
 }
 
 
 void cog_graphics_init(cog_window* win) {
+#if GRAPHICS_DISABLED
+#else
 #ifdef USE_SDL
     r.draw_sprite = cog_graphics_sdl2_draw_sprite;
     r.init = cog_graphics_sdl2_init;
@@ -83,14 +101,20 @@ void cog_graphics_init(cog_window* win) {
     cog_map_init(&sprite_cache);
     cog_list_init(&texture_list, sizeof(uint32_t));
     //camera_pos.x = 1.0;
+#endif
 }
 
 void cog_graphics_update(double timestep) {
+#if GRAPHICS_DISABLED
+#else
     camera_pos.x += camera_vel.x * timestep;
     camera_pos.y += camera_vel.y * timestep;
+#endif
 }
 
 void cog_graphics_render(cog_window* window) {
+#if GRAPHICS_DISABLED
+#else
     //Clear color buffer
     r.clear();
     r.set_camera_pos(&camera_pos);
@@ -109,20 +133,33 @@ void cog_graphics_render(cog_window* window) {
         cog_text_draw_layer(i);
     }
     r.flush();
+#endif
 }
 
 void cog_graphics_cam_set(cog_pos2* pos) {
+#if GRAPHICS_DISABLED
+#else
     camera_pos = (*pos);
+#endif
 }
 
 void cog_graphics_cam_get(cog_pos2* pos) {
+#if GRAPHICS_DISABLED
+#else
     (*pos) = camera_pos;
+#endif
 }
 
 void cog_graphics_cam_vel_set(cog_vec2* vel) {
+#if GRAPHICS_DISABLED
+#else
     camera_vel = (*vel);
+#endif
 }
 
 void cog_graphics_cam_vel_get(cog_vec2* vel) {
+#if GRAPHICS_DISABLED
+#else
     (*vel) = camera_vel;
+#endif
 }

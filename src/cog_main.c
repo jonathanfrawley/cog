@@ -1,10 +1,18 @@
 #include "cog_main.h"
 
+#define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
+
 #include <math.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include <assert.h>
+#ifdef USE_LEGACY_SDL
+#include <SDL/SDL.h>
+#include <SDL/SDL_events.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
+#endif
 
 #include "cog_anim.h"
 #include "cog_core.h"

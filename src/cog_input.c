@@ -1,6 +1,12 @@
 #include "cog_input.h"
 
+#define USE_LEGACY_SDL //TODO :Figure out how to pass this on emcc path
+
+#ifdef USE_LEGACY_SDL
+#include <SDL/SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 #include "cog.h"
 #include "cog_core.h"

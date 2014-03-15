@@ -1,58 +1,13 @@
-#include "cog_window_sdl.h"
+#include "cog.h"
 
-#include "SDL/SDL.h"
+#include "emscripten.h"
 #include "SDL/SDL_image.h" //TODO: Remove
 #include "SDL/SDL_opengl.h" //TODO: Remove
 
 #include "stdio.h" //TODO: Remove
 #include "string.h" //TODO: Remove
 
-
-#include "cog_log.h"
-
-void cog_window_sdl_init(cog_config config, cog_window* window) {
-    SDL_Surface *screen;
-
-    // Slightly different SDL initialization
-    if( SDL_Init(SDL_INIT_VIDEO) != 0 ) { 
-        //cog_errorf("Unable to initialize SDL: %s\n", SDL_GetError());
-        printf("Unable to initialize SDL: %s\n", SDL_GetError());
-        return;
-    }   
-
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    int width = config.window_w;
-    int height = config.window_h;
-    if(config.window_w == 0) {
-        width = 640;
-        height = 480;
-    }
-
-    screen = SDL_SetVideoMode(width, height, 16, SDL_OPENGL);
-    if ( !screen ) { 
-        //cog_errorf("Unable to set video mode: %s\n", SDL_GetError());
-        printf("Unable to set video mode: %s\n", SDL_GetError());
-        return;
-    }   
-}
-
-void cog_window_sdl_update(cog_window* window) {
-}
-
-void cog_window_sdl_quit(cog_window* window) {
-    SDL_Quit();
-}
-
-void cog_window_sdl_toggle_fullscreen(cog_window* window) {
-}
-
-#ifdef TEST
-int main(int argc, char *argv[]) {
-    cog_window window;
-    cog_window_sdl_init((cog_config){}, &window);
-    cog_window_sdl_update(&window);
-
+void render(void) {
     //Begin test rendering code
     glClearColor( 0, 0, 0, 0 );
 
@@ -108,7 +63,6 @@ int main(int argc, char *argv[]) {
     else {
         printf("SDL could not load image.bmp: %s\n", SDL_GetError());
         SDL_Quit();
-        return 1;
     }
 
     // Free the SDL_Surface only if it was successfully created
@@ -135,9 +89,21 @@ int main(int argc, char *argv[]) {
     glDisable(GL_TEXTURE_2D);
 
     SDL_GL_SwapBuffers();
-    printf("HI");
-
-    //End test rendering code
-    cog_window_sdl_quit(&window);
 }
-#endif
+
+void main_loop(void) {
+    cog_debugf("HI");
+}
+
+int main(int argc, char* argv[]) {
+    cog_init();
+/*
+    while(!cog_hasquit()) {
+        cog_loopstep();
+    }
+*/
+    render();
+    emscripten_set_main_loop(main_loop, 0, 0);
+    cog_quit();
+    return 0;
+}

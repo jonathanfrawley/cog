@@ -2,7 +2,9 @@
 
 #include "cog_log.h"
 
-#ifdef LEGACY_SDL
+#define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
+
+#ifdef USE_LEGACY_SDL
 #include "cog_window_sdl.h"
 #else
 #include "cog_window_sdl2.h"
@@ -18,7 +20,7 @@ typedef struct {
 static cog_wm wm;
 
 void cog_window_init(cog_config config, cog_window* window) {
-#ifdef LEGACY_SDL
+#ifdef USE_LEGACY_SDL
     wm.init = cog_window_sdl_init;
     wm.update = cog_window_sdl_update;
     wm.quit = cog_window_sdl_quit;
