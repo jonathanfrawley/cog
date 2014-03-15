@@ -6,20 +6,42 @@
 #include <SDL/SDL_opengl.h>
 
 #include "cog_log.h"
+#include "cog_math.h"
 #include "cog_window.h"
 
 
 void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
-    //cog_debugf("Drawing sprinte <%d>", sprite->id);
+    cog_debugf("Drawing sprite <%d>", sprite->id);
     
-
-
-    glMatrixMode( GL_MODELVIEW );
+    glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glPushMatrix();
+        glTranslatef(sprite->pos.x, sprite->pos.y, 0.0f);
+        glRotatef(-cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
+        glScalef(sprite->dim.w, sprite->dim.h, 1.0f);
+        /*
+        int x_start = 10;
+        int x_end = 300;
+        int y_start = 10;
+        int y_end = 128;
+        */
+        int x_start = -1;
+        int x_end = 1;
+        int y_start = -1.0;
+        int y_end = 1;
+        glBegin( GL_QUADS );
+        glTexCoord2i(0, 0); glVertex3f(x_start, y_start, 0);
+        glTexCoord2i(1, 0); glVertex3f(x_end, y_start, 0);
+        glTexCoord2i(1, 1); glVertex3f(x_end, y_end, 0);
+        glTexCoord2i(0, 1); glVertex3f(x_start, y_end, 0);
+    glEnd();
+    glPopMatrix();
 
     // Load the OpenGL texture
 
-    GLuint texture; // Texture object handle
+    /*
+    //GLuint texture; // Texture object handle
     SDL_Surface *surface; // Gives us the information to make the texture
 
     if ( (surface = IMG_Load("screenshot.png")) ) {
@@ -62,33 +84,15 @@ void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     if ( surface ) {
         SDL_FreeSurface( surface );
     }
+    */
 
     // Clear the screen before drawing
-    glClear( GL_COLOR_BUFFER_BIT );
+    //glClear( GL_COLOR_BUFFER_BIT );
 
     // Bind the texture to which subsequent calls refer to
-    glBindTexture( GL_TEXTURE_2D, texture );
+    //glBindTexture( GL_TEXTURE_2D, texture );
 
-    glPushMatrix();
-        //glRotatef(30, 0.0f, 0.0f, 1.0f);
-        //glScalef(1.5, 1.0, 1.0);
-        /*
-        int x_start = 10;
-        int x_end = 300;
-        int y_start = 10;
-        int y_end = 128;
-        */
-        int x_start = -1;
-        int x_end = 1;
-        int y_start = -1.0;
-        int y_end = 1;
-        glBegin( GL_QUADS );
-        glTexCoord2i(0, 0); glVertex3f(x_start, y_start, 0);
-        glTexCoord2i(1, 0); glVertex3f(x_end, y_start, 0);
-        glTexCoord2i(1, 1); glVertex3f(x_end, y_end, 0);
-        glTexCoord2i(0, 1); glVertex3f(x_start, y_end, 0);
-    glEnd();
-    glPopMatrix();
+
 
 
 
@@ -129,14 +133,14 @@ uint32_t cog_graphics_sdl_load_texture(const char* filename, int* width, int* he
         }
 
         // Have OpenGL generate a texture object handle for us
-        glGenTextures( 1, &texture );
+        glGenTextures(1, &texture);
 
         // Bind the texture object
-        glBindTexture( GL_TEXTURE_2D, texture );
+        glBindTexture(GL_TEXTURE_2D, texture);
 
         // Set the texture's stretching properties
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         //SDL_LockSurface(surface);
 

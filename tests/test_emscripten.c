@@ -115,12 +115,24 @@ int main(int argc, char* argv[]) {
 */
 //    render();
     cog_sprite_id id = cog_sprite_add("test0.png");
+
     cog_sprite_set(id, (cog_sprite) {
         .dim=(cog_dim2) {
             .w=1.0, .h=1.0
         },
         .rot=COG_PI/2
     });
+    /*
+    cog_sprite_set(id, (cog_sprite) {
+        .pos=(cog_pos2) {
+            .x=0.1, .y=0.2
+        },
+        .dim=(cog_dim2) {
+            .w=0.5, .h=0.9
+        },
+        //.rot=COG_PI/4
+    });
+    */
     //emscripten_set_main_loop(main_loop, 0, 0);
     main_loop();
     cog_quit();
