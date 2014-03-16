@@ -198,6 +198,7 @@ void cog_input_check_mouse(void) {
     if(SDL_BUTTON_LEFT == SDL_BUTTON(state)) {
         if(!mouse_left_pressed) {
             mouse_left_just_pressed = COG_TRUE;
+            cog_state_global_fsm_push_event(COG_E_MOUSELDOWN);
         } else {
             mouse_left_just_pressed = COG_FALSE;
         }

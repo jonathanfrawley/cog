@@ -11,6 +11,7 @@ typedef int32_t cog_event;
 
 #define COG_E_DUMMY -1
 #define COG_E_KEYDOWN -2
+#define COG_E_MOUSELDOWN -3
 
 typedef struct cog_state_info {
     bool initial;
