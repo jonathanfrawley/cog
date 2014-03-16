@@ -11,13 +11,11 @@
 
 
 void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
-    cog_debugf("Drawing sprite <%d>", sprite->id);
-    
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glPushMatrix();
-        glTranslatef(sprite->pos.x, sprite->pos.y, 0.0f);
+        glTranslatef(sprite->pos.x, -sprite->pos.y, 0.0f);
         glRotatef(-cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
         glScalef(sprite->dim.w, sprite->dim.h, 1.0f);
         int x_start = -1;
@@ -28,7 +26,6 @@ void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
         double tex_x_end = sprite->tex_pos.x + sprite->tex_dim.w;
         double tex_y_start = sprite->tex_pos.y;
         double tex_y_end = sprite->tex_pos.y + sprite->tex_dim.h;
-        cog_debugf("x_start %lf x_end %lf tex_y_start %lf tex_y_end %lf", tex_x_start, tex_x_end, tex_y_start, tex_y_end);
         glBegin(GL_QUADS);
         glTexCoord2f(tex_x_start, tex_y_start); glVertex3f(x_start, y_start, 0);
         glTexCoord2f(tex_x_end, tex_y_start); glVertex3f(x_end, y_start, 0);

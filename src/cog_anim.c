@@ -210,7 +210,7 @@ void cog_anim_update(double timestep) {
         this_anim->current_frame_time += timestep;
         if(this_anim->current_frame_time >= this_anim->transition_time) {
             this_anim->current_frame++;
-            this_anim->current_frame_time = this_anim->current_frame_time - this_anim->transition_time;   //Diff
+            this_anim->current_frame_time = 0.0;
             if(this_anim->current_frame >= this_anim->n_frames) {
                 if(this_anim->looped) {
                     this_anim->current_frame = 0;
