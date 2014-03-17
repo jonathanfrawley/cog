@@ -6,6 +6,8 @@
 #define COG_PI 3.14159265
 
 double cog_math_cosf(double radians);
+double cog_math_max(double x, double y);
+double cog_math_min(double x, double y);
 double cog_math_radians_to_degrees(double radians);
 double cog_math_sinf(double radians);
 double cog_math_slopef(double x1, double y1, double x2,

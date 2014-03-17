@@ -31,7 +31,7 @@
 #include "cog_sprite.h"
 #include "cog_snd.h"
 #include "cog_text.h"
-//#include "cog_tween.h" //TODO
+#include "cog_tween.h"
 #include "cog_window.h"
 
 //constants
@@ -72,6 +72,7 @@ void _cog_init(cog_config config) {
     cog_input_init(&window);
     cog_graphics_init(&window);
     cog_text_init();
+    cog_tween_init();
     starttime = SDL_GetTicks();
     //init rng
     srand(2);
@@ -113,16 +114,16 @@ void cog_update() {
     frameupdatecounter++;
     lastframetime = SDL_GetTicks() - starttime;
     starttime = SDL_GetTicks();
-    cog_input_check_keys();
-    cog_input_check_mouse();
     double timestep = (double)delta_millis / 1000.0;
     cog_anim_update(timestep);
     cog_sprite_update(timestep);
     cog_graphics_update(timestep);
-//    cog_tween_update(timestep); //TODO
+    cog_tween_update(timestep);
     if(main_loop_func) {
         (*main_loop_func)();
     }
+    cog_input_check_keys();
+    cog_input_check_mouse();
     //Useful logging every second.
     frametimecounter += lastframetime;
     if(frametimecounter >= 1000) {

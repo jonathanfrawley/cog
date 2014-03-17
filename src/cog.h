@@ -15,6 +15,7 @@
 #include "cog_state.h"
 #include "cog_test.h"
 #include "cog_text.h"
+#include "cog_tween.h"
 #include "cog_types.h"
 #include "cog_window.h"
 

@@ -6,6 +6,22 @@ double cog_math_cosf(double radians) {
     return cosf(radians);
 }
 
+double cog_math_max(double x, double y) {
+    if(x > y) {
+        return x;
+    } else {
+        return y;
+    }
+}
+
+double cog_math_min(double x, double y) {
+    if(x < y) {
+        return x;
+    } else {
+        return y;
+    }
+}
+
 double cog_math_radians_to_degrees(double radians) {
     return (radians * (180.0f / COG_PI));
 }
