@@ -1,8 +1,7 @@
 #include "cog_window.h"
 
+#include "cog_defs.h"
 #include "cog_log.h"
-
-#define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
 
 #ifdef USE_LEGACY_SDL
 #include "cog_window_sdl.h"

@@ -1,8 +1,6 @@
 #include "cog_main.h"
 
-#define EMSCRIPTEN_ENABLED //TODO :Figure out how to pass this on emcc path
-#define DEBUG //TODO :Figure out how to pass this on emcc path
-#define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
+#include "cog_defs.h"
 
 #ifdef EMSCRIPTEN_ENABLED
 #include <emscripten.h>

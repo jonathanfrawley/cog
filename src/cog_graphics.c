@@ -3,12 +3,12 @@
 #include "cog.h"
 #include "cog_anim.h"
 #include "cog_core.h"
+#include "cog_defs.h"
 #include "cog_list.h"
 #include "cog_map.h"
 #include "cog_math.h"
 #include "cog_sprite.h"
 
-#define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
 #ifdef USE_LEGACY_SDL
 #include "cog_graphics_sdl.h"
 #else
@@ -78,7 +78,7 @@ uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height
 void cog_graphics_init(cog_window* win) {
 #if GRAPHICS_DISABLED
 #else
-#ifdef defined(USE_SDL)
+#ifdef USE_SDL
     r.draw_sprite = cog_graphics_sdl2_draw_sprite;
     r.init = cog_graphics_sdl2_init;
     r.draw_text = cog_graphics_sdl2_draw_text;
@@ -86,7 +86,7 @@ void cog_graphics_init(cog_window* win) {
     r.set_camera_pos = 0; //TODO: Implement
     r.clear = cog_graphics_sdl2_clear;
     r.flush = cog_graphics_sdl2_flush;
-#elif USE_LEGACY_SDL
+#elif defined(USE_LEGACY_SDL)
     r.draw = cog_graphics_sdl_draw;
     r.draw_sprite = cog_graphics_sdl_draw_sprite;
     r.init = cog_graphics_sdl_init;

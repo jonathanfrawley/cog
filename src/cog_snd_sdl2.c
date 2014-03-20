@@ -1,6 +1,6 @@
 #include "cog_snd_sdl2.h"
 
-#define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
+#include "cog_defs.h"
 #ifdef USE_LEGACY_SDL
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>

@@ -1,10 +1,10 @@
 #include "cog_snd.h"
 
 #include "cog_core.h"
+#include "cog_defs.h"
 #include "cog_list.h"
 #include "cog_map.h"
 
-#define USE_LEGACY_SDL 1 //TODO :Figure out how to pass this on emcc path
 #ifdef USE_LEGACY_SDL
 #include "cog_snd_sdl2.h"
 #else
