@@ -50,13 +50,27 @@ void cog_state_fsm_update(cog_state_fsm* fsm) {
             }
         }
     } else {
+        bool was_transition = false;
         COG_LIST_FOREACH(&fsm->transitions) {
             cog_state_transition* transition =
                 (cog_state_transition*) curr->data;
             if(transition->state == fsm->currentstate) {
                 if(transition->event == (*event)) {
                     fsm->currentstate = transition->transition_fn((cog_state_info){.initial=true});
+                    was_transition = true;
                     break;
+                }
+            }
+        }
+        //Do a default transition if there was no event-based transition.
+        if(!was_transition) {
+            COG_LIST_FOREACH(&fsm->transitions) {
+                cog_state_transition* transition =
+                    (cog_state_transition*) curr->data;
+                if(transition->event == COG_E_DUMMY) {
+                    if(transition->state == fsm->currentstate) {
+                        transition->transition_fn((cog_state_info){.initial=false});
+                    }
                 }
             }
         }
