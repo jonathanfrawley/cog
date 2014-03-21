@@ -48,8 +48,8 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     uint32_t offset = idx * vertex_amount;
     //1.5 here is due to cos and sin rotation below.
-    double w = sprite->dim.w * 1.5;
-    double h = sprite->dim.h * 1.5;
+    double w = sprite->dim.w * 1.415;
+    double h = sprite->dim.h * 1.415;
     double x_offset = sprite->pos.x;
     double y_offset = sprite->pos.y;
     //Do rotation and transformation ourselves.
