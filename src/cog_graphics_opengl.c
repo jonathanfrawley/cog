@@ -2,12 +2,9 @@
 
 #include <SDL2/SDL.h>
 
-// GLEW
 #if !defined(HAVE_GLES)
-//#include <GL/gl.h>
-#include <GL/glew.h>
+#include <SDL2/SDL_opengl.h>
 #else
-#include <GL/gl.h>
 #include <GLES/gl.h>
 #include "eglport.h"
 #endif
@@ -36,6 +33,234 @@ static uint32_t vertex_amount = 12;
 static uint32_t tex_amount = 8;
 static uint32_t index_amount = 6;
 static uint32_t sprite_amount;
+
+//############### Shaders
+static bool shaders_supported = true;
+static int32_t current_shader = 1;
+
+enum {
+    SHADER_COLOR,
+    SHADER_TEXTURE,
+    SHADER_TEXCOORDS,
+    NUM_SHADERS
+};
+
+typedef struct {
+    GLhandleARB program;
+    GLhandleARB vert_shader;
+    GLhandleARB frag_shader;
+    const char *vert_source;
+    const char *frag_source;
+} cog_shader_data;
+
+static cog_shader_data shaders[NUM_SHADERS] = {
+    /* SHADER_COLOR */
+    { 0, 0, 0,
+        /* vertex shader */
+"varying vec4 v_color;\n"
+"\n"
+"void main()\n"
+"{\n"
+"    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
+"    v_color = gl_Color;\n"
+"}",
+        /* fragment shader */
+"varying vec4 v_color;\n"
+"\n"
+"void main()\n"
+"{\n"
+"    gl_FragColor = v_color;\n"
+"}"
+    },
+
+    /* SHADER_TEXTURE */
+    { 0, 0, 0,
+        /* vertex shader */
+"varying vec4 v_color;\n"
+"varying vec2 v_texCoord;\n"
+"\n"
+"void main()\n"
+"{\n"
+"    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
+"    v_color = gl_Color;\n"
+"    v_texCoord = vec2(gl_MultiTexCoord0);\n"
+"}",
+        /* fragment shader */
+"varying vec4 v_color;\n"
+"varying vec2 v_texCoord;\n"
+"uniform sampler2D tex0;\n"
+"\n"
+"void main()\n"
+"{\n"
+"    gl_FragColor = texture2D(tex0, v_texCoord) * v_color;\n"
+"}"
+    },
+
+    /* SHADER_TEXCOORDS */
+    { 0, 0, 0,
+        /* vertex shader */
+"varying vec2 v_texCoord;\n"
+"\n"
+"void main()\n"
+"{\n"
+"    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
+"    v_texCoord = vec2(gl_MultiTexCoord0);\n"
+"}",
+        /* fragment shader */
+"varying vec2 v_texCoord;\n"
+"\n"
+"void main()\n"
+"{\n"
+"    vec4 color;\n"
+"    vec2 delta;\n"
+"    float dist;\n"
+"\n"
+"    delta = vec2(0.5, 0.5) - v_texCoord;\n"
+"    dist = dot(delta, delta);\n"
+"\n"
+"    color.r = v_texCoord.x;\n"
+"    color.g = v_texCoord.x * v_texCoord.y;\n"
+"    color.b = v_texCoord.y;\n"
+"    color.a = 1.0 - (dist * 4.0);\n"
+"    gl_FragColor = color;\n"
+"}"
+    },
+};
+
+static PFNGLATTACHOBJECTARBPROC glAttachObjectARB;
+static PFNGLCOMPILESHADERARBPROC glCompileShaderARB;
+static PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgramObjectARB;
+static PFNGLCREATESHADEROBJECTARBPROC glCreateShaderObjectARB;
+static PFNGLDELETEOBJECTARBPROC glDeleteObjectARB;
+static PFNGLGETINFOLOGARBPROC glGetInfoLogARB;
+static PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB;
+static PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocationARB;
+static PFNGLLINKPROGRAMARBPROC glLinkProgramARB;
+static PFNGLSHADERSOURCEARBPROC glShaderSourceARB;
+static PFNGLUNIFORM1IARBPROC glUniform1iARB;
+static PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObjectARB;
+
+static bool cog_graphics_opengl_compile_shader(GLhandleARB shader, const char *source) {
+    GLint status;
+    glShaderSourceARB(shader, 1, &source, NULL);
+    glCompileShaderARB(shader);
+    glGetObjectParameterivARB(shader, GL_OBJECT_COMPILE_STATUS_ARB, &status);
+    if (status == 0) {
+        GLint length;
+        char *info;
+        glGetObjectParameterivARB(shader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &length);
+        info = SDL_stack_alloc(char, length+1);
+        glGetInfoLogARB(shader, length, NULL, info);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to compile shader:\n%s\n%s", source, info);
+        SDL_stack_free(info);
+        return false;
+    } else {
+        return true;
+    }
+}
+
+static bool cog_graphics_opengl_compile_shaderProgram(cog_shader_data *data) {
+    const int num_tmus_bound = 4;
+    int i;
+    GLint location;
+    glGetError();
+    /* Create one program object to rule them all */
+    data->program = glCreateProgramObjectARB();
+    /* Create the vertex shader */
+    data->vert_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    if (!cog_graphics_opengl_compile_shader(data->vert_shader, data->vert_source)) {
+        return false;
+    }
+    /* Create the fragment shader */
+    data->frag_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+    if (!cog_graphics_opengl_compile_shader(data->frag_shader, data->frag_source)) {
+        return false;
+    }
+    /* ... and in the darkness bind them */
+    glAttachObjectARB(data->program, data->vert_shader);
+    glAttachObjectARB(data->program, data->frag_shader);
+    glLinkProgramARB(data->program);
+    /* Set up some uniform variables */
+    glUseProgramObjectARB(data->program);
+    for (i = 0; i < num_tmus_bound; ++i) {
+        char tex_name[5];
+        SDL_snprintf(tex_name, SDL_arraysize(tex_name), "tex%d", i);
+        location = glGetUniformLocationARB(data->program, tex_name);
+        if (location >= 0) {
+            glUniform1iARB(location, i);
+        }
+    }
+    glUseProgramObjectARB(0);
+    return (glGetError() == GL_NO_ERROR);
+}
+
+static void cog_graphics_destroy_shader_program(cog_shader_data *data) {
+    if (shaders_supported) {
+        glDeleteObjectARB(data->vert_shader);
+        glDeleteObjectARB(data->frag_shader);
+        glDeleteObjectARB(data->program);
+    }
+}
+
+static bool cog_graphics_opengl_init_shaders() {
+    int i;
+    /* Check for shader support */
+    shaders_supported = false;
+    if (SDL_GL_ExtensionSupported("GL_ARB_shader_objects") &&
+        SDL_GL_ExtensionSupported("GL_ARB_shading_language_100") &&
+        SDL_GL_ExtensionSupported("GL_ARB_vertex_shader") &&
+        SDL_GL_ExtensionSupported("GL_ARB_fragment_shader")) {
+        glAttachObjectARB = (PFNGLATTACHOBJECTARBPROC) SDL_GL_GetProcAddress("glAttachObjectARB");
+        glCompileShaderARB = (PFNGLCOMPILESHADERARBPROC) SDL_GL_GetProcAddress("glCompileShaderARB");
+        glCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC) SDL_GL_GetProcAddress("glCreateProgramObjectARB");
+        glCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC) SDL_GL_GetProcAddress("glCreateShaderObjectARB");
+        glDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glDeleteObjectARB");
+        glGetInfoLogARB = (PFNGLGETINFOLOGARBPROC) SDL_GL_GetProcAddress("glGetInfoLogARB");
+        glGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC) SDL_GL_GetProcAddress("glGetObjectParameterivARB");
+        glGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC) SDL_GL_GetProcAddress("glGetUniformLocationARB");
+        glLinkProgramARB = (PFNGLLINKPROGRAMARBPROC) SDL_GL_GetProcAddress("glLinkProgramARB");
+        glShaderSourceARB = (PFNGLSHADERSOURCEARBPROC) SDL_GL_GetProcAddress("glShaderSourceARB");
+        glUniform1iARB = (PFNGLUNIFORM1IARBPROC) SDL_GL_GetProcAddress("glUniform1iARB");
+        glUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC) SDL_GL_GetProcAddress("glUseProgramObjectARB");
+        if (glAttachObjectARB &&
+            glCompileShaderARB &&
+            glCreateProgramObjectARB &&
+            glCreateShaderObjectARB &&
+            glDeleteObjectARB &&
+            glGetInfoLogARB &&
+            glGetObjectParameterivARB &&
+            glGetUniformLocationARB &&
+            glLinkProgramARB &&
+            glShaderSourceARB &&
+            glUniform1iARB &&
+            glUseProgramObjectARB) {
+            shaders_supported = true;
+        }
+    }
+    if (!shaders_supported) {
+        cog_debugf("shaders not supported...");
+        return false;
+    }
+    cog_debugf("shaders supported :)");
+    /* Compile all the shaders */
+    for (i = 0; i < NUM_SHADERS; ++i) {
+        if (!cog_graphics_opengl_compile_shaderProgram(&shaders[i])) {
+            cog_errorf("Unable to compile shader!\n");
+            return false;
+        }
+    }
+    /* We're done! */
+    return true;
+}
+
+static void cog_graphics_opengl_quit_shaders() {
+    int i;
+    for (i = 0; i < NUM_SHADERS; ++i) {
+        cog_graphics_destroy_shader_program(&shaders[i]);
+    }
+}
+
+//############### OpenGL
 
 void cog_graphics_opengl_prepare(uint32_t amount) {
     vertices = (GLfloat*)cog_malloc(sizeof(GLfloat) * vertex_amount * amount);
@@ -88,6 +313,9 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
 }
 
 void cog_graphics_opengl_init(cog_window* win) {
+    if(shaders_supported) {
+        cog_graphics_opengl_init_shaders();
+    }
     window = win;
     GLenum error = GL_NO_ERROR;
     //Initialize Projection Matrix
@@ -345,6 +573,9 @@ void cog_graphics_opengl_clear() {
 }
 
 void cog_graphics_opengl_draw() {
+    if (shaders_supported) {
+        glUseProgramObjectARB(shaders[current_shader].program);
+    }
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -355,6 +586,9 @@ void cog_graphics_opengl_draw() {
     cog_free(vertices);
     cog_free(tex);
     cog_free(indices);
+    if (shaders_supported) {
+        glUseProgramObjectARB(0);
+    }
 }
 
 void cog_graphics_opengl_flush() {

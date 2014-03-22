@@ -34,7 +34,7 @@ void entity_update(entity* obj) {
 }
 
 int main(int argc, char* argv[]) {
-    cog_init(.fullscreen = true);
+    cog_init(.fullscreen = false);
     entity myentity[N_ENTITIES];
 
     cog_anim_id anim = cog_anim_add("media/2d_anim_test.png", 2, 4);
