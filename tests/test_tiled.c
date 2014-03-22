@@ -4,13 +4,13 @@
 #include <cog.h>
 
 //TILESET_w is tileset.image.width / tileset.tilewidth, same for h
-void cog_tiled_load_background(double x, double y, double w, double h, 
-        const char* tileset_path, int32_t tileset_w, int32_t tileset_h, 
-        int32_t tile_layer_w, int32_t tile_layer_h, int32_t* ids, int32_t n_ids, cog_list* out_anims) {
+void cog_tiled_load_background(double x, double y, double w, double h,
+                               const char* tileset_path, int32_t tileset_w, int32_t tileset_h,
+                               int32_t tile_layer_w, int32_t tile_layer_h, int32_t* ids, int32_t n_ids, cog_list* out_anims) {
     //Load in so the x, y is in the top-left and
     double elem_w = w / (double)tile_layer_w;
     double elem_h = h / (double)tile_layer_h;
-    for(int i=0;i < n_ids;i++) {
+    for(int i=0; i < n_ids; i++) {
         int32_t id = ids[i] - 1;
         if(id == -1) {
             continue;
@@ -100,7 +100,6 @@ int32_t* read_in_tiled_map(const char* tiled_json_filename, int32_t* data_size) 
         json_t* width_json = json_object_get(json, "width");
         double width = json_number_value(width_json);
         cog_infof("Parsed in width %lf", width);
-
         //Parsing in layers
         json_t* layers_json = json_object_get(json, "layers");
         json_t* layer0_json = json_array_get(layers_json, 0);
@@ -120,10 +119,8 @@ int32_t* read_in_tiled_map(const char* tiled_json_filename, int32_t* data_size) 
     return 0;
 }
 
-int main(int argc, char **argv) {
-
+int main(int argc, char** argv) {
     cog_init();
-
     int32_t size;
     int32_t* ids = read_in_tiled_map("level.json", &size);
     //for(int i = 0; i < size ; i++) {
@@ -131,13 +128,10 @@ int main(int argc, char **argv) {
     //}
     cog_list out_anims;
     cog_list_init(&out_anims, sizeof(cog_anim_id));
-    cog_tiled_load_background(-1.0, 1.0, 10.0, 10.0, 
-        "media/tileset.png", 2, 2, 100, 100, ids, size, &out_anims);
-
-
+    cog_tiled_load_background(-1.0, 1.0, 10.0, 10.0,
+                              "media/tileset.png", 2, 2, 100, 100, ids, size, &out_anims);
     while(!cog_hasquit()) {
         cog_loopstep();
-
         cog_vec2 cam_vel;
         cog_graphics_cam_vel_get(&cam_vel);
         if(cog_input_key_pressed()) {

@@ -32,10 +32,10 @@ void cog_window_sdl2_init(cog_config config, cog_window* window) {
         height = 0;
     }
     if((sdl_window = SDL_CreateWindow("cog game",
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          width, height,
-                                          flags)) == 0) {
+                                      SDL_WINDOWPOS_UNDEFINED,
+                                      SDL_WINDOWPOS_UNDEFINED,
+                                      width, height,
+                                      flags)) == 0) {
         cog_errorf("cog_window_init failed when creating SDL window <%s> \n",
                    SDL_GetError());
     }

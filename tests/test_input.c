@@ -17,8 +17,8 @@ void entity_init(entity* obj) {
         .pos = (cog_pos2) {.x=0, .y=0},
         .vel = (cog_vec2) {.x=0.0001, .y=0.0003},
         .transition_time = 0.15,
-        .looped = COG_TRUE,
-        .ang_vel = COG_PI
+         .looped = COG_TRUE,
+          .ang_vel = COG_PI
     });
     cog_anim_set_frames(obj->anim, 0, 1, 2);
 }

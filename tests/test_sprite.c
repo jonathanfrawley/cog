@@ -12,7 +12,6 @@ int main(int argc, char* argv[]) {
         },
         .rot=COG_PI/2
     });
-
     while(!cog_hasquit()) {
         cog_loopstep();
     }

@@ -49,7 +49,6 @@ cog_anim_id cog_anim_add(const char* img, uint32_t rows, uint32_t cols) {
     }
     (*tex_anim_len)++;
     cog_map_put_hash(&tex_anim_lens, key, tex_anim_len);
-
     cog_list_append(&active_anims, (cog_dataptr) & (anim->id));
     return anim->id;
 }
@@ -134,7 +133,7 @@ void cog_anim_set(cog_anim_id id, cog_anim src) {
 
 void cog_anim_set_frames_array(cog_anim_id id, int frames[]) {
     cog_anim* anim = cog_anim_get(id);
-    for(int i=0;frames[i] != COG_NULL;i++) {
+    for(int i=0; frames[i] != COG_NULL; i++) {
         cog_list_append(&(anim->frames), (cog_dataptr) & frames[i]);
     }
 }

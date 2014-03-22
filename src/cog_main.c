@@ -211,7 +211,7 @@ void cog_set_background(char* img) {
 
 void cog_start_main_loop(void (*main_loop)(void)) {
     main_loop_func = main_loop;
-#ifdef EMSCRIPTEN_ENABLED 
+#ifdef EMSCRIPTEN_ENABLED
     emscripten_set_main_loop(cog_loopstep, 0, 0);
 #else
     cog_main_loop();

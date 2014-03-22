@@ -45,7 +45,9 @@ void cog_state_fsm_update(cog_state_fsm* fsm) {
                 (cog_state_transition*) curr->data;
             if(transition->event == COG_E_DUMMY) {
                 if(transition->state == fsm->currentstate) {
-                    transition->transition_fn((cog_state_info){.initial=false});
+                    transition->transition_fn((cog_state_info) {
+                        .initial=false
+                    });
                 }
             }
         }
@@ -56,7 +58,9 @@ void cog_state_fsm_update(cog_state_fsm* fsm) {
                 (cog_state_transition*) curr->data;
             if(transition->state == fsm->currentstate) {
                 if(transition->event == (*event)) {
-                    fsm->currentstate = transition->transition_fn((cog_state_info){.initial=true});
+                    fsm->currentstate = transition->transition_fn((cog_state_info) {
+                        .initial=true
+                    });
                     was_transition = true;
                     break;
                 }
@@ -69,7 +73,9 @@ void cog_state_fsm_update(cog_state_fsm* fsm) {
                     (cog_state_transition*) curr->data;
                 if(transition->event == COG_E_DUMMY) {
                     if(transition->state == fsm->currentstate) {
-                        transition->transition_fn((cog_state_info){.initial=false});
+                        transition->transition_fn((cog_state_info) {
+                            .initial=false
+                        });
                     }
                 }
             }

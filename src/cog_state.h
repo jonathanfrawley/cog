@@ -30,7 +30,7 @@ typedef struct cog_state_transition {
      * Transition function called when the event occurs while in this state.
      * It returns the new state's type.
      * */
-    cog_state (*transition_fn)(cog_state_info);
+    cog_state(*transition_fn)(cog_state_info);
 } cog_state_transition;
 
 typedef struct cog_state_fsm {

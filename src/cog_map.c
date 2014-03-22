@@ -114,11 +114,9 @@ void cog_map_put_recurse(cog_map_elem* elem, uint32_t key, void* data) {
 uint32_t cog_map_hash(const char* key) {
     uint32_t hash = 5381;
     int c;
-
-    while (c = *key++) {
+    while(c = *key++) {
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
     }
-
     return hash;
 }
 

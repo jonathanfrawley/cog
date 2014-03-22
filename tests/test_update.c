@@ -31,21 +31,19 @@ int main(int argc, char* argv[]) {
             .w=1, .h=1
         },
         .rot=0.0,
-        .update_func = update_sprite
+         .update_func = update_sprite
     });
-
     cog_anim_id anim = cog_anim_add("media/kitten_anim.png", 1, 3);
     cog_anim_set(anim, (cog_anim) {
         .dim = (cog_dim2) {.w=0.3, .h=0.3},
         .pos = (cog_pos2) {.x=0, .y=0},
         .vel = (cog_vec2) {.x=0.3, .y=0.9},
         .transition_time = 0.15,
-        .looped = COG_TRUE,
-        .ang_vel = COG_PI/1,
-        .update_func = update_anim
+         .looped = COG_TRUE,
+          .ang_vel = COG_PI/1,
+           .update_func = update_anim
     });
     cog_anim_set_frames(anim, 0, 1, 2);
-
     while(!cog_hasquit()) {
         cog_loopstep();
     }
