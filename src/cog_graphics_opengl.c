@@ -35,15 +35,16 @@ static uint32_t index_amount = 6;
 static uint32_t sprite_amount;
 
 //############### Shaders
-static bool shaders_supported = true;
-static int32_t current_shader = 1;
-
 enum {
     SHADER_COLOR,
     SHADER_TEXTURE,
     SHADER_TEXCOORDS,
+    SHADER_TEST,
     NUM_SHADERS
 };
+
+static bool shaders_supported = true;
+static int32_t current_shader = SHADER_TEXTURE;
 
 typedef struct {
     GLhandleARB program;
@@ -128,6 +129,32 @@ static cog_shader_data shaders[NUM_SHADERS] = {
         "    gl_FragColor = color;\n"
         "}"
     },
+
+    {
+        0, 0, 0,
+        "varying vec2 uv;\n"
+        "\n"
+        "void main() {\n"
+        "  gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
+        "  uv = vec2(gl_MultiTexCoord0);\n"
+        "}",
+        "varying vec2 uv;\n"
+        "void main() {\n"
+        "    float border = 0.11;\n"
+        "    float radius = 0.55;\n"
+        "    vec4 color0 = vec4(0.0, 0.0, 0.0, 1.0);\n"
+        "    vec4 color1 = vec4(1.0, 1.0, 1.0, 1.0);\n"
+        "    vec2 m = uv - vec2(0.5, 0.5);\n"
+        "    float dist = radius - sqrt(m.x * m.x + m.y * m.y);\n"
+        "    float t = 0.0;\n"
+        "    if (dist > border) {\n"
+        "      t = 1.0;\n"
+        "    } else if (dist > 0.0) {\n"
+        "      t = dist / border;\n"
+        "    }\n"
+        "    gl_FragColor = mix(color0, color1, t);\n"
+        "}"
+    }
 };
 
 static PFNGLATTACHOBJECTARBPROC glAttachObjectARB;
@@ -154,7 +181,7 @@ static bool cog_graphics_opengl_compile_shader(GLhandleARB shader, const char* s
         glGetObjectParameterivARB(shader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &length);
         info = SDL_stack_alloc(char, length+1);
         glGetInfoLogARB(shader, length, NULL, info);
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to compile shader:\n%s\n%s", source, info);
+        cog_errorf("Failed to compile shader:\n%s\n%s", source, info);
         SDL_stack_free(info);
         return false;
     } else {
@@ -272,6 +299,25 @@ void cog_graphics_opengl_prepare(uint32_t amount) {
     sprite_amount = amount;
 }
 
+//TODO: Refactor these into one common func
+double cog_graphics_opengl_round_w(double n) {
+    double w = window->w/2;
+    double ret = n+1.0;
+    ret = ret*w;
+    ret = (ret > (floor(ret)+0.5)) ? ceil(ret) : floor(ret);
+    ret = ret/w;
+    return ret-1.0;
+}
+
+double cog_graphics_opengl_round_h(double n) {
+    double h = window->h/2;
+    double ret = n+1.0;
+    ret = ret*h;
+    ret = (ret > (floor(ret)+0.5)) ? ceil(ret) : floor(ret);
+    ret = ret/h;
+    return ret-1.0;
+}
+
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     uint32_t offset = idx * vertex_amount;
@@ -280,6 +326,10 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     double h = sprite->dim.h * 1.415;
     double x_offset = sprite->pos.x;
     double y_offset = sprite->pos.y;
+    if(sprite->pixel_perfect) {
+        x_offset = cog_graphics_opengl_round_w(sprite->pos.x);
+        y_offset = cog_graphics_opengl_round_h(sprite->pos.y);
+    } 
     //Do rotation and transformation ourselves.
     //Rotate by PI/4 because..
     //TODO: Looks like the quads are getting stretched on rotation. Fix this somehow
@@ -365,7 +415,8 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     const char* p;
     FT_GlyphSlot g = text_ft->face->glyph;
-    double x = text->pos.x;
+    double x = text->pos.x ;
+    //double x = ((text->pos.x + 1.0) + * 512);
     double y = text->pos.y;
     double sx = text->scale.w;
     double sy = text->scale.h;
@@ -572,12 +623,12 @@ uint32_t cog_graphics_opengl_load_texture(const char* filename, int* width, int*
 void cog_graphics_opengl_clear() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-}
-
-void cog_graphics_opengl_draw() {
     if(shaders_supported) {
         glUseProgramObjectARB(shaders[current_shader].program);
     }
+}
+
+void cog_graphics_opengl_draw() {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, tex);
@@ -588,11 +639,11 @@ void cog_graphics_opengl_draw() {
     cog_free(vertices);
     cog_free(tex);
     cog_free(indices);
-    if(shaders_supported) {
-        glUseProgramObjectARB(0);
-    }
 }
 
 void cog_graphics_opengl_flush() {
+    if(shaders_supported) {
+        glUseProgramObjectARB(0);
+    }
     SDL_GL_SwapWindow(cog_window_sdl2_get_window());
 }

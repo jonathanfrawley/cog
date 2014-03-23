@@ -42,6 +42,7 @@ cog_sprite_id cog_sprite_add_inactive(const char* img) {
     sprite->dim.h = (double)h;
     sprite->tex_dim.w = 1.0f;
     sprite->tex_dim.h = 1.0f;
+    sprite->pixel_perfect = true;
     cog_map_put(&sprites, sprite->id, (void*) sprite);
     return sprite->id;
 }
@@ -102,6 +103,7 @@ void cog_sprite_set(cog_sprite_id id, cog_sprite src) {
     sprite->vel = src.vel;
     sprite->ang_vel = src.ang_vel;
     sprite->update_func = src.update_func;
+    sprite->pixel_perfect = src.pixel_perfect;
 }
 
 /*-----------------------------------------------------------------------------

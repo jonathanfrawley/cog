@@ -23,6 +23,7 @@ typedef struct {
     cog_vec2 vel;
     double ang_vel;
     void (*update_func)(double timestep, struct cog_sprite* anim);
+    bool pixel_perfect;
 } cog_sprite;
 
 cog_sprite_id cog_sprite_add(const char* img);
