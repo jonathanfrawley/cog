@@ -20,6 +20,7 @@
 
 #include "cog_anim.h"
 #include "cog_core.h"
+#include "cog_group.h"
 #include "cog_graphics.h"
 #include "cog_input.h"
 #include "cog_list.h"
@@ -194,6 +195,7 @@ void cog_clear() {
     cog_sprite_init();
     cog_anim_removeall();
     cog_anim_init();
+    cog_group_init();
     cog_text_removeall();
     cog_text_init();
     cog_snd_stopall();

@@ -4,6 +4,7 @@
 #include "cog_anim.h"
 #include "cog_core.h"
 #include "cog_graphics.h"
+#include "cog_group.h"
 #include "cog_input.h"
 #include "cog_list.h"
 #include "cog_log.h"
