@@ -10,6 +10,12 @@ void cog_tiled_load_background(double x, double y, double w, double h,
     //Load in so the x, y is in the top-left and
     double elem_w = w / (double)tile_layer_w;
     double elem_h = h / (double)tile_layer_h;
+    cog_debugf("w %lf ",w);
+    cog_debugf("h %lf ",h);
+    cog_debugf("tile_layer_w %lf ",tile_layer_w);
+    cog_debugf("tile_layer_h %lf ",tile_layer_h);
+    cog_debugf("elem_h %lf ", elem_h);
+    cog_debugf("elem_w %lf ", elem_w);
     for(int i=0; i < n_ids; i++) {
         int32_t id = ids[i] - 1;
         if(id == -1) {
@@ -21,13 +27,9 @@ void cog_tiled_load_background(double x, double y, double w, double h,
             .pos = (cog_pos2) {.x=x + (i%tile_layer_w)*elem_w*2 + elem_w, .y=y - ((i/tile_layer_h)*elem_h*2 + elem_h)},
             .paused = COG_TRUE
         });
-        /*
         cog_debugf("id %d ", ids[i]-1);
-        cog_debugf("elem_h %lf ", elem_h);
-        cog_debugf("elem_w %lf ", elem_w);
-        cog_debugf("x %lf ",x+((i % tile_layer_w) * elem_w));
-        cog_debugf("y %lf ",y-((i / tile_layer_h) * elem_h));
-        */
+        cog_debugf("x %lf ",x + (i%tile_layer_w)*elem_w*2 + elem_w);
+        cog_debugf("y %lf ",y - (i/tile_layer_h)*elem_h*2 + elem_h);
         cog_anim_set_frames(anim, id);
         cog_anim_set_frame(anim, id);
     }

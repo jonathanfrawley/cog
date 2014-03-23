@@ -29,6 +29,7 @@ typedef struct {
     cog_vec2 vel;
     double ang_vel;
     bool finished;
+    bool pixel_perfect;
     void (*update_func)(double timestep, struct cog_anim* anim);
 } cog_anim;
 

@@ -128,6 +128,7 @@ void cog_anim_set(cog_anim_id id, cog_anim src) {
     anim->vel = src.vel;
     anim->ang_vel = src.ang_vel;
     anim->finished = src.finished;
+    anim->pixel_perfect = src.pixel_perfect;
     anim->update_func = src.update_func;
 }
 
@@ -186,6 +187,7 @@ uint32_t cog_anim_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t idx_globa
         sprite->dim.w = anim->dim.w;
         sprite->dim.h = anim->dim.h;
         sprite->rot = anim->rot;
+        sprite->pixel_perfect = anim->pixel_perfect;
         cog_graphics_draw_sprite(sprite, idx_global + idx);
         idx++;
     }
