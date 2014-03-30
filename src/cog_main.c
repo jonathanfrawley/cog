@@ -200,6 +200,8 @@ void cog_clear() {
     cog_text_init();
     cog_snd_stopall();
     cog_snd_init();
+    cog_tween_removeall();
+    cog_tween_init();
 }
 
 void cog_set_background(char* img) {

@@ -35,13 +35,13 @@ static uint32_t index_amount = 6;
 static uint32_t sprite_amount;
 
 //############### Shaders
-enum {
+typedef enum {
     SHADER_COLOR,
     SHADER_TEXTURE,
     SHADER_TEXCOORDS,
     SHADER_TEST,
     NUM_SHADERS
-};
+} cog_shader_type;
 
 static bool shaders_supported = true;
 static int32_t current_shader = SHADER_TEXTURE;
@@ -402,6 +402,11 @@ void cog_graphics_opengl_init(cog_window* win) {
 }
 
 void cog_graphics_opengl_draw_text(cog_text* text) {
+    cog_shader_type old_program = current_shader;
+    if(shaders_supported) {
+        //Disable shader for text
+        glUseProgramObjectARB(0);
+    }
     cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
@@ -454,8 +459,7 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
         glEnable(GL_TEXTURE_2D);
         glLoadIdentity();
         cog_color c = text->col;
-        glColor4f(c.r, c.g, c.b, c.a);
-        //glColor4f(c.r, c.g, c.b, 0.0);
+        glColor4d(c.r, c.g, c.b, c.a);
         GLfloat vertices[] = {
             x2, -y2, 0, //top left
             x2 + w, -y2, 0, //top right
@@ -477,6 +481,9 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
     //Restore alpha to normal
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glPopMatrix();
+    if(shaders_supported) {
+        glUseProgramObjectARB(shaders[old_program].program);
+    }
 }
 
 uint32_t cog_graphics_opengl_gen_tex_id() {

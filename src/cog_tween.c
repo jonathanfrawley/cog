@@ -39,7 +39,7 @@ cog_tween_id cog_tween_pos_add(cog_pos2 pos, cog_pos2 dest_pos, double time) {
     tween->time = time;
     tween->finished = false;
     cog_list_append(&active_tweens, (cog_dataptr) & (tween->id));
-    cog_map_put(&tweens, tween->id, (void*) tween);
+    cog_map_put(&tweens, tween->id, (cog_dataptr) tween);
     return tween->id;
 }
 
