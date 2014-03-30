@@ -28,8 +28,6 @@ void cog_window_sdl2_init(cog_config config, cog_window* window) {
 #endif
     if(config.fullscreen) {
         flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
-        width = 0;
-        height = 0;
     }
     if((sdl_window = SDL_CreateWindow("cog game",
                                       SDL_WINDOWPOS_UNDEFINED,
