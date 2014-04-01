@@ -329,7 +329,7 @@ void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     if(sprite->pixel_perfect) {
         x_offset = cog_graphics_opengl_round_w(sprite->pos.x);
         y_offset = cog_graphics_opengl_round_h(sprite->pos.y);
-    } 
+    }
     //Do rotation and transformation ourselves.
     //Rotate by PI/4 because..
     //TODO: Looks like the quads are getting stretched on rotation. Fix this somehow
