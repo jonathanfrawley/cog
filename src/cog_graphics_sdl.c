@@ -25,7 +25,7 @@ void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     double tex_x_start = sprite->tex_pos.x;
     double tex_x_end = sprite->tex_pos.x + sprite->tex_dim.w;
     double tex_y_start = sprite->tex_pos.y;
-    double tex_y_end = sprite->tex_pos.y + sprite->tex_dim.h;
+    double tex_y_end =  sprite->tex_pos.y + sprite->tex_dim.h;
     glBegin(GL_QUADS);
     glTexCoord2f(tex_x_start, tex_y_start);
     glVertex3f(x_start, y_start, 0);
@@ -64,11 +64,11 @@ uint32_t cog_graphics_sdl_load_texture(const char* filename, int* width, int* he
     if((surface = IMG_Load(filename))) {
         // Check that the image's width is a power of 2
         if((surface->w & (surface->w - 1)) != 0) {
-            cog_errorf("Image's width is not a power of 2\n");
+            cog_errorf("Image's width is not a power of 2 : %s, width %d", filename, surface->w);
         }
         // Also check if the height is a power of 2
         if((surface->h & (surface->h - 1)) != 0) {
-            cog_errorf("Image's height is not a power of 2\n");
+            cog_errorf("Image's height is not a power of 2: %s, height %d", filename, surface->h);
         }
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);

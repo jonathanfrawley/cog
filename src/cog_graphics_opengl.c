@@ -1,12 +1,15 @@
 #include "cog_graphics_opengl.h"
 
-#include <SDL2/SDL.h>
+#include <cog_defs.h>
 
-#if !defined(HAVE_GLES)
-#include <SDL2/SDL_opengl.h>
+#ifdef USE_LEGACY_SDL
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+#include <cog_window_sdl.h>
 #else
-#include <GLES/gl.h>
-#include "eglport.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include <cog_window_sdl2.h>
 #endif
 
 #include <ft2build.h>
@@ -17,7 +20,6 @@
 #include <cog_math.h>
 #include <cog_main.h>
 #include <cog_text_freetype.h>
-#include <cog_window_sdl2.h>
 
 GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, int* height);
 cog_window* window;
@@ -43,7 +45,6 @@ typedef enum {
     NUM_SHADERS
 } cog_shader_type;
 
-static bool shaders_supported = true;
 static int32_t current_shader = SHADER_TEXTURE;
 
 typedef struct {
@@ -156,6 +157,14 @@ static cog_shader_data shaders[NUM_SHADERS] = {
         "}"
     }
 };
+#ifdef USE_LEGACY_SDL
+static bool shaders_supported = false;
+static bool cog_graphics_opengl_init_shaders() {
+    return true;
+}
+#else
+static bool shaders_supported = true;
+
 
 static PFNGLATTACHOBJECTARBPROC glAttachObjectARB;
 static PFNGLCOMPILESHADERARBPROC glCompileShaderARB;
@@ -289,6 +298,7 @@ static void cog_graphics_opengl_quit_shaders() {
         cog_graphics_destroy_shader_program(&shaders[i]);
     }
 }
+#endif
 
 //############### OpenGL
 
@@ -374,26 +384,11 @@ void cog_graphics_opengl_init(cog_window* win) {
     //Initialize Projection Matrix
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    //Check for error
-    error = glGetError();
-    if(error != GL_NO_ERROR) {
-        printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-    }
     //Initialize Modelview Matrix
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    //Check for error
-    error = glGetError();
-    if(error != GL_NO_ERROR) {
-        printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-    }
     //Initialize clear color
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    //Check for error
-    error = glGetError();
-    if(error != GL_NO_ERROR) {
-        printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-    }
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glEnable(GL_BLEND);
@@ -404,8 +399,10 @@ void cog_graphics_opengl_init(cog_window* win) {
 void cog_graphics_opengl_draw_text(cog_text* text) {
     cog_shader_type old_program = current_shader;
     if(shaders_supported) {
+#ifndef USE_LEGACY_SDL
         //Disable shader for text
         glUseProgramObjectARB(0);
+#endif
     }
     cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
     glPushMatrix();
@@ -482,7 +479,9 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glPopMatrix();
     if(shaders_supported) {
+#ifndef USE_LEGACY_SDL
         glUseProgramObjectARB(shaders[old_program].program);
+#endif
     }
 }
 
@@ -631,7 +630,9 @@ void cog_graphics_opengl_clear() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
     if(shaders_supported) {
+#ifndef USE_LEGACY_SDL
         glUseProgramObjectARB(shaders[current_shader].program);
+#endif
     }
 }
 
@@ -650,7 +651,13 @@ void cog_graphics_opengl_draw() {
 
 void cog_graphics_opengl_flush() {
     if(shaders_supported) {
+#ifndef USE_LEGACY_SDL
         glUseProgramObjectARB(0);
+#endif
     }
+#ifdef USE_LEGACY_SDL
+    SDL_GL_SwapBuffers();
+#else
     SDL_GL_SwapWindow(cog_window_sdl2_get_window());
+#endif
 }
