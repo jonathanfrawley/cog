@@ -10,7 +10,7 @@
 #include "cog_sprite.h"
 
 #ifdef USE_LEGACY_SDL
-#include "cog_graphics_opengl.h"
+#include "cog_graphics_sdl.h"
 #else
 #ifdef USE_SDL
 #include "cog_graphics_sdl2.h"
@@ -86,7 +86,6 @@ void cog_graphics_init(cog_window* win) {
     r.set_camera_pos = 0; //TODO: Implement
     r.clear = cog_graphics_sdl2_clear;
     r.flush = cog_graphics_sdl2_flush;
-    /*
 #elif defined(USE_LEGACY_SDL)
     r.draw = cog_graphics_sdl_draw;
     r.draw_sprite = cog_graphics_sdl_draw_sprite;
@@ -97,7 +96,6 @@ void cog_graphics_init(cog_window* win) {
     r.set_camera_pos = cog_graphics_sdl_set_camera_pos;
     r.clear = cog_graphics_sdl_clear;
     r.flush = cog_graphics_sdl_flush;
-    */
 #else
     r.draw = cog_graphics_opengl_draw;
     r.draw_sprite = cog_graphics_opengl_draw_sprite;
