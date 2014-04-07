@@ -1,6 +1,8 @@
 #ifndef COG_GRAPHICS_SDL_H
 #define COG_GRAPHICS_SDL_H
 
+#include <SDL/SDL.h>
+
 #include "cog_sprite.h"
 #include "cog_text.h"
 #include "cog_types.h"
@@ -17,5 +19,7 @@ uint32_t cog_graphics_sdl_load_texture(const char* filename, int* width, int* he
 void cog_graphics_sdl_prepare(uint32_t amount);
 void cog_graphics_sdl_set_camera_pos(cog_pos2* pos);
 
+//Internal
+uint32_t cog_graphics_sdl_upload_surface(SDL_Surface* image);
 
 #endif // COG_GRAPHICS_SDL_H

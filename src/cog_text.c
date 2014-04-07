@@ -7,14 +7,13 @@
 #include "cog_map.h"
 #include "cog_math.h"
 
-#ifdef USE_LEGACY_SDL
-#define TEXT_DISABLED
-#else
-#ifdef USE_SDL
+#if COG_TEXT==COG_TEXT_SDL
+#include "cog_text_freetype.h"
+//#include "cog_text_sdl.h"
+#elif COG_TEXT==COG_TEXT_SDL2
 #include "cog_text_sdl2.h"
 #else
 #include "cog_text_freetype.h"
-#endif
 #endif
 
 #define COG_TEXT_LAYER 3
@@ -73,7 +72,7 @@ void cog_text_set(cog_text_id id, cog_text src) {
     text->dim = src.dim;
     text->scale = src.scale;
     text->col = src.col;
-    strcpy(text->str, src.str);
+    cog_text_set_str(id, src.str);
 #endif
 }
 
@@ -82,6 +81,10 @@ void cog_text_set_str(cog_text_id id, char* str) {
 #else
     cog_text* text = cog_text_get(id);
     strcpy(text->str, str);
+#ifdef USE_LEGACY_SDL
+    //Flag update to sdl so it can reupload to GPU
+//    cog_text_sdl_update(id, text->str);
+#endif
 #endif
 }
 
@@ -116,8 +119,18 @@ void cog_text_removeall(void) {
 void cog_text_init(void) {
 #ifdef TEXT_DISABLED
 #else
-#ifdef USE_SDL
-    //TODO:Implement
+#if COG_TEXT==COG_TEXT_SDL
+    renderer.text_init = cog_text_freetype_init;
+    renderer.text_add = cog_text_freetype_add;
+    renderer.text_remove = cog_text_freetype_remove;
+    renderer.text_set_face = cog_text_freetype_set_face;
+    /*
+    renderer.text_init = cog_text_sdl_init;
+    renderer.text_add = cog_text_sdl_add;
+    renderer.text_remove = cog_text_sdl_remove;
+    renderer.text_set_face = cog_text_sdl_set_face;
+    */
+#elif COG_TEXT==COG_TEXT_SDL2
     renderer.text_init = cog_text_sdl2_init;
     renderer.text_add = cog_text_sdl2_add;
     renderer.text_remove = cog_text_sdl2_remove;

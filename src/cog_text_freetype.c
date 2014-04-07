@@ -11,7 +11,7 @@ static FT_Face default_face;
 
 static cog_map text_freetypes;
 
-static const cog_string default_path = "media/font/04B_03__.ttf";
+static const cog_string default_path = "assets/fonts/04B_03__.ttf";
 static uint32_t default_pt_size = 48;
 
 void cog_text_freetype_add(cog_text_id id) {
@@ -25,7 +25,7 @@ void cog_text_freetype_add(cog_text_id id) {
 FT_Face cog_text_freetype_load_face(cog_string path, double pt_size) {
     FT_Face face;
     if(FT_New_Face(font_library, path, 0, &face)) {
-        cog_errorf("Could not open font");
+        cog_errorf("Could not open font %s", path);
     }
     FT_Set_Pixel_Sizes(face, 0, pt_size);
     if(FT_Load_Char(face, 'X', FT_LOAD_RENDER)) {
