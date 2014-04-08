@@ -11,15 +11,28 @@
 #include "cog_text_sdl.h" //TODO:Remove
 #include "cog_window.h"
 
+static bool is_init;
 
 void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
-    glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
+    if(!is_init) {
+        glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
+        glBegin(GL_QUADS);
+        is_init = true;
+    }
+    /*
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glPushMatrix();
+    */
     glTranslatef(sprite->pos.x, -sprite->pos.y, 0.0f);
     glRotatef(-cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
     glScalef(sprite->dim.w, sprite->dim.h, 1.0f);
+    /*
+    int x_start = -1;
+    int x_end = 1;
+    int y_start = -1;
+    int y_end = 1;
+    */
     int x_start = -1;
     int x_end = 1;
     int y_start = -1;
@@ -28,7 +41,7 @@ void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     double tex_x_end = sprite->tex_pos.x + sprite->tex_dim.w;
     double tex_y_start = sprite->tex_pos.y;
     double tex_y_end =  sprite->tex_pos.y + sprite->tex_dim.h;
-    glBegin(GL_QUADS);
+    //glBegin(GL_QUADS);
     glTexCoord2f(tex_x_start, tex_y_start);
     glVertex3f(x_start, y_start, 0);
     glTexCoord2f(tex_x_end, tex_y_start);
@@ -37,8 +50,8 @@ void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     glVertex3f(x_end, y_end, 0);
     glTexCoord2f(tex_x_start, tex_y_end);
     glVertex3f(x_start, y_end, 0);
-    glEnd();
-    glPopMatrix();
+    //glEnd();
+    //glPopMatrix();
 }
 
 void cog_graphics_sdl_init(cog_window* window) {
@@ -53,7 +66,13 @@ void cog_graphics_sdl_init(cog_window* window) {
     glEnable(GL_TEXTURE_2D);
 }
 
+static bool drawn;//XXX: Tmp code
 void cog_graphics_sdl_draw_text(cog_text* text) {
+    //if(!text->dirty) {
+    if(drawn) {
+        return; //XXX: Quick fix as drawing text is expensive
+    }
+    drawn = true; //XXX: Tmp code
     /*
     glPushMatrix();
     //Bind texture
@@ -106,6 +125,25 @@ void cog_graphics_sdl_draw_text(cog_text* text) {
     double sy = text->scale.h;
     double scalar_y = 0.15; //TODO : Figure out a more generic way to find scale
     double row_height = text_ft->face->descender * sy * scalar_y;
+
+    glPushMatrix();
+    glEnable(GL_TEXTURE_2D);
+    glLoadIdentity();
+    cog_color c = text->col;
+    glColor4d(c.r, c.g, c.b, c.a);
+
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_ALPHA,
+        g->bitmap.width,
+        g->bitmap.rows,
+        0,
+        GL_ALPHA,
+        GL_UNSIGNED_BYTE,
+        g->bitmap.buffer
+    );
+    glBegin(GL_QUADS);
     for(p = text->str; *p; p++) {
         int new_line = x > (text->pos.x + text->dim.w) || (*p) == '\n';
         if(new_line) {
@@ -118,6 +156,7 @@ void cog_graphics_sdl_draw_text(cog_text* text) {
         if(FT_Load_Char(text_ft->face, *p, FT_LOAD_RENDER)) {
             continue;
         }
+        /*
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
@@ -129,47 +168,37 @@ void cog_graphics_sdl_draw_text(cog_text* text) {
             GL_UNSIGNED_BYTE,
             g->bitmap.buffer
         );
+        */
         double x2 = x + g->bitmap_left * sx;
         //double y2 = y + g->bitmap_top * sy;
         //double y2 = y - (g->bitmap_top * sy) + (g->bitmap_top * sy)/4.0;
         double y2 = y;
         double w = g->bitmap.width * sx;
         double h = g->bitmap.rows * sy;
+        /*
         glPushMatrix();
         glEnable(GL_TEXTURE_2D);
         glLoadIdentity();
         cog_color c = text->col;
         glColor4d(c.r, c.g, c.b, c.a);
-        /*
-        GLfloat vertices[] = {
-            x2, -y2, 0, //top left
-            x2 + w, -y2, 0, //top right
-            x2 + w, -y2 - h, 0, //bottom right
-            x2, -y2 - h, 0 //bottom left
-        };
-        GLfloat tex[] = {0, 0, 1, 0, 1, 1, 0, 1};
-        GLubyte indices[] = { 3, 0, 1,      // first triangle (bottom left - top left - top right)
-                              3, 1, 2       // second triangle (bottom left - top right - bottom right)
-                            };
-        glTexCoordPointer(2, GL_FLOAT, 0, tex);
-        glVertexPointer(3, GL_FLOAT, 0, vertices);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
         */
-        glBegin(GL_QUADS);
+        //glBegin(GL_QUADS);
+        float z = 0.1;
         glTexCoord2f(0, 1);
-        glVertex3f(x2, -y2, 0);
+        glVertex3f(x2, -y2, z);
         glTexCoord2f(1, 1);
-        glVertex3f(x2 + w, -y2, 0);
+        glVertex3f(x2 + w, -y2, z);
         glTexCoord2f(1, 0);
-        glVertex3f(x2 + w, -y2 - h, 0);
+        glVertex3f(x2 + w, -y2 - h, z);
         glTexCoord2f(0, 0);
-        glVertex3f(x2, -y2 - h, 0);
-        glEnd();
+        glVertex3f(x2, -y2 - h, z);
+        //glEnd();
         x += (g->advance.x >> 6) * sx;
         y += (g->advance.y >> 6) * sy;
     }
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnd();
+    //glDisableClientState(GL_VERTEX_ARRAY);
+    //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     //Restore alpha to normal
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glPopMatrix();
@@ -206,9 +235,15 @@ void cog_graphics_sdl_clear() {
 }
 
 void cog_graphics_sdl_draw() {
+    glEnd();
+    glPopMatrix();
 }
 
 void cog_graphics_sdl_prepare(uint32_t amount) {
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glPushMatrix();
+    is_init = false;
 }
 
 void cog_graphics_sdl_set_camera_pos(cog_pos2* pos) {
