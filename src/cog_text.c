@@ -72,15 +72,17 @@ void cog_text_set(cog_text_id id, cog_text src) {
     text->dim = src.dim;
     text->scale = src.scale;
     text->col = src.col;
-    cog_text_set_str(id, src.str);
 #endif
 }
 
-void cog_text_set_str(cog_text_id id, char* str) {
+void cog_text_set_str(cog_text_id id, char* str, ...) {
 #ifdef TEXT_DISABLED
 #else
     cog_text* text = cog_text_get(id);
-    strcpy(text->str, str);
+    va_list ap;
+    va_start(ap, str);
+    vsprintf(text->str, str, ap);
+    //strcpy(text->str, str);
 #ifdef USE_LEGACY_SDL
     //Flag update to sdl so it can reupload to GPU
 //    cog_text_sdl_update(id, text->str);
