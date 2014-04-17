@@ -14,25 +14,22 @@
 static bool is_init;
 
 void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
+    /*
     if(!is_init) {
         glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
         glBegin(GL_QUADS);
         is_init = true;
     }
-    /*
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glPushMatrix();
-    */
+    //glMatrixMode(GL_MODELVIEW);
+    //glLoadIdentity();
+    //glPushMatrix();
     glTranslatef(sprite->pos.x, -sprite->pos.y, 0.0f);
     glRotatef(-cog_math_radians_to_degrees(sprite->rot), 0.0f, 0.0f, 1.0f);
     glScalef(sprite->dim.w, sprite->dim.h, 1.0f);
-    /*
-    int x_start = -1;
-    int x_end = 1;
-    int y_start = -1;
-    int y_end = 1;
-    */
+    //int x_start = -1;
+    //int x_end = 1;
+    //int y_start = -1;
+    //int y_end = 1;
     int x_start = -1;
     int x_end = 1;
     int y_start = -1;
@@ -52,6 +49,33 @@ void cog_graphics_sdl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     glVertex3f(x_start, y_end, 0);
     //glEnd();
     //glPopMatrix();
+    */
+    GLfloat vVertices[] = {  0.0f,  0.5f, 0.0f, 
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f };
+
+    // No clientside arrays, so do this in a webgl-friendly manner
+    GLuint vertexPosObject;
+    glGenBuffers(1, &vertexPosObject);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
+    glBufferData(GL_ARRAY_BUFFER, 9*4, vVertices, GL_STATIC_DRAW);
+
+    // Set the viewport
+    //glViewport ( 0, 0, esContext->width, esContext->height );
+
+    // Clear the color buffer
+    glClear ( GL_COLOR_BUFFER_BIT );
+
+    // Use the program object
+    //glUseProgram ( userData->programObject );
+
+    // Load the vertex data
+    glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
+    glVertexAttribPointer(0 /* ? */, 3, GL_FLOAT, 0, 0, 0); 
+    glEnableVertexAttribArray(0);
+
+    glDrawArrays ( GL_TRIANGLES, 0, 3 );
+
 }
 
 void cog_graphics_sdl_init(cog_window* window) {
@@ -66,13 +90,7 @@ void cog_graphics_sdl_init(cog_window* window) {
     glEnable(GL_TEXTURE_2D);
 }
 
-static bool drawn;//XXX: Tmp code
 void cog_graphics_sdl_draw_text(cog_text* text) {
-    //if(!text->dirty) {
-    if(drawn) {
-        return; //XXX: Quick fix as drawing text is expensive
-    }
-    drawn = true; //XXX: Tmp code
     /*
     glPushMatrix();
     //Bind texture
