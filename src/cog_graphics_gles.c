@@ -58,12 +58,13 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     // Clear the color buffer
     glClear(GL_COLOR_BUFFER_BIT);
     // Use the program object
-    //glUseProgram ( userData->program_object );
+    glUseProgram ( program_object );
     // Load the vertex data
     glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
     glVertexAttribPointer(0 /* ? */, 3, GL_FLOAT, 0, 0, 0);
     glEnableVertexAttribArray(0);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    cog_debugf("Drawing sprite gles");
 }
 
 void cog_graphics_gles_init(cog_window* window) {
