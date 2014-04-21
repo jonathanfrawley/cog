@@ -1,7 +1,6 @@
 #include "cog_text_freetype.h"
 
 #include "cog_graphics.h"
-#include "cog_graphics_opengl.h"
 #include "cog_log.h"
 #include "cog_map.h"
 #include "cog_text.h"
@@ -17,7 +16,7 @@ static uint32_t default_pt_size = 48;
 void cog_text_freetype_add(cog_text_id id) {
     cog_text_freetype* text_freetype = COG_STRUCT_MALLOC(cog_text_freetype);
     text_freetype->id = id;
-    text_freetype->tex_id = cog_graphics_opengl_gen_tex_id();
+    text_freetype->tex_id = cog_graphics_gen_tex_id();
     text_freetype->face = default_face;
     cog_map_put(&text_freetypes, id, (cog_dataptr) text_freetype);
 }

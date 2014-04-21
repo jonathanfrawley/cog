@@ -25,6 +25,7 @@ typedef struct {
     void (*draw)(void);
     void (*draw_sprite)(cog_sprite* sprite, uint32_t idx);
     void (*draw_text)(cog_text* text);
+    uint32_t (*gen_tex_id)(void);
     uint32_t (*load_texture)(const char* filename, int* width, int* height);
     void (*prepare)(uint32_t amount);
     void (*set_camera_pos)(cog_pos2* pos);
@@ -101,6 +102,7 @@ void cog_graphics_init(cog_window* win) {
     r.draw_sprite = cog_graphics_gles_draw_sprite;
     r.init = cog_graphics_gles_init;
     r.draw_text = cog_graphics_gles_draw_text;
+    r.gen_tex_id = cog_graphics_gles_gen_tex_id;
     r.load_texture = cog_graphics_gles_load_texture;
     r.prepare = cog_graphics_gles_prepare;
     r.set_camera_pos = cog_graphics_gles_set_camera_pos;
@@ -111,6 +113,7 @@ void cog_graphics_init(cog_window* win) {
     r.draw_sprite = cog_graphics_opengl_draw_sprite;
     r.init = cog_graphics_opengl_init;
     r.draw_text = cog_graphics_opengl_draw_text;
+    r.gen_tex_id = cog_graphics_opengl_gen_tex_id;
     r.load_texture = cog_graphics_opengl_load_texture;
     r.prepare = cog_graphics_opengl_prepare;
     r.set_camera_pos = cog_graphics_opengl_set_camera_pos;
@@ -182,4 +185,8 @@ void cog_graphics_cam_vel_get(cog_vec2* vel) {
 #else
     (*vel) = camera_vel;
 #endif
+}
+
+uint32_t cog_graphics_gen_tex_id() {
+    return r.gen_tex_id();
 }

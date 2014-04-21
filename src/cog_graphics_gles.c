@@ -73,11 +73,6 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
         x_offset = cog_graphics_gles_round_w(sprite->pos.x);
         y_offset = cog_graphics_gles_round_h(sprite->pos.y);
     }
-
-    //Quad
-    sampler_loc = glGetUniformLocation(program_object, "s_texture");
-    position_loc = glGetAttribLocation(program_object, "a_position");
-    tex_coord_loc = glGetAttribLocation(program_object, "a_texCoord");
 /*
     GLfloat v_vertices[] = { -0.5,  0.5, 0.0,  // Position 0
         0.0,  0.0,       // TexCoord 0
@@ -115,9 +110,12 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     vertices[offset + 18] = sprite->tex_pos.x;
     vertices[offset + 19] = sprite->tex_pos.y + sprite->tex_dim.h;
 
-    //offset = idx * tex_amount; //TODO
-
     GLushort indices[] = {3, 0, 1, 3, 1, 2};
+
+    //Quad
+    sampler_loc = glGetUniformLocation(program_object, "s_texture");
+    position_loc = glGetAttribLocation(program_object, "a_position");
+    tex_coord_loc = glGetAttribLocation(program_object, "a_texCoord");
 
     //1) Generate buffers
     // No clientside arrays, so do this in a webgl-friendly manner
@@ -209,6 +207,129 @@ void cog_graphics_gles_init(cog_window* win) {
 }
 
 void cog_graphics_gles_draw_text(cog_text* text) {
+    glUseProgram(program_object);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
+    const char* p;
+    FT_GlyphSlot g = text_ft->face->glyph;
+    double x = text->pos.x;
+    //double x = ((text->pos.x + 1.0) + * 512);
+    double y = text->pos.y;
+    double sx = text->scale.w;
+    double sy = text->scale.h;
+    double scalar_y = 0.15; //TODO : Figure out a more generic way to find scale
+    double row_height = text_ft->face->descender * sy * scalar_y;
+    for(p = text->str; *p; p++) {
+        int new_line = x > (text->pos.x + text->dim.w) || (*p) == '\n';
+        if(new_line) {
+            x = text->pos.x;
+            y += row_height;
+            if((*p) == '\n') {
+                continue;
+            }
+        }
+        if(FT_Load_Char(text_ft->face, *p, FT_LOAD_RENDER)) {
+            continue;
+        }
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_ALPHA,
+            g->bitmap.width,
+            g->bitmap.rows,
+            0,
+            GL_ALPHA,
+            GL_UNSIGNED_BYTE,
+            g->bitmap.buffer
+        );
+        double x2 = x + g->bitmap_left * sx;
+        //double y2 = y + g->bitmap_top * sy;
+        double y2 = -y - g->bitmap_top * sy;
+        double w = g->bitmap.width * sx;
+        double h = g->bitmap.rows * sy;
+        cog_color c = text->col;
+
+        uint32_t offset = 0;
+        GLfloat vertices[12 + 8];
+        //topleft
+        vertices[offset + 0] = x2;
+        vertices[offset + 1] = -y2;
+        vertices[offset + 2] = 0;
+        vertices[offset + 3] = 0;
+        vertices[offset + 4] = 0;
+        //topright
+        vertices[offset + 5] = x2 + w;
+        vertices[offset + 6] = -y2;
+        vertices[offset + 7] = 0;
+        vertices[offset + 8] = 1;
+        vertices[offset + 9] = 0;
+        //bottom right
+        vertices[offset + 10] = x2 + w;
+        vertices[offset + 11] = -y2 - h;
+        vertices[offset + 12] = 0;
+        vertices[offset + 13] = 1;
+        vertices[offset + 14] = 1;
+        //bottom left
+        vertices[offset + 15] = x2;
+        vertices[offset + 16] = -y2 - h;
+        vertices[offset + 17] = 0;
+        vertices[offset + 18] = 0;
+        vertices[offset + 19] = 1;
+
+        GLushort indices[] = {3, 0, 1, 3, 1, 2};
+
+        //TODO: Put in its own function
+        sampler_loc = glGetUniformLocation(program_object, "s_texture");
+        position_loc = glGetAttribLocation(program_object, "a_position");
+        tex_coord_loc = glGetAttribLocation(program_object, "a_texCoord");
+
+        //1) Generate buffers
+        // No clientside arrays, so do this in a webgl-friendly manner
+        // vertex pos
+        glGenBuffers(1, &vertex_pos_object);
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        // vertex indices
+        glGenBuffers(1, &index_object);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        //2) Drawing phase
+        // Use the program object
+        glUseProgram(program_object);
+        // Load the vertex position
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
+        glVertexAttribPointer(position_loc, 3, GL_FLOAT,
+                GL_FALSE, 5 * 4, 0 );
+        // Load the texture coordinate
+        glVertexAttribPointer(tex_coord_loc, 2, GL_FLOAT,
+                GL_FALSE, 5 * 4, 
+                3 * 4 );
+
+        glEnableVertexAttribArray(position_loc);
+        glEnableVertexAttribArray(tex_coord_loc);
+        // Set the viewport
+        //glViewport ( 0, 0, esContext->width, esContext->height );
+        // Clear the color buffer
+
+        //3) tex
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(sampler_loc, 0);
+        //4) Draw the things!
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+        //END TODO
+
+        x += (g->advance.x >> 6) * sx;
+        y += (g->advance.y >> 6) * sy;
+    }
+    //Restore alpha to normal
 }
 
 void cog_graphics_gles_flush() {
