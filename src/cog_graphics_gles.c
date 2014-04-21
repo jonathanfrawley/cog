@@ -1,6 +1,7 @@
 #include "cog_graphics_gles.h"
 
 #include <stdlib.h>
+#include <time.h> //TODO:Remove
 
 #include "gles_util/esUtil.h"
 
@@ -11,6 +12,7 @@
 #include "cog_window.h"
 
 GLuint program_object;
+GLuint index_object;
 
 //-------------Private functions
 static GLuint _load_shader(GLenum type, const char* shader_src) {
@@ -44,27 +46,71 @@ static GLuint _load_shader(GLenum type, const char* shader_src) {
 
 //-------------Public functions
 void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
-    GLfloat v_vertices[] = {  0.0f,  0.5f, 0.0f,
-                             -0.5f, -0.5f, 0.0f,
-                             0.5f, -0.5f, 0.0f
-                          };
+    /*
+    clock_t begin, end;
+    double time_spent;
+
+    begin = clock();
+    for(int i=0;i<50;i++) {
+        GLfloat v_vertices[] = {0.0f,  0.5f, 0.0f,
+                                -0.5f, -0.5f, 0.0f,
+                                0.5f, -0.5f, 0.0f};
+        // No clientside arrays, so do this in a webgl-friendly manner
+        GLuint vertex_pos_object;
+        glGenBuffers(1, &vertex_pos_object);
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
+        glBufferData(GL_ARRAY_BUFFER, 9*4, v_vertices, GL_STATIC_DRAW);
+        // Set the viewport
+        //glViewport ( 0, 0, esContext->width, esContext->height );
+        // Clear the color buffer
+        glClear(GL_COLOR_BUFFER_BIT);
+        // Use the program object
+        glUseProgram(program_object);
+        // Load the vertex data
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
+        glVertexAttribPointer(0, 3, GL_FLOAT, 0, 0, 0);
+        glEnableVertexAttribArray(0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
+    end = clock();
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    cog_debugf("time_spent %lf", time_spent);
+    //cog_debugf(" fps %lf", 1.0/time_spent);
+    */
+
+    //Quad
+    GLfloat v_vertices[] = { -0.5,  0.5, 0.0,  // Position 0
+                           -0.5, -0.5, 0.0,  // Position 1
+                            0.5, -0.5, 0.0,  // Position 2
+                            0.5,  0.5, 0.0,  // Position 3
+    };
+    GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
+
+
     // No clientside arrays, so do this in a webgl-friendly manner
+    // vertex pos
     GLuint vertex_pos_object;
     glGenBuffers(1, &vertex_pos_object);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
-    glBufferData(GL_ARRAY_BUFFER, 9*4, v_vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(v_vertices), v_vertices, GL_STATIC_DRAW);
+    // vertex indices
+    glGenBuffers(1, &index_object);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     // Set the viewport
     //glViewport ( 0, 0, esContext->width, esContext->height );
     // Clear the color buffer
     glClear(GL_COLOR_BUFFER_BIT);
     // Use the program object
-    glUseProgram ( program_object );
+    glUseProgram(program_object);
     // Load the vertex data
     glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
-    glVertexAttribPointer(0 /* ? */, 3, GL_FLOAT, 0, 0, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
+    glVertexAttribPointer(0, 3, GL_FLOAT, 0, 0, 0);
     glEnableVertexAttribArray(0);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    cog_debugf("Drawing sprite gles");
+    //glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 }
 
 void cog_graphics_gles_init(cog_window* window) {
