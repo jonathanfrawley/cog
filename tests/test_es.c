@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
     cog_sprite_id id = cog_sprite_add("assets/images/title.png");
     cog_sprite_set(id, (cog_sprite) {
         .dim=(cog_dim2) {
-            .w=0.5, .h=0.5
+            .w=0.7, .h=0.5
         },
         .ang_vel=0.1
     });
@@ -18,8 +18,7 @@ int main(int argc, char* argv[]) {
     cog_anim_set(anim, (cog_anim) {
         .dim = (cog_dim2) {.w=0.3, .h=0.3},
         .pos = (cog_pos2) {.x=0.3, .y=0.3},
-        .ang_vel = COG_PI/20.0,
-         .transition_time = 1.0,
+         .transition_time = 0.1,
           .looped = COG_TRUE
     });
     cog_text_id text = cog_text_add();

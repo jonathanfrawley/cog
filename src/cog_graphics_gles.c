@@ -209,13 +209,17 @@ void cog_graphics_gles_init(cog_window* win) {
 void cog_graphics_gles_draw_text(cog_text* text) {
     glUseProgram(program_object);
 
+    cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, text_ft->tex_id);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
     const char* p;
     FT_GlyphSlot g = text_ft->face->glyph;
     double x = text->pos.x;
@@ -237,6 +241,7 @@ void cog_graphics_gles_draw_text(cog_text* text) {
         if(FT_Load_Char(text_ft->face, *p, FT_LOAD_RENDER)) {
             continue;
         }
+
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
@@ -319,7 +324,6 @@ void cog_graphics_gles_draw_text(cog_text* text) {
         // Clear the color buffer
 
         //3) tex
-        glActiveTexture(GL_TEXTURE0);
         glUniform1i(sampler_loc, 0);
         //4) Draw the things!
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
