@@ -4,13 +4,23 @@ void main_loop(void) {
 }
 
 int main(int argc, char* argv[]) {
-    cog_init();
+    cog_init(.window_w = 800,
+             .window_h = 600,
+             .fullscreen = false);
     cog_sprite_id id = cog_sprite_add("assets/images/title.png");
     cog_sprite_set(id, (cog_sprite) {
         .dim=(cog_dim2) {
             .w=0.5, .h=0.5
         },
-        .rot=COG_PI/2
+        .ang_vel=0.1
+    });
+    cog_anim_id anim = cog_anim_add("assets/images/tileset.png", 2, 4);
+    cog_anim_set(anim, (cog_anim) {
+        .dim = (cog_dim2) {.w=0.3, .h=0.3},
+        .pos = (cog_pos2) {.x=0.3, .y=0.3},
+        .ang_vel = COG_PI/20.0,
+         .transition_time = 1.0,
+          .looped = COG_TRUE
     });
     cog_start_main_loop(main_loop);
     cog_quit();

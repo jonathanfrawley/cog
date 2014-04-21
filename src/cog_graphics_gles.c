@@ -90,33 +90,30 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     };
     */
     GLfloat vertices[12 + 8];
+    //topleft
     vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
     vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
     vertices[offset + 2] = 0;
     vertices[offset + 3] = sprite->tex_pos.x;
-    vertices[offset + 4] = sprite->tex_pos.y + sprite->tex_dim.h;
-
+    vertices[offset + 4] = sprite->tex_pos.y;
+    //topright
     vertices[offset + 5] = 1.0f * w * cos(rot) + x_offset;
     vertices[offset + 6] = 1.0f * h * sin(rot) + y_offset;
     vertices[offset + 7] = 0;
     vertices[offset + 8] = sprite->tex_pos.x + sprite->tex_dim.w;
-    vertices[offset + 9] = sprite->tex_pos.y + sprite->tex_dim.h;
-
+    vertices[offset + 9] = sprite->tex_pos.y;
+    //bottom right
     vertices[offset + 10] = 1.0f * w * sin(rot) + x_offset;
     vertices[offset + 11] = -1.0f * h * cos(rot) + y_offset;
     vertices[offset + 12] = 0;
     vertices[offset + 13] = sprite->tex_pos.x + sprite->tex_dim.w;
-    vertices[offset + 14] = sprite->tex_pos.y;
-
+    vertices[offset + 14] = sprite->tex_pos.y + sprite->tex_dim.h;
+    //bottom left
     vertices[offset + 15] = -1.0f * w * cos(rot) + x_offset;
     vertices[offset + 16] = -1.0f * h * sin(rot)+ y_offset;
     vertices[offset + 17] = 0;
     vertices[offset + 18] = sprite->tex_pos.x;
-    vertices[offset + 19] = sprite->tex_pos.y;
-
-    for(int i=0;i<5;i++) {
-        cog_debugf("vertex[%d] is %lf", i, vertices[i]);
-    }
+    vertices[offset + 19] = sprite->tex_pos.y + sprite->tex_dim.h;
 
     //offset = idx * tex_amount; //TODO
 
@@ -134,7 +131,6 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     //2) Drawing phase
-    glClear(GL_COLOR_BUFFER_BIT);
     // Use the program object
     glUseProgram(program_object);
     // Load the vertex position
@@ -208,7 +204,7 @@ void cog_graphics_gles_init(cog_window* win) {
     }
     // Store the program object
     program_object = program_object;
-    glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
+    glClearColor(0.2f, 0.1f, 0.0f, 0.0f);
     window = win;
 }
 
@@ -218,7 +214,14 @@ void cog_graphics_gles_draw_text(cog_text* text) {
 void cog_graphics_gles_flush() {
 }
 
+uint32_t cog_graphics_gles_gen_tex_id() {
+    GLuint tex_id;
+    glGenTextures(1, &tex_id);
+    return tex_id;
+}
+
 void cog_graphics_gles_clear() {
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void cog_graphics_gles_draw() {
@@ -279,6 +282,8 @@ uint32_t cog_graphics_gles_load_texture(const char* filename, int* width, int* h
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+    } else {
+        cog_errorf("Could not load file at : %s", filename);
     }
     return texture;
 }
