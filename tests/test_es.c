@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
     cog_sprite_id id = cog_sprite_add("assets/images/title.png");
     cog_sprite_set(id, (cog_sprite) {
         .dim=(cog_dim2) {
-            .w=1.0, .h=1.0
+            .w=0.5, .h=0.5
         },
         .rot=COG_PI/2
     });

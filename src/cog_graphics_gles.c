@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <time.h> //TODO:Remove
+#include <math.h>
 
 #include <png.h>
 #include <SDL/SDL.h>
@@ -14,6 +15,7 @@
 //#include "cog_text_gles.h" //TODO:Remove
 #include "cog_window.h"
 
+static cog_window* window;
 static GLuint program_object;
 static GLuint vertex_pos_object;
 static GLuint index_object;
@@ -23,6 +25,8 @@ static GLuint tex_coord_loc;
 
 static GLuint _load_shader(GLenum type, const char* shader_src);
 static GLuint cog_graphics_gles_load_texture_png(const char* file_name, int* width, int* height);
+double cog_graphics_gles_round_w(double n);
+double cog_graphics_gles_round_h(double n);
 
 //-------------Public functions
 void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
@@ -57,12 +61,24 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     cog_debugf("time_spent %lf", time_spent);
     //cog_debugf(" fps %lf", 1.0/time_spent);
     */
+    double rot = sprite->rot + COG_PI/4;
+    //uint32_t offset = idx * vertex_amount; //TODO
+    uint32_t offset = 0;
+    //1.5 here is due to cos and sin rotation below.
+    double w = sprite->dim.w * 1.415;
+    double h = sprite->dim.h * 1.415;
+    double x_offset = sprite->pos.x;
+    double y_offset = sprite->pos.y;
+    if(sprite->pixel_perfect) {
+        x_offset = cog_graphics_gles_round_w(sprite->pos.x);
+        y_offset = cog_graphics_gles_round_h(sprite->pos.y);
+    }
 
     //Quad
     sampler_loc = glGetUniformLocation(program_object, "s_texture");
     position_loc = glGetAttribLocation(program_object, "a_position");
     tex_coord_loc = glGetAttribLocation(program_object, "a_texCoord");
-
+/*
     GLfloat v_vertices[] = { -0.5,  0.5, 0.0,  // Position 0
         0.0,  0.0,       // TexCoord 0
         -0.5, -0.5, 0.0,  // Position 1
@@ -72,14 +88,46 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
         0.5,  0.5, 0.0,  // Position 3
         1.0,  0.0        // TexCoord 3
     };
-    GLushort indices[] = {0, 1, 2, 0, 2, 3};
+    */
+    GLfloat vertices[12 + 8];
+    vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
+    vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
+    vertices[offset + 2] = 0;
+    vertices[offset + 3] = sprite->tex_pos.x;
+    vertices[offset + 4] = sprite->tex_pos.y + sprite->tex_dim.h;
+
+    vertices[offset + 5] = 1.0f * w * cos(rot) + x_offset;
+    vertices[offset + 6] = 1.0f * h * sin(rot) + y_offset;
+    vertices[offset + 7] = 0;
+    vertices[offset + 8] = sprite->tex_pos.x + sprite->tex_dim.w;
+    vertices[offset + 9] = sprite->tex_pos.y + sprite->tex_dim.h;
+
+    vertices[offset + 10] = 1.0f * w * sin(rot) + x_offset;
+    vertices[offset + 11] = -1.0f * h * cos(rot) + y_offset;
+    vertices[offset + 12] = 0;
+    vertices[offset + 13] = sprite->tex_pos.x + sprite->tex_dim.w;
+    vertices[offset + 14] = sprite->tex_pos.y;
+
+    vertices[offset + 15] = -1.0f * w * cos(rot) + x_offset;
+    vertices[offset + 16] = -1.0f * h * sin(rot)+ y_offset;
+    vertices[offset + 17] = 0;
+    vertices[offset + 18] = sprite->tex_pos.x;
+    vertices[offset + 19] = sprite->tex_pos.y;
+
+    for(int i=0;i<5;i++) {
+        cog_debugf("vertex[%d] is %lf", i, vertices[i]);
+    }
+
+    //offset = idx * tex_amount; //TODO
+
+    GLushort indices[] = {3, 0, 1, 3, 1, 2};
 
     //1) Generate buffers
     // No clientside arrays, so do this in a webgl-friendly manner
     // vertex pos
     glGenBuffers(1, &vertex_pos_object);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(v_vertices), v_vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     // vertex indices
     glGenBuffers(1, &index_object);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
@@ -113,7 +161,7 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 }
 
-void cog_graphics_gles_init(cog_window* window) {
+void cog_graphics_gles_init(cog_window* win) {
     GLbyte v_shader_str[] =
         "attribute vec4 a_position;   \n"
         "attribute vec2 a_texCoord;   \n"
@@ -161,6 +209,7 @@ void cog_graphics_gles_init(cog_window* window) {
     // Store the program object
     program_object = program_object;
     glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
+    window = win;
 }
 
 void cog_graphics_gles_draw_text(cog_text* text) {
@@ -233,3 +282,22 @@ uint32_t cog_graphics_gles_load_texture(const char* filename, int* width, int* h
     }
     return texture;
 }
+
+double cog_graphics_gles_round_w(double n) {
+    double w = window->w/2;
+    double ret = n+1.0;
+    ret = ret*w;
+    ret = (ret > (floor(ret)+0.5)) ? ceil(ret) : floor(ret);
+    ret = ret/w;
+    return ret-1.0;
+}
+
+double cog_graphics_gles_round_h(double n) {
+    double h = window->h/2;
+    double ret = n+1.0;
+    ret = ret*h;
+    ret = (ret > (floor(ret)+0.5)) ? ceil(ret) : floor(ret);
+    ret = ret/h;
+    return ret-1.0;
+}
+
