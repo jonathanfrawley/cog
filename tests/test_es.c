@@ -27,10 +27,22 @@ int main(int argc, char* argv[]) {
         .dim = (cog_dim2) {.w=2.0, .h=0.003},
         .pos = (cog_pos2) {.x=-1, .y=0.9},
         .col=(cog_color) {
+            .r=0,.g=0,.b=0,.a=1
+        }
+    });
+    cog_text_set_str(text, "This is really the ultimate ");
+    /*
+    cog_text_id text = cog_text_add();
+    cog_text_set(text, (cog_text) {
+        .scale = (cog_dim2) {.w=0.003, .h=0.003},
+        .dim = (cog_dim2) {.w=2.0, .h=0.003},
+        .pos = (cog_pos2) {.x=0, .y=0},
+        .col=(cog_color) {
             .r=1,.g=1,.b=1,.a=1
         }
     });
-    cog_text_set_str(text, "TEST");
+    cog_text_set_str(text, "T");
+    */
 
     cog_start_main_loop(main_loop);
     cog_quit();

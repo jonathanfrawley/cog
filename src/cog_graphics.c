@@ -1,5 +1,7 @@
 #include "cog_graphics.h"
 
+#include "stdio.h"
+
 #include "cog.h"
 #include "cog_anim.h"
 #include "cog_core.h"
@@ -188,5 +190,12 @@ void cog_graphics_cam_vel_get(cog_vec2* vel) {
 }
 
 uint32_t cog_graphics_gen_tex_id() {
-    return r.gen_tex_id();
+    uint32_t* tex_id = cog_malloc(sizeof(uint32_t));
+    (*tex_id) = r.gen_tex_id();
+    char buf[COG_MAX_BUF];
+    sprintf(buf, "tex_%d", (*tex_id));
+    cog_map_put_hash(&sprite_cache, buf, (cog_dataptr)tex_id);
+    cog_list_append(&texture_list, (cog_dataptr)tex_id);
+    cog_debugf("Inserting tex_id %d into list for tex %s", *tex_id, buf);
+    return (*tex_id);
 }

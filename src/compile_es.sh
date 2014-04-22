@@ -25,4 +25,4 @@ LIBS="-I ../libs/zlib-1.2.5/src -I . -I ../libs/freetype/include -I../libs/janss
 
 PRELOADS="--preload-file assets"
 
-emcc -std=c99 $FILES \ $LIBS $PRELOADS gles_util/esUtil.c gles_util/esShader.c ../tests/test_es.c -I gles_util -I. -o a.html -s GL_UNSAFE_OPTS=0
+emcc -O0 -std=c99 $FILES \ $LIBS $PRELOADS gles_util/esUtil.c gles_util/esShader.c ../tests/test_es.c -I gles_util -I. -o a.html -s GL_UNSAFE_OPTS=0

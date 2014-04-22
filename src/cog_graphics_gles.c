@@ -9,6 +9,7 @@
 
 #include "gles_util/esUtil.h"
 
+#include "cog_graphics.h"
 #include "cog_log.h"
 #include "cog_math.h"
 #include "cog_text_freetype.h"
@@ -61,12 +62,15 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     cog_debugf("time_spent %lf", time_spent);
     //cog_debugf(" fps %lf", 1.0/time_spent);
     */
+
     double rot = sprite->rot + COG_PI/4;
     //uint32_t offset = idx * vertex_amount; //TODO
     uint32_t offset = 0;
     //1.5 here is due to cos and sin rotation below.
     double w = sprite->dim.w * 1.415;
     double h = sprite->dim.h * 1.415;
+    //double w = sprite->dim.w;
+    //double h = sprite->dim.h;
     double x_offset = sprite->pos.x;
     double y_offset = sprite->pos.y;
     if(sprite->pixel_perfect) {
@@ -209,6 +213,14 @@ void cog_graphics_gles_init(cog_window* win) {
 void cog_graphics_gles_draw_text(cog_text* text) {
     glUseProgram(program_object);
 
+    //TODO: DEBUG
+    static bool done = false;
+    if(done) {
+        return;
+    } else {
+        done = true;
+    }
+
     cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, text_ft->tex_id);
@@ -242,6 +254,18 @@ void cog_graphics_gles_draw_text(cog_text* text) {
             continue;
         }
 
+        GLuint tex_id = cog_graphics_gen_tex_id();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tex_id);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
@@ -254,12 +278,15 @@ void cog_graphics_gles_draw_text(cog_text* text) {
             g->bitmap.buffer
         );
         double x2 = x + g->bitmap_left * sx;
-        //double y2 = y + g->bitmap_top * sy;
-        double y2 = -y - g->bitmap_top * sy;
+        double y2 = y + g->bitmap_top * sy;
+        //double y2 = -y - g->bitmap_top * sy;
         double w = g->bitmap.width * sx;
         double h = g->bitmap.rows * sy;
         cog_color c = text->col;
-
+        cog_sprite_add_explicit(tex_id, 
+                (cog_pos2){.x=x2+(w/2.0), .y=y2-(h/2.0)}, 
+                (cog_dim2){.w=w/2.0, .h=h/2.0});
+        /*
         uint32_t offset = 0;
         GLfloat vertices[12 + 8];
         //topleft
@@ -329,7 +356,7 @@ void cog_graphics_gles_draw_text(cog_text* text) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
         //END TODO
-
+        */
         x += (g->advance.x >> 6) * sx;
         y += (g->advance.y >> 6) * sy;
     }
