@@ -173,6 +173,7 @@ uint32_t cog_sprite_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t global_
                                      *)
                                     curr->data));
         if(curr_sprite->layer == layer && curr_sprite->tex_id == tex_id) {
+            cog_debugf("HI %d idx is %d", curr_sprite->id, idx);
             cog_graphics_draw_sprite(curr_sprite, global_idx + idx);
             idx++;
         }
@@ -205,9 +206,8 @@ void cog_sprite_decrease_tex_sprite_len(cog_sprite* sprite) {
 void cog_sprite_increase_tex_sprite_len(cog_sprite* sprite) {
     uint32_t key = cog_sprite_get_len_key(sprite->tex_id, sprite->layer);
     cog_len_map_entry* tex_sprite_len = cog_map_get(&tex_sprite_lens, key);
-    if(tex_sprite_len == 0) {
+    if(tex_sprite_len == COG_NULL) {
         tex_sprite_len = (cog_len_map_entry*)cog_malloc(sizeof(cog_len_map_entry));
-        cog_debugf("inserting sprite with tex_id %d ", sprite->tex_id);
         tex_sprite_len->cnt = 0;
         tex_sprite_len->tex_id = sprite->tex_id;
         tex_sprite_len->layer = sprite->layer;

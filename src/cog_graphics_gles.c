@@ -77,37 +77,26 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
         x_offset = cog_graphics_gles_round_w(sprite->pos.x);
         y_offset = cog_graphics_gles_round_h(sprite->pos.y);
     }
-/*
-    GLfloat v_vertices[] = { -0.5,  0.5, 0.0,  // Position 0
-        0.0,  0.0,       // TexCoord 0
-        -0.5, -0.5, 0.0,  // Position 1
-        0.0,  1.0,       // TexCoord 1
-        0.5, -0.5, 0.0,  // Position 2
-        1.0,  1.0,       // TexCoord 2
-        0.5,  0.5, 0.0,  // Position 3
-        1.0,  0.0        // TexCoord 3
-    };
-    */
-    GLfloat vertices[12 + 8];
-    //topleft
+    //GLfloat vertices[12 + 8];
+    //top-left
     vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
     vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
     vertices[offset + 2] = 0;
     vertices[offset + 3] = sprite->tex_pos.x;
     vertices[offset + 4] = sprite->tex_pos.y;
-    //topright
+    //top-right
     vertices[offset + 5] = 1.0f * w * cos(rot) + x_offset;
     vertices[offset + 6] = 1.0f * h * sin(rot) + y_offset;
     vertices[offset + 7] = 0;
     vertices[offset + 8] = sprite->tex_pos.x + sprite->tex_dim.w;
     vertices[offset + 9] = sprite->tex_pos.y;
-    //bottom right
+    //bottom-right
     vertices[offset + 10] = 1.0f * w * sin(rot) + x_offset;
     vertices[offset + 11] = -1.0f * h * cos(rot) + y_offset;
     vertices[offset + 12] = 0;
     vertices[offset + 13] = sprite->tex_pos.x + sprite->tex_dim.w;
     vertices[offset + 14] = sprite->tex_pos.y + sprite->tex_dim.h;
-    //bottom left
+    //bottom-left
     vertices[offset + 15] = -1.0f * w * cos(rot) + x_offset;
     vertices[offset + 16] = -1.0f * h * sin(rot)+ y_offset;
     vertices[offset + 17] = 0;
@@ -376,7 +365,60 @@ void cog_graphics_gles_clear() {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void cog_graphics_gles_draw() {
+void cog_graphics_gles_draw(void) {
+    //Quad
+    sampler_loc = glGetUniformLocation(program_object, "s_texture");
+    position_loc = glGetAttribLocation(program_object, "a_position");
+    tex_coord_loc = glGetAttribLocation(program_object, "a_texCoord");
+
+    //1) Generate buffers
+    // No clientside arrays, so do this in a webgl-friendly manner
+    // vertex pos
+    glGenBuffers(1, &vertex_pos_object);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * sprite_amount * vertex_amount, vertices, GL_STATIC_DRAW);
+    // vertex indices
+    glGenBuffers(1, &index_object);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * sprite_amount * index_amount, indices, GL_STATIC_DRAW);
+/*
+    glGenBuffers(1, &vertex_pos_object);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // vertex indices
+    glGenBuffers(1, &index_object);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+*/
+
+    //2) Drawing phase
+    // Use the program object
+    glUseProgram(program_object);
+    // Load the vertex position
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
+    //glVertexAttribPointer(position_loc, 3, GL_FLOAT,
+    //        GL_FALSE, 5 * 4, 0 );
+    glVertexAttribPointer(position_loc, 3, GL_FLOAT,
+            GL_FALSE, 5 * 4, 0 );
+    // Load the texture coordinate
+    glVertexAttribPointer(tex_coord_loc, 2, GL_FLOAT,
+            GL_FALSE, 5 * 4, 
+            3 * 4);
+
+    glEnableVertexAttribArray(position_loc);
+    glEnableVertexAttribArray(tex_coord_loc);
+    // Set the viewport
+    //glViewport ( 0, 0, esContext->width, esContext->height );
+    // Clear the color buffer
+
+    //3) tex
+    glUniform1i(sampler_loc, 0);
+    //4) Draw the things!
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
+    //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    cog_debugf("sa is %d", sprite_amount);
+    glDrawElements(GL_TRIANGLES, 6 * sprite_amount, GL_UNSIGNED_INT, 0);
+>>>>>>> 769eb1e... Progress
 }
 
 void cog_graphics_gles_prepare(uint32_t amount) {
