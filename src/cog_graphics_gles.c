@@ -167,14 +167,6 @@ void cog_graphics_gles_init(cog_window* win) {
 void cog_graphics_gles_draw_text(cog_text* text) {
     glUseProgram(program_object);
 
-    //TODO: DEBUG
-    static bool done = false;
-    if(done) {
-        return;
-    } else {
-        done = true;
-    }
-
     cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, text_ft->tex_id);
@@ -381,6 +373,8 @@ void cog_graphics_gles_draw(void) {
     //4) Draw the things!
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
     //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    cog_debugf("sa is %d", sprite_amount);
+    glDrawElements(GL_TRIANGLES, 6 * sprite_amount, GL_UNSIGNED_INT, 0);
 }
 
 void cog_graphics_gles_prepare(uint32_t amount) {
