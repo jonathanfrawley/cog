@@ -26,23 +26,9 @@ int main(int argc, char* argv[]) {
     cog_sprite_set(id, (cog_sprite) {
             .dim=(cog_dim2) {
             .w=0.7, .h=0.5
-            },
-            .pos=(cog_pos2) {
-            .x=-1.0, .y=0.0
-            },
-            .ang_vel=0.1
-            });
-    id = cog_sprite_add("assets/images/title.png");
-    cog_sprite_set(id, (cog_sprite) {
-            .dim=(cog_dim2) {
-            .w=0.7, .h=0.5
-            },
-            .pos=(cog_pos2) {
-            .x=0.0, .y=0.0
-            },
-            .ang_vel=0.1
-            });
-/*
+        },
+        .ang_vel=0.1
+    });
     cog_anim_id anim = cog_anim_add("assets/images/tileset.png", 2, 4);
     cog_anim_set(anim, (cog_anim) {
         .dim = (cog_dim2) {.w=0.3, .h=0.3},
@@ -62,7 +48,6 @@ int main(int argc, char* argv[]) {
     cog_text_set_str(text, "This");
     //cog_text_set_str(text, "This is really the ultimate test of skill TEST YOUR MIGHT IN FACT HOW HIGH CAN YOU GO?!?!?!?!?!?!?!?!?!?!? THIS IS INSANE!!!! LETS GO LETS GO LETS GO LESTSTSIOEHSIGHOEHSROGHSEOPRJHGSOERUGNPSE*NRPB*SENBPN*HW£$N%^BPSN$P**NPN*BPSN*PBNEOPROSNIBEPOINSEOPINONE");
     //cog_text_set_str(text, "This");
-*/
     /*
     cog_text_id text = cog_text_add();
     cog_text_set(text, (cog_text) {

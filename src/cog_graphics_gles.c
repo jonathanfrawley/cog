@@ -103,49 +103,14 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     vertices[offset + 18] = sprite->tex_pos.x;
     vertices[offset + 19] = sprite->tex_pos.y + sprite->tex_dim.h;
 
-    GLushort indices[] = {3, 0, 1, 3, 1, 2};
-
-    //Quad
-    sampler_loc = glGetUniformLocation(program_object, "s_texture");
-    position_loc = glGetAttribLocation(program_object, "a_position");
-    tex_coord_loc = glGetAttribLocation(program_object, "a_texCoord");
-
-    //1) Generate buffers
-    // No clientside arrays, so do this in a webgl-friendly manner
-    // vertex pos
-    glGenBuffers(1, &vertex_pos_object);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // vertex indices
-    glGenBuffers(1, &index_object);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    //2) Drawing phase
-    // Use the program object
-    glUseProgram(program_object);
-    // Load the vertex position
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
-    glVertexAttribPointer(position_loc, 3, GL_FLOAT,
-            GL_FALSE, 5 * 4, 0 );
-    // Load the texture coordinate
-    glVertexAttribPointer(tex_coord_loc, 2, GL_FLOAT,
-            GL_FALSE, 5 * 4, 
-            3 * 4 );
-
-    glEnableVertexAttribArray(position_loc);
-    glEnableVertexAttribArray(tex_coord_loc);
-    // Set the viewport
-    //glViewport ( 0, 0, esContext->width, esContext->height );
-    // Clear the color buffer
-
-    //3) tex
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
-    glUniform1i(sampler_loc, 0);
-    //4) Draw the things!
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    //indices
+    offset = idx * index_amount;
+    indices[offset + 0] = 3;
+    indices[offset + 1] = 0;
+    indices[offset + 2] = 1;
+    indices[offset + 3] = 3;
+    indices[offset + 4] = 1;
+    indices[offset + 5] = 2;
 }
 
 void cog_graphics_gles_init(cog_window* win) {
@@ -416,12 +381,14 @@ void cog_graphics_gles_draw(void) {
     //4) Draw the things!
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
     //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-    cog_debugf("sa is %d", sprite_amount);
-    glDrawElements(GL_TRIANGLES, 6 * sprite_amount, GL_UNSIGNED_INT, 0);
->>>>>>> 769eb1e... Progress
 }
 
 void cog_graphics_gles_prepare(uint32_t amount) {
+    cog_free(vertices);
+    cog_free(indices);
+    vertices = (GLfloat*)cog_malloc(sizeof(GLfloat) * vertex_amount * amount);
+    indices = (GLuint*)cog_malloc(sizeof(GLuint) * index_amount * amount);
+    sprite_amount = amount;
 }
 
 void cog_graphics_gles_set_camera_pos(cog_pos2* pos) {
