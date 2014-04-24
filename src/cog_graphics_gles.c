@@ -24,6 +24,13 @@ static GLuint sampler_loc;
 static GLuint position_loc;
 static GLuint tex_coord_loc;
 
+static GLfloat* vertices;
+static GLuint* indices;
+static uint32_t vertex_amount = 12 + 8;
+static uint32_t index_amount = 6;
+static uint32_t sprite_amount;
+static cog_pos2 translate_pos;
+
 static GLuint _load_shader(GLenum type, const char* shader_src);
 static GLuint cog_graphics_gles_load_texture_png(const char* file_name, int* width, int* height);
 double cog_graphics_gles_round_w(double n);
@@ -102,6 +109,21 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     vertices[offset + 17] = 0;
     vertices[offset + 18] = sprite->tex_pos.x;
     vertices[offset + 19] = sprite->tex_pos.y + sprite->tex_dim.h;
+
+    //Add camera to each
+    for(int i=0;i<20;i++) {
+        if(i==3 || i==4 || i==8 || i==9 || i==13 || i==13 || i==18 || i==19) {
+            continue;
+        } else {
+            if((i%5) == 0) {
+                vertices[offset+i] += translate_pos.x;
+            } else {
+                if((i%5) == 1) {
+                    vertices[offset+i] += translate_pos.y;
+                }
+            }
+        }
+    }
 
     //indices
     offset = idx * index_amount;
@@ -386,6 +408,7 @@ void cog_graphics_gles_prepare(uint32_t amount) {
 }
 
 void cog_graphics_gles_set_camera_pos(cog_pos2* pos) {
+    translate_pos = (*pos);
 }
 
 //-------------Private functions

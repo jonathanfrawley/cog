@@ -75,6 +75,10 @@ int main(int argc, char* argv[]) {
     });
     cog_text_set_str(text, "T");
     */
+    cog_pos2 cam = (cog_pos2) {.x=0.5, .y=0.5};
+    cog_graphics_cam_set(&cam);
+    cog_vec2 cam_vel = (cog_vec2) {.x=0.5, .y=0.5};
+    cog_graphics_cam_vel_set(&cam_vel);
 
     cog_start_main_loop(main_loop);
     cog_quit();
