@@ -41,7 +41,7 @@ else()
 endif()
 
 #Copy files to dest.
-file(COPY ../media 
+file(COPY ../assets 
     DESTINATION ${CMAKE_BINARY_DIR})
 file(GLOB ${CMAKE_SOURCE_DIR}/*.h ${CMAKE_BINARY_DIR})
 file(COPY ../swig/cog.i DESTINATION ${CMAKE_BINARY_DIR})
