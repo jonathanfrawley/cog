@@ -120,6 +120,13 @@ uint32_t cog_map_hash(const char* key) {
     return hash;
 }
 
+uint32_t cog_map_int32_hash(int32_t a, int32_t b) {
+    int hash = 23;
+    hash = hash * 31 + a;
+    hash = hash * 31 + b;
+    return hash;
+}
+
 
 void cog_map_reset_counter() {
     cog_map_counter = 0;

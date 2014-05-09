@@ -41,7 +41,7 @@ else()
 endif()
 
 #Copy files to dest.
-file(COPY ../media 
+file(COPY ../assets 
     DESTINATION ${CMAKE_BINARY_DIR})
 file(GLOB ${CMAKE_SOURCE_DIR}/*.h ${CMAKE_BINARY_DIR})
 file(COPY ../swig/cog.i DESTINATION ${CMAKE_BINARY_DIR})
@@ -94,6 +94,8 @@ add_executable(cog_test_map ${TEST_DIR}/test_map.c)
 target_link_libraries(cog_test_map cog)
 add_executable(cog_test_update ${TEST_DIR}/test_update.c)
 target_link_libraries(cog_test_update cog)
+add_executable(cog_test_es ${TEST_DIR}/test_es.c)
+target_link_libraries(cog_test_es cog)
 
 # Installation
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")

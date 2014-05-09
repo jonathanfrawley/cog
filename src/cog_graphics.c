@@ -1,5 +1,7 @@
 #include "cog_graphics.h"
 
+#include "stdio.h"
+
 #include "cog.h"
 #include "cog_anim.h"
 #include "cog_core.h"
@@ -9,14 +11,14 @@
 #include "cog_math.h"
 #include "cog_sprite.h"
 
-#ifdef USE_LEGACY_SDL
+#if COG_RENDERER==COG_RENDERER_SDL
 #include "cog_graphics_sdl.h"
-#else
-#ifdef USE_SDL
+#elif COG_RENDERER==COG_RENDERER_SDL2
 #include "cog_graphics_sdl2.h"
+#elif COG_RENDERER==COG_RENDERER_GLES
+#include "cog_graphics_gles.h"
 #else
 #include "cog_graphics_opengl.h"
-#endif
 #endif
 
 typedef struct {
@@ -25,6 +27,7 @@ typedef struct {
     void (*draw)(void);
     void (*draw_sprite)(cog_sprite* sprite, uint32_t idx);
     void (*draw_text)(cog_text* text);
+    uint32_t (*gen_tex_id)(void);
     uint32_t (*load_texture)(const char* filename, int* width, int* height);
     void (*prepare)(uint32_t amount);
     void (*set_camera_pos)(cog_pos2* pos);
@@ -78,7 +81,7 @@ uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height
 void cog_graphics_init(cog_window* win) {
 #if GRAPHICS_DISABLED
 #else
-#ifdef USE_SDL
+#if COG_RENDERER==COG_RENDERER_SDL2
     r.draw_sprite = cog_graphics_sdl2_draw_sprite;
     r.init = cog_graphics_sdl2_init;
     r.draw_text = cog_graphics_sdl2_draw_text;
@@ -86,7 +89,7 @@ void cog_graphics_init(cog_window* win) {
     r.set_camera_pos = 0; //TODO: Implement
     r.clear = cog_graphics_sdl2_clear;
     r.flush = cog_graphics_sdl2_flush;
-#elif defined(USE_LEGACY_SDL)
+#elif COG_RENDERER==COG_RENDERER_SDL
     r.draw = cog_graphics_sdl_draw;
     r.draw_sprite = cog_graphics_sdl_draw_sprite;
     r.init = cog_graphics_sdl_init;
@@ -96,11 +99,23 @@ void cog_graphics_init(cog_window* win) {
     r.set_camera_pos = cog_graphics_sdl_set_camera_pos;
     r.clear = cog_graphics_sdl_clear;
     r.flush = cog_graphics_sdl_flush;
+#elif COG_RENDERER==COG_RENDERER_GLES
+    r.draw = cog_graphics_gles_draw;
+    r.draw_sprite = cog_graphics_gles_draw_sprite;
+    r.init = cog_graphics_gles_init;
+    r.draw_text = cog_graphics_gles_draw_text;
+    r.gen_tex_id = cog_graphics_gles_gen_tex_id;
+    r.load_texture = cog_graphics_gles_load_texture;
+    r.prepare = cog_graphics_gles_prepare;
+    r.set_camera_pos = cog_graphics_gles_set_camera_pos;
+    r.clear = cog_graphics_gles_clear;
+    r.flush = cog_graphics_gles_flush;
 #else
     r.draw = cog_graphics_opengl_draw;
     r.draw_sprite = cog_graphics_opengl_draw_sprite;
     r.init = cog_graphics_opengl_init;
     r.draw_text = cog_graphics_opengl_draw_text;
+    r.gen_tex_id = cog_graphics_opengl_gen_tex_id;
     r.load_texture = cog_graphics_opengl_load_texture;
     r.prepare = cog_graphics_opengl_prepare;
     r.set_camera_pos = cog_graphics_opengl_set_camera_pos;
@@ -172,4 +187,15 @@ void cog_graphics_cam_vel_get(cog_vec2* vel) {
 #else
     (*vel) = camera_vel;
 #endif
+}
+
+uint32_t cog_graphics_gen_tex_id() {
+    uint32_t* tex_id = cog_malloc(sizeof(uint32_t));
+    (*tex_id) = r.gen_tex_id();
+    char buf[COG_MAX_BUF];
+    sprintf(buf, "tex_%d", (*tex_id));
+    cog_map_put_hash(&sprite_cache, buf, (cog_dataptr)tex_id);
+    cog_list_append(&texture_list, (cog_dataptr)tex_id);
+    cog_debugf("Inserting tex_id %d into list for tex %s", *tex_id, buf);
+    return (*tex_id);
 }

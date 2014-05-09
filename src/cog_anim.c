@@ -1,6 +1,7 @@
 #include "cog_anim.h"
 
 #include <stdio.h>
+#include <assert.h>
 
 #include "cog_core.h"
 #include "cog_log.h"
@@ -16,7 +17,15 @@ static cog_map anims;
 static cog_list active_anims;   //anims drawn(active) at the moment
 static cog_map tex_anim_lens;
 
-void cog_anim_get_len_key(char* buf, uint32_t tex_id, uint32_t layer);
+uint32_t cog_anim_get_len_key(uint32_t tex_id, uint32_t layer);
+void cog_anim_decrease_tex_anim_len(cog_anim* anim);
+void cog_anim_increase_tex_anim_len(cog_anim* anim);
+
+typedef struct cog_len_map_entry {
+    uint32_t tex_id;
+    uint32_t layer;
+    uint32_t cnt;
+} cog_len_map_entry;
 
 /*-----------------------------------------------------------------------------
  * Assumes animation is a single 1D animation frame.
@@ -41,14 +50,7 @@ cog_anim_id cog_anim_add(const char* img, uint32_t rows, uint32_t cols) {
         cog_list_append(&(anim->frames), sprite);
     }
     cog_map_put(&anims, anim->id, (void*) anim);
-    char key[MAX_KEY];
-    cog_anim_get_len_key(key, anim->tex_id, anim->layer);
-    uint32_t* tex_anim_len = cog_map_get_hash(&tex_anim_lens, key);
-    if(tex_anim_len == 0) {
-        tex_anim_len = (uint32_t*)cog_malloc(sizeof(uint32_t));
-    }
-    (*tex_anim_len)++;
-    cog_map_put_hash(&tex_anim_lens, key, tex_anim_len);
+    cog_anim_increase_tex_anim_len(anim);
     cog_list_append(&active_anims, (cog_dataptr) & (anim->id));
     return anim->id;
 }
@@ -77,18 +79,20 @@ cog_anim* cog_anim_get(cog_anim_id id) {
     return (cog_anim*) cog_map_get(&anims, id);
 }
 
-void cog_anim_get_len_key(char* buf, uint32_t tex_id, uint32_t layer) {
-    sprintf(buf, "%d:%d", tex_id, layer);
+uint32_t cog_anim_get_len_key(uint32_t tex_id, uint32_t layer) {
+    return cog_map_int32_hash(tex_id, layer);
 }
 
 uint32_t cog_anim_len(uint32_t tex_id, uint32_t layer) {
-    char key[MAX_KEY];
-    cog_anim_get_len_key(key, tex_id, layer);
-    uint32_t* result = cog_map_get_hash(&tex_anim_lens, key);
+    uint32_t key = cog_anim_get_len_key(tex_id, layer);
+    cog_len_map_entry* result = cog_map_get(&tex_anim_lens, key);
     if(result == 0) {
         return 0;
     } else {
-        return *result;
+        //Collisions TODO: Handle them
+        assert(result->tex_id == tex_id);
+        assert(result->layer == layer);
+        return result->cnt;
     }
 }
 
@@ -99,14 +103,7 @@ void cog_anim_remove(cog_anim_id id) {
             //BUG: Update len here with removal
             char key[MAX_KEY];
             cog_anim* anim = cog_anim_get(id);
-            cog_anim_get_len_key(key, anim->tex_id, anim->layer);
-            uint32_t* tex_anim_len = cog_map_get_hash(&tex_anim_lens, key);
-            if(tex_anim_len == 0) {
-                tex_anim_len = (uint32_t*)cog_malloc(sizeof(uint32_t));
-            } else {
-                (*tex_anim_len)--;
-            }
-            cog_map_put_hash(&tex_anim_lens, key, tex_anim_len);
+            cog_anim_decrease_tex_anim_len(anim);
             break;
         }
     }
@@ -192,6 +189,32 @@ uint32_t cog_anim_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t idx_globa
         idx++;
     }
     return idx;
+}
+
+void cog_anim_decrease_tex_anim_len(cog_anim* anim) {
+    uint32_t key = cog_anim_get_len_key(anim->tex_id, anim->layer);
+    cog_len_map_entry* tex_anim_len = cog_map_get(&tex_anim_lens, key);
+    if(tex_anim_len == 0) {
+        tex_anim_len = (cog_len_map_entry*)cog_malloc(sizeof(cog_len_map_entry));
+        tex_anim_len->cnt = 0;
+        tex_anim_len->tex_id = anim->tex_id;
+        tex_anim_len->layer = anim->layer;
+    }
+    tex_anim_len->cnt--;
+    cog_map_put(&tex_anim_lens, key, tex_anim_len);
+}
+
+void cog_anim_increase_tex_anim_len(cog_anim* anim) {
+    uint32_t key = cog_anim_get_len_key(anim->tex_id, anim->layer);
+    cog_len_map_entry* tex_anim_len = cog_map_get(&tex_anim_lens, key);
+    if(tex_anim_len == 0) {
+        tex_anim_len = (cog_len_map_entry*)cog_malloc(sizeof(cog_len_map_entry));
+        tex_anim_len->cnt = 0;
+        tex_anim_len->tex_id = anim->tex_id;
+        tex_anim_len->layer = anim->layer;
+    }
+    tex_anim_len->cnt++;
+    cog_map_put(&tex_anim_lens, key, tex_anim_len);
 }
 
 void cog_anim_init() {

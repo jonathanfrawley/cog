@@ -27,5 +27,6 @@ void cog_map_reset_counter();
 uint32_t cog_map_get_counter();
 void cog_map_reset_timer();
 double cog_map_get_timer();
+uint32_t cog_map_int32_hash(int32_t a, int32_t b);
 
 #endif // COG_MAP_H
