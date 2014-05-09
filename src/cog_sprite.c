@@ -173,7 +173,6 @@ uint32_t cog_sprite_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t global_
                                      *)
                                     curr->data));
         if(curr_sprite->layer == layer && curr_sprite->tex_id == tex_id) {
-            cog_debugf("HI %d idx is %d", curr_sprite->id, idx);
             cog_graphics_draw_sprite(curr_sprite, global_idx + idx);
             idx++;
         }

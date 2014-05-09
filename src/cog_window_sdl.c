@@ -113,7 +113,6 @@ int main(int argc, char* argv[]) {
     glPopMatrix();
     glDisable(GL_TEXTURE_2D);
     SDL_GL_SwapBuffers();
-    printf("HI");
     //End test rendering code
     cog_window_sdl_quit(&window);
 }
