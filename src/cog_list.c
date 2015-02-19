@@ -77,3 +77,16 @@ cog_dataptr cog_list_pop(cog_list* list) {
         return result;
     }
 }
+
+cog_dataptr cog_list_peek(cog_list* list) {
+    cog_list* curr = list->next;
+    if(cog_list_len(list) == 0) {
+        return COG_NULL;
+    } else {
+        //make copy of data
+        cog_dataptr result = cog_malloc(list->size);
+        cog_memcpy(result, curr->data, list->size);
+        //and return copy
+        return result;
+    }
+}

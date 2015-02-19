@@ -5,30 +5,30 @@
 #include "cog_state.h"
 #include "cog_test.h"
 
-#define STATE_START 0
-#define STATE_LEVEL_RUNNING 1
-#define STATE_END 2
-#define STATE_FINISH 3
+#define STATE_START 1
+#define STATE_LEVEL_RUNNING 2
+#define STATE_END 3
+#define STATE_FINISH 4
 
-#define EVENT_TEST 0
-#define EVENT_TEST2 1
+#define EVENT_TEST 1
+#define EVENT_TEST2 2
 
-int32_t load_firstlevel(void) {
+int32_t load_firstlevel(cog_state_info info) {
     cog_debugf("loading first level...");
     return STATE_LEVEL_RUNNING;
 }
 
-int32_t show_death_screen(void) {
+int32_t show_death_screen(cog_state_info info) {
     cog_debugf("showing death screen...");
     return STATE_END;
 }
 
-int32_t cleanup_game(void) {
+int32_t cleanup_game(cog_state_info info) {
     cog_debugf("cleaning up game...");
     return STATE_FINISH;
 }
 
-int32_t infinite_loop(void) {
+int32_t infinite_loop(cog_state_info info) {
     cog_debugf("infinite loop state at finish...");
     return STATE_FINISH;
 }

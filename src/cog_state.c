@@ -37,22 +37,21 @@ void cog_state_fsm_add_transitions(cog_state_fsm* fsm,
 
 void cog_state_fsm_update(cog_state_fsm* fsm) {
     cog_event* event = cog_list_pop(&fsm->events);
-    //If no event fired, call the current state's transition function.
-    //Keeps the game going in the current state.
-    if(event == COG_NULL) {
+    // when no event fired last update, continue in current state
+    if((*event) == COG_NULL) {
         COG_LIST_FOREACH(&fsm->transitions) {
             cog_state_transition* transition =
                 (cog_state_transition*) curr->data;
-            if(transition->event == COG_E_DUMMY) {
-                if(transition->state == fsm->currentstate) {
-                    transition->transition_fn((cog_state_info) {
-                        .initial=false
-                    });
-                }
+            if(transition->state == fsm->currentstate) {
+                fsm->currentstate = transition->transition_fn((cog_state_info) {
+                    .initial=false
+                });
+                break;
             }
         }
     } else {
         bool was_transition = false;
+        // search for a matching transition for this event
         COG_LIST_FOREACH(&fsm->transitions) {
             cog_state_transition* transition =
                 (cog_state_transition*) curr->data;
@@ -66,14 +65,14 @@ void cog_state_fsm_update(cog_state_fsm* fsm) {
                 }
             }
         }
-        //Do a default transition if there was no event-based transition.
+        // default transition if no event found
         if(!was_transition) {
             COG_LIST_FOREACH(&fsm->transitions) {
                 cog_state_transition* transition =
                     (cog_state_transition*) curr->data;
                 if(transition->event == COG_E_DUMMY) {
                     if(transition->state == fsm->currentstate) {
-                        transition->transition_fn((cog_state_info) {
+                        fsm->currentstate = transition->transition_fn((cog_state_info) {
                             .initial=false
                         });
                     }
@@ -89,7 +88,6 @@ void cog_state_fsm_push_event(cog_state_fsm* fsm, cog_event event) {
 
 void cog_state_fsm_set_state(cog_state_fsm* fsm, cog_state state) {
     fsm->currentstate = state;
-    cog_state_fsm_push_event(fsm, COG_E_DUMMY);
 }
 
 void cog_state_global_fsm_push_event(cog_event event) {

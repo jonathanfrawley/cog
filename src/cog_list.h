@@ -63,4 +63,9 @@ uint32_t cog_list_len(cog_list* list);
 //----------------------------------------------------------------------
 cog_dataptr cog_list_pop(cog_list* list);
 
+//----------------------------------------------------------------------
+//  Peeks the front element of the list and returns it.
+//----------------------------------------------------------------------
+cog_dataptr cog_list_peek(cog_list* list);
+
 #endif // COG_LIST_H
