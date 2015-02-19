@@ -388,7 +388,7 @@ void cog_graphics_opengl_init(cog_window* win) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     //Initialize clear color
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glEnable(GL_BLEND);

@@ -9,7 +9,6 @@
 
 #if COG_TEXT==COG_TEXT_SDL
 #include "cog_text_freetype.h"
-//#include "cog_text_sdl.h"
 #elif COG_TEXT==COG_TEXT_SDL2
 #include "cog_text_sdl2.h"
 #else
@@ -33,9 +32,6 @@ static cog_text_id textcnt;
 static cog_color default_color = {.r=1,.g=1,.b=1,.a=1};
 
 cog_text_id cog_text_add() {
-#ifdef TEXT_DISABLED
-    return 0;
-#else
     cog_text_id id = textcnt++;
     renderer.text_add(id);
     cog_text* text = COG_STRUCT_MALLOC(cog_text);
@@ -46,38 +42,25 @@ cog_text_id cog_text_add() {
     cog_map_put(&texts, text->id, (cog_dataptr) text);
     cog_list_append(&activetexts, (cog_dataptr) & (text->id));
     return id;
-#endif
 }
 
 void cog_text_set_face(cog_text_id id, cog_string path, double pt_size) {
-#ifdef TEXT_DISABLED
-#else
     renderer.text_set_face(id, path, pt_size);
-#endif
 }
 
 cog_text* cog_text_get(cog_text_id id) {
-#ifdef TEXT_DISABLED
-    return 0;
-#else
     return (cog_text*) cog_map_get(&texts, id);
-#endif
 }
 
 void cog_text_set(cog_text_id id, cog_text src) {
-#ifdef TEXT_DISABLED
-#else
     cog_text* text = cog_text_get(id);
     text->pos = src.pos;
     text->dim = src.dim;
     text->scale = src.scale;
     text->col = src.col;
-#endif
 }
 
 void cog_text_set_str(cog_text_id id, char* str, ...) {
-#ifdef TEXT_DISABLED
-#else
     cog_text* text = cog_text_get(id);
     va_list ap;
     va_start(ap, str);
@@ -87,12 +70,9 @@ void cog_text_set_str(cog_text_id id, char* str, ...) {
     //Flag update to sdl so it can reupload to GPU
 //    cog_text_sdl_update(id, text->str);
 #endif
-#endif
 }
 
 void cog_text_remove(cog_text_id id) {
-#ifdef TEXT_DISABLED
-#else
     COG_LIST_FOREACH(&activetexts) {
         if(*((cog_text_id*) curr->data) == id) {
             cog_list_remove(&activetexts, curr->data);
@@ -101,17 +81,13 @@ void cog_text_remove(cog_text_id id) {
     }
     cog_map_remove(&texts, id);
     renderer.text_remove(id);
-#endif
 }
 
 void cog_text_removeall(void) {
-#ifdef TEXT_DISABLED
-#else
     COG_LIST_FOREACH(&activetexts) {
         renderer.text_remove(*(cog_text_id*) curr->data);
     }
     cog_list_removeall(&activetexts);
-#endif
 }
 
 /*-----------------------------------------------------------------------------
@@ -119,8 +95,6 @@ void cog_text_removeall(void) {
  *-----------------------------------------------------------------------------*/
 
 void cog_text_init(void) {
-#ifdef TEXT_DISABLED
-#else
 #if COG_TEXT==COG_TEXT_SDL
     renderer.text_init = cog_text_freetype_init;
     renderer.text_add = cog_text_freetype_add;
@@ -148,12 +122,9 @@ void cog_text_init(void) {
     renderer.text_init();
     cog_map_init(&texts);
     cog_list_init(&activetexts, sizeof(cog_text_id));
-#endif
 }
 
 void cog_text_draw_layer(uint32_t layer) {
-#ifdef TEXT_DISABLED
-#else
     COG_LIST_FOREACH(&activetexts) {
         cog_text_id id = *(cog_text_id*) curr->data;
         cog_text* text = cog_text_get(id);
@@ -161,5 +132,4 @@ void cog_text_draw_layer(uint32_t layer) {
             cog_graphics_draw_text(text);
         }
     }
-#endif
 }

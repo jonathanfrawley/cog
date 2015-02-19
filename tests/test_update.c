@@ -3,7 +3,6 @@
 void update_sprite(double timestep, cog_sprite* sprite) {
     static double timer = 0;
     timer += timestep;
-    cog_debugf("timestep %lf", timestep);
     if(timer > 1.0) {
         if(sprite->pos.y > 9.0) {
             sprite->pos.y = 0.0; //Back on-screen
@@ -25,7 +24,7 @@ void update_anim(double timestep, cog_anim* anim) {
 
 int main(int argc, char* argv[]) {
     cog_init();
-    cog_sprite_id id = cog_sprite_add("media/test0.png");
+    cog_sprite_id id = cog_sprite_add("assets/test0.png");
     cog_sprite_set(id, (cog_sprite) {
         .dim=(cog_dim2) {
             .w=1, .h=1
@@ -33,7 +32,7 @@ int main(int argc, char* argv[]) {
         .rot=0.0,
          .update_func = update_sprite
     });
-    cog_anim_id anim = cog_anim_add("media/kitten_anim.png", 1, 3);
+    cog_anim_id anim = cog_anim_add("assets/kitten_anim.png", 1, 3);
     cog_anim_set(anim, (cog_anim) {
         .dim = (cog_dim2) {.w=0.3, .h=0.3},
         .pos = (cog_pos2) {.x=0, .y=0},

@@ -124,14 +124,14 @@ int32_t* read_in_tiled_map(const char* tiled_json_filename, int32_t* data_size) 
 int main(int argc, char** argv) {
     cog_init();
     int32_t size;
-    int32_t* ids = read_in_tiled_map("level.json", &size);
+    int32_t* ids = read_in_tiled_map("assets/level.json", &size);
     //for(int i = 0; i < size ; i++) {
     //    cog_debugf("i is %d", ids[i]);
     //}
     cog_list out_anims;
     cog_list_init(&out_anims, sizeof(cog_anim_id));
     cog_tiled_load_background(-1.0, 1.0, 10.0, 10.0,
-                              "media/tileset.png", 2, 2, 100, 100, ids, size, &out_anims);
+                              "assets/tileset.png", 2, 2, 100, 100, ids, size, &out_anims);
     while(!cog_hasquit()) {
         cog_loopstep();
         cog_vec2 cam_vel;
