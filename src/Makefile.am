@@ -1,4 +1,4 @@
-AM_CFLAGS = --pedantic -Wall -std=c99 -O2
+AM_CFLAGS = --pedantic -Wall -std=c99 -O3 -Werror
 AM_LDFLAGS =
 
 noinst_LIBRARIES = libcog.a
