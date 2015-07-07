@@ -81,3 +81,41 @@ See tests/
 
 ##License
 GPLv3. See LICENSE.txt for a copy.
+
+##Roadmap
+###Emscripten support 
+ - [DONE] Get image rendering in emscripten with SDL1.2
+ - [DONE] Get image rotation and scaling working with SDL1.2
+ - [DONE] Get audio working with OpenAL or SDL1.2_mixer
+ - Get SDL1.2 working in cog again (Bringing up a window, make it another backend)
+ - Play a sound
+ - Get rendering working
+ - Get animations working
+
+###Other things
+- [DONE] Fix rotations
+ - [DONE] Add ability to plug in update funcs
+ - Add some simple tweens
+  >> Features wanted:
+   -> Want to be able to change pos, rot, vel, ang_vel, alpha of a sprite or anim over a period of time.
+   -> Have 4 types:
+    == PERSIST Once and stay around at end
+    == LOOPING After complete start at start
+    == PINGPONG After complete start at end and go backwards, then go back and continue from start, and so on.
+    == ONESHOT Once and die at end
+   -> Model after gokit : http://forum.unity3d.com/threads/133823-Prime31-GoKit-Tween-Library-Live
+ - Add importing of objects in tiled
+ - Finish off tiled importer
+ - Maybe rethink state changes to be more flixel-like?
+
+###TODO port
+ - Get working with cross compiler for OSX X
+
+###TODO general
+ - Think about using top-left coordinate system - this mimicks how files are read, how people read, etc. Maybe better then center-based as is currently?
+ - Set media folder on init, so no need to type each time.
+ - Good readable definition of all keycodes (enum?)
+ - Normalisation of vectors built-in
+ - Make shutdown more safe -> Deallocate memory and call shutdown functions in correct order
+ - Status of SDL2 port: Anims, sprites and sound working. Mysterious crash on text example and text offsets are incorrect.
+

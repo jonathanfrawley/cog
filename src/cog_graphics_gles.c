@@ -76,9 +76,8 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     vertices[offset + 17] = 0;
     vertices[offset + 18] = sprite->tex_pos.x;
     vertices[offset + 19] = sprite->tex_pos.y + sprite->tex_dim.h;
-
     //Add camera to each
-    for(int i=0;i<20;i++) {
+    for(int i=0; i<20; i++) {
         if(i==3 || i==4 || i==8 || i==9 || i==13 || i==13 || i==18 || i==19) {
             continue;
         } else {
@@ -91,7 +90,6 @@ void cog_graphics_gles_draw_sprite(cog_sprite* sprite, uint32_t idx) {
             }
         }
     }
-
     //indices
     offset = idx * index_amount;
     indices[offset + 0] = 3;
@@ -155,7 +153,6 @@ void cog_graphics_gles_init(cog_window* win) {
 
 void cog_graphics_gles_draw_text(cog_text* text) {
     glUseProgram(program_object);
-
     cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, text_ft->tex_id);
@@ -166,7 +163,6 @@ void cog_graphics_gles_draw_text(cog_text* text) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
     const char* p;
     FT_GlyphSlot g = text_ft->face->glyph;
     double x = text->pos.x;
@@ -188,7 +184,6 @@ void cog_graphics_gles_draw_text(cog_text* text) {
         if(FT_Load_Char(text_ft->face, *p, FT_LOAD_RENDER)) {
             continue;
         }
-
         GLuint tex_id = cog_graphics_gen_tex_id();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tex_id);
@@ -199,8 +194,6 @@ void cog_graphics_gles_draw_text(cog_text* text) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
@@ -218,9 +211,13 @@ void cog_graphics_gles_draw_text(cog_text* text) {
         double w = g->bitmap.width * sx;
         double h = g->bitmap.rows * sy;
         cog_color c = text->col;
-        cog_sprite_add_explicit(tex_id, 
-                (cog_pos2){.x=x2+(w/2.0), .y=y2-(h/2.0)}, 
-                (cog_dim2){.w=w/2.0, .h=h/2.0});
+        cog_sprite_add_explicit(tex_id,
+        (cog_pos2) {
+            .x=x2+(w/2.0), .y=y2-(h/2.0)
+        },
+        (cog_dim2) {
+            .w=w/2.0, .h=h/2.0
+        });
         /*
         uint32_t offset = 0;
         GLfloat vertices[12 + 8];
@@ -276,7 +273,7 @@ void cog_graphics_gles_draw_text(cog_text* text) {
                 GL_FALSE, 5 * 4, 0 );
         // Load the texture coordinate
         glVertexAttribPointer(tex_coord_loc, 2, GL_FLOAT,
-                GL_FALSE, 5 * 4, 
+                GL_FALSE, 5 * 4,
                 3 * 4 );
 
         glEnableVertexAttribArray(position_loc);
@@ -316,7 +313,6 @@ void cog_graphics_gles_draw(void) {
     sampler_loc = glGetUniformLocation(program_object, "s_texture");
     position_loc = glGetAttribLocation(program_object, "a_position");
     tex_coord_loc = glGetAttribLocation(program_object, "a_texCoord");
-
     //1) Generate buffers
     // No clientside arrays, so do this in a webgl-friendly manner
     // vertex pos
@@ -327,16 +323,15 @@ void cog_graphics_gles_draw(void) {
     glGenBuffers(1, &index_object);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * sprite_amount * index_amount, indices, GL_STATIC_DRAW);
-/*
-    glGenBuffers(1, &vertex_pos_object);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // vertex indices
-    glGenBuffers(1, &index_object);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-*/
-
+    /*
+        glGenBuffers(1, &vertex_pos_object);
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        // vertex indices
+        glGenBuffers(1, &index_object);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    */
     //2) Drawing phase
     // Use the program object
     glUseProgram(program_object);
@@ -345,28 +340,25 @@ void cog_graphics_gles_draw(void) {
     //glVertexAttribPointer(position_loc, 3, GL_FLOAT,
     //        GL_FALSE, 5 * 4, 0 );
     glVertexAttribPointer(position_loc, 3, GL_FLOAT,
-            GL_FALSE, 5 * 4, 0 );
+                          GL_FALSE, 5 * 4, 0);
     // Load the texture coordinate
     glVertexAttribPointer(tex_coord_loc, 2, GL_FLOAT,
-            GL_FALSE, 5 * 4, 
-            3 * 4);
-
+                          GL_FALSE, 5 * 4,
+                          3 * 4);
     glEnableVertexAttribArray(position_loc);
     glEnableVertexAttribArray(tex_coord_loc);
     // Set the viewport
     //glViewport ( 0, 0, esContext->width, esContext->height );
     // Clear the color buffer
-
     //3) tex
     glUniform1i(sampler_loc, 0);
     //4) Draw the things!
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);
     //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-
     //TODO: For some reason webgl does not like drawing more than one quad at a time
     //glDrawElements(GL_TRIANGLES, 6 * sprite_amount, GL_UNSIGNED_INT, 0);
     //XXX: Hack because webgl refuses to accept more than one quad at a time
-    for(int i=0;i<sprite_amount;i++) {
+    for(int i=0; i<sprite_amount; i++) {
         glBindBuffer(GL_ARRAY_BUFFER, vertex_pos_object);
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertex_amount, vertices + (vertex_amount*i), GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_object);

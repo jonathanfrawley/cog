@@ -46,6 +46,26 @@ test_state:
 test_text:
 	$(CC) -o bin/test_text tests/test_text.c $(CFLAGS) $(TARGET_LIB)
 
+style:
+	# Enforce style
+	find src \( -name '*.c' -o -name '*.h' \) -exec printf "Indenting file {}\n" \; -exec astyle --style=java --suffix=.astyleorig --unpad-paren --delete-empty-lines --add-brackets --convert-tabs --align-pointer=type --lineend=linux --suffix=none --indent-switches {} \;
+	find tests \( -name '*.c' -o -name '*.h' \) -exec printf "Indenting file {}\n" \; -exec astyle --style=java --suffix=.astyleorig --unpad-paren --delete-empty-lines --add-brackets --convert-tabs --align-pointer=type --lineend=linux --suffix=none --indent-switches {} \;
+
+build_in_place:
+	# Build in place, using the deps built from scratch
+	platform="arch32" # Or win32
+	dest_dir=../${platform}
+
+	export CMAKE_LIBRARY_PATH="${CMAKE_LIBRARY_PATH}:$dest_dir/lib"
+	export CMAKE_INCLUDE_PATH="${CMAKE_INCLUDE_PATH}:$dest_dir/include/AL:$dest_dir/include/SDL2:$dest_dir/include/freetype2:$dest_dir/include/"
+	export C_INCLUDE_PATH="${C_INCLUDE_PATH}:${dest_dir}/include"
+	export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${dest_dir}/lib"
+	mkdir -p build
+	pushd build
+	cmake -DCMAKE_INSTALL_PREFIX:PATH= ../src
+	make
+	popd
+
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf $(TARGET_LIB)
