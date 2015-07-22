@@ -37,6 +37,7 @@ typedef struct cog_state_fsm {
     cog_list transitions;
     cog_state currentstate;
     cog_list events;
+    bool initial;
 } cog_state_fsm;
 
 cog_state_fsm* cog_state_fsm_alloc(void);

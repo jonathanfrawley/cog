@@ -19,6 +19,7 @@ void cog_state_fsm_init(cog_state_fsm* fsm) {
     cog_list_init(&fsm->transitions, sizeof(cog_state_transition));
     fsm->currentstate = COG_STATE_ERROR;
     cog_list_init(&fsm->events, sizeof(cog_event));
+    fsm->initial = true;
 }
 
 void cog_state_fsm_add_transition(cog_state_fsm* fsm,
@@ -38,13 +39,19 @@ void cog_state_fsm_add_transitions(cog_state_fsm* fsm,
 void cog_state_fsm_update(cog_state_fsm* fsm) {
     cog_event* event = cog_list_pop(&fsm->events);
     // when no event fired last update, continue in current state
-    if((*event) == COG_NULL) {
+    if(event == COG_NULL) {
         COG_LIST_FOREACH(&fsm->transitions) {
             cog_state_transition* transition =
                 (cog_state_transition*) curr->data;
             if(transition->state == fsm->currentstate) {
+                // For the very first event of a fsm, say it is initial
+                bool initial = false;
+                if(fsm->initial) {
+                    initial = true;
+                    fsm->initial = false;
+                }
                 fsm->currentstate = transition->transition_fn((cog_state_info) {
-                    .initial=false
+                    .initial=initial
                 });
                 break;
             }
