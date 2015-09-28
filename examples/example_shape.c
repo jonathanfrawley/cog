@@ -13,7 +13,9 @@ int main(int argc, char* argv[]) {
         .rot=COG_PI/2,
         .col=(cog_color) {
             .r=1,.g=1,.b=1,.a=1
-        }
+        },
+        .vel=0.01,
+        .ang_vel=COG_PI/4
     });
     while(!cog_hasquit()) {
         cog_loopstep();

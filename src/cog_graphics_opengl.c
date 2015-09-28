@@ -342,7 +342,7 @@ void cog_graphics_opengl_draw_rect(cog_rect* rect, uint32_t idx) {
     //Do rotation and transformation ourselves.
     //Rotate by PI/4 because..
     //TODO: Looks like the quads are getting stretched on rotation. Fix this somehow
-    double rot = rect->rot + COG_PI/4;
+    double rot = rect->rot - COG_PI/4;
     vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
     vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
     vertices[offset + 2] = 0;

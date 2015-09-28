@@ -16,8 +16,8 @@ void entity_init(entity* obj) {
             .pos = (cog_pos2) {.x=0, .y=0},
             .vel = (cog_vec2) {.x=0.1, .y=0.3},
             .transition_time = 0.15,
-             .looped = COG_TRUE,
-              .ang_vel = COG_PI/10.0,
+            .looped = COG_TRUE,
+            .ang_vel = COG_PI/10.0,
         });
         cog_anim_set_frames(obj->anim, 0, 1, 2);
     }
@@ -41,8 +41,8 @@ int main(int argc, char* argv[]) {
         .dim = (cog_dim2) {.w=0.3, .h=0.3},
         .pos = (cog_pos2) {.x=0.3, .y=0.3},
         .ang_vel = COG_PI/20.0,
-         .transition_time = 1.0,
-          .looped = COG_TRUE
+        .transition_time = 1.0,
+        .looped = COG_TRUE
     });
     cog_anim_set_frames(anim, 0, 1, 2, 3, 4, 5, 6, 7);
     cog_anim_id tileset = cog_anim_add("../assets/tileset.png", 2, 2);

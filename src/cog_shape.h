@@ -25,6 +25,7 @@ uint32_t cog_rect_draw_layer(uint32_t layer, uint32_t global_idx);
 cog_rect* cog_rect_get(cog_rect_id);
 void cog_rect_remove(cog_rect_id id);
 void cog_rect_removeall(void);
+void cog_rect_update(double timestep);
 void cog_rect_set(cog_rect_id id, cog_rect src);
 
 #endif // COG_SHAPE_H

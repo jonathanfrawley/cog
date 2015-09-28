@@ -117,6 +117,7 @@ void cog_update() {
     starttime = SDL_GetTicks();
     double timestep = (double)delta_millis / 1000.0;
     cog_anim_update(timestep);
+    cog_rect_update(timestep);
     cog_sprite_update(timestep);
     cog_graphics_update(timestep);
     cog_tween_update(timestep);
