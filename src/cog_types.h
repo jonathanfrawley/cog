@@ -19,6 +19,7 @@ typedef int32_t cog_sprite_id;
 typedef int32_t cog_text_id;
 typedef int32_t cog_tween_id;
 typedef int32_t cog_group_id;
+typedef int32_t cog_rect_id;
 typedef void* cog_dataptr;
 typedef char* cog_string;
 

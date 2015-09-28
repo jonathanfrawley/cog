@@ -27,6 +27,7 @@
 #include "cog_log.h"
 #include "cog_map.h"
 #include "cog_math.h"
+#include "cog_shape.h"
 #include "cog_sprite.h"
 #include "cog_snd.h"
 #include "cog_text.h"
@@ -72,6 +73,7 @@ void _cog_init(cog_config config) {
     cog_graphics_init(&window);
     cog_text_init();
     cog_tween_init();
+    cog_rect_init();
     starttime = SDL_GetTicks();
     //init rng
     srand(2);

@@ -9,6 +9,7 @@
 #include "cog_list.h"
 #include "cog_map.h"
 #include "cog_math.h"
+#include "cog_shape.h"
 #include "cog_sprite.h"
 
 #if COG_RENDERER==COG_RENDERER_SDL
@@ -26,6 +27,7 @@ typedef struct {
     void (*clear)(void);
     void (*draw)(void);
     void (*draw_sprite)(cog_sprite* sprite, uint32_t idx);
+    void (*draw_rect)(cog_rect* rect, uint32_t idx);
     void (*draw_text)(cog_text* text);
     uint32_t (*gen_tex_id)(void);
     uint32_t (*load_texture)(const char* filename, int* width, int* height);
@@ -39,6 +41,13 @@ static cog_map sprite_cache;
 static cog_list texture_list;
 static cog_vec2 camera_vel;
 static cog_pos2 camera_pos;
+
+void cog_graphics_draw_rect(cog_rect* rect, uint32_t idx) {
+#if GRAPHICS_DISABLED
+#else
+    r.draw_rect(rect, idx);
+#endif
+}
 
 /*-----------------------------------------------------------------------------
  * Sprites are drawn centred at the sprite's x and y coord, as opposed to most
@@ -111,7 +120,9 @@ void cog_graphics_init(cog_window* win) {
     r.clear = cog_graphics_gles_clear;
     r.flush = cog_graphics_gles_flush;
 #else
+    // Default and best supported method is opengl
     r.draw = cog_graphics_opengl_draw;
+    r.draw_rect = cog_graphics_opengl_draw_rect;
     r.draw_sprite = cog_graphics_opengl_draw_sprite;
     r.init = cog_graphics_opengl_init;
     r.draw_text = cog_graphics_opengl_draw_text;
@@ -155,6 +166,9 @@ void cog_graphics_render(cog_window* window) {
                 r.draw();
             }
         }
+        r.prepare(1);
+        cog_rect_draw_layer(i, 0); //TODO: Remove 0
+        r.draw();
         cog_text_draw_layer(i);
     }
     r.flush();

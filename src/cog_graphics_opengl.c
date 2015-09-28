@@ -328,6 +328,55 @@ double cog_graphics_opengl_round_h(double n) {
     return ret-1.0;
 }
 
+void cog_graphics_opengl_draw_rect(cog_rect* rect, uint32_t idx) {
+    uint32_t offset = idx * vertex_amount;
+    //1.5 here is due to cos and sin rotation below.
+    double w = rect->dim.w * 1.415;
+    double h = rect->dim.h * 1.415;
+    double x_offset = rect->pos.x;
+    double y_offset = rect->pos.y;
+    if(rect->pixel_perfect) {
+        x_offset = cog_graphics_opengl_round_w(rect->pos.x);
+        y_offset = cog_graphics_opengl_round_h(rect->pos.y);
+    }
+    //Do rotation and transformation ourselves.
+    //Rotate by PI/4 because..
+    //TODO: Looks like the quads are getting stretched on rotation. Fix this somehow
+    double rot = rect->rot + COG_PI/4;
+    vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
+    vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
+    vertices[offset + 2] = 0;
+    vertices[offset + 3] = 1.0f * w * cos(rot) + x_offset;
+    vertices[offset + 4] = 1.0f * h * sin(rot) + y_offset;
+    vertices[offset + 5] = 0;
+    vertices[offset + 6] = 1.0f * w * sin(rot) + x_offset;
+    vertices[offset + 7] = -1.0f * h * cos(rot) + y_offset;
+    vertices[offset + 8] = 0;
+    vertices[offset + 9] = -1.0f * w * cos(rot) + x_offset;
+    vertices[offset + 10] = -1.0f * h * sin(rot)+ y_offset;
+    vertices[offset + 11] = 0;
+    offset = idx * index_amount;
+    uint32_t idx_offset = idx * 4;
+    indices[offset + 0] = idx_offset + 3;
+    indices[offset + 1] = idx_offset + 0;
+    indices[offset + 2] = idx_offset + 1;
+    indices[offset + 3] = idx_offset + 3;
+    indices[offset + 4] = idx_offset + 1;
+    indices[offset + 5] = idx_offset + 2;
+
+    cog_color c = rect->col;
+    glColor4d(c.r, c.g, c.b, c.a);
+
+    glPushMatrix();
+    glLoadIdentity();
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glDrawElements(GL_TRIANGLES, 6 * sprite_amount, GL_UNSIGNED_INT, indices);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glPopMatrix();
+}
+
+
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     uint32_t offset = idx * vertex_amount;
@@ -624,7 +673,6 @@ GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, i
 uint32_t cog_graphics_opengl_load_texture(const char* filename, int* width, int* height) {
     return cog_graphics_opengl_load_texture_png(filename, 0, 0);
 }
-
 
 void cog_graphics_opengl_clear() {
     glClear(GL_COLOR_BUFFER_BIT);
