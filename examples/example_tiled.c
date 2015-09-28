@@ -124,7 +124,7 @@ int32_t* read_in_tiled_map(const char* tiled_json_filename, int32_t* data_size) 
 int main(int argc, char** argv) {
     cog_init();
     int32_t size;
-    int32_t* ids = read_in_tiled_map("assets/level.json", &size);
+    int32_t* ids = read_in_tiled_map("../assets/level.json", &size);
     //for(int i = 0; i < size ; i++) {
     //    cog_debugf("i is %d", ids[i]);
     //}

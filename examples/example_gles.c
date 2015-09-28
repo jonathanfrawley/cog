@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
     int size = 10;
     double inc = 0.1;
     for(int i=0; i<size; i++) {
-        cog_sprite_id id = cog_sprite_add("assets/images/title.png");
+        cog_sprite_id id = cog_sprite_add("../assets/images/title.png");
         cog_debugf("Added sprite %d ", id);
         cog_sprite_set(id, (cog_sprite) {
             .dim=(cog_dim2) {
@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
             .ang_vel=0.1
         });
     }
-    cog_sprite_id id = cog_sprite_add("assets/images/title.png");
+    cog_sprite_id id = cog_sprite_add("../assets/images/title.png");
     cog_sprite_set(id, (cog_sprite) {
         .dim=(cog_dim2) {
             .w=0.7, .h=0.5
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
         },
         .ang_vel=0.1
     });
-    id = cog_sprite_add("assets/images/title.png");
+    id = cog_sprite_add("../assets/images/title.png");
     cog_sprite_set(id, (cog_sprite) {
         .dim=(cog_dim2) {
             .w=0.7, .h=0.5

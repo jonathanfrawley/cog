@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     });
     cog_text_set_str(mid, "This is some multiline text.\nThis is the second line.\nAnd the third.\n4");
     cog_text* text = cog_text_get(id);
-    cog_text_set_face(id, "assets/fonts/FreeSans.ttf", 48);
+    cog_text_set_face(id, "../assets/fonts/FreeSans.ttf", 48);
     double xvel = 0.003;
     double yvel = 0.009;
     while(!cog_hasquit()) {

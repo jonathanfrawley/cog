@@ -1,5 +1,24 @@
 #cog - a KISS 2D game library written in C
 
+##Getting started
+Use cmake to build the project in a seperate directory.
+For example on linux:
+
+    mkdir build
+    cd build
+    cmake ../src
+    make
+
+This will build a bunch of tests.
+To run one, first copy the media folder into the current directory:
+
+    cp -rf ../media ./
+
+and then run the test:
+
+    ./test_anim
+
+
 ##What is cog?
 Cog is a 2D game library written to allow games to be prototyped quickly without sacrificing speed or portability.
 Developed with the KISS philosophy and borrowing concepts from the brilliant actionscript game framework flixel.
@@ -27,24 +46,6 @@ In addition, to build cog you will need:
  - cmake
 
 See https://github.com/df3n5/cog_deps for some useful scripts to help build dependencies.
-
-##Compiling
-Use cmake to build the project in a seperate directory.
-For example on linux:
-
-    mkdir build
-    cd build
-    cmake ../src
-    make
-
-This will build a bunch of tests.
-To run one, first copy the media folder into the current directory:
-
-    cp -rf ../media ./
-
-and then run the test:
-
-    ./test_anim
 
 ###Generating python bindings
 The resultant library will be called libcog.so. 

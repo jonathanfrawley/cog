@@ -10,7 +10,7 @@ static FT_Face default_face;
 
 static cog_map text_freetypes;
 
-static const cog_string default_path = "assets/fonts/04B_03__.ttf";
+static const cog_string default_path = "../assets/fonts/04B_03__.ttf";
 static uint32_t default_pt_size = 48;
 
 void cog_text_freetype_add(cog_text_id id) {
