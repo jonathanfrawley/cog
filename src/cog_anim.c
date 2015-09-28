@@ -101,7 +101,6 @@ void cog_anim_remove(cog_anim_id id) {
         if(*((cog_anim_id*) curr->data) == id) {
             cog_list_remove(&active_anims, curr->data);
             //BUG: Update len here with removal
-            char key[MAX_KEY];
             cog_anim* anim = cog_anim_get(id);
             cog_anim_decrease_tex_anim_len(anim);
             break;

@@ -8,7 +8,7 @@
 /*-----------------------------------------------------------------------------
  *  Represents a 2D image to be drawn to the screen
  *-----------------------------------------------------------------------------*/
-typedef struct {
+typedef struct cog_sprite {
     cog_sprite_id id;
     uint32_t layer;
     uint32_t tex_id;

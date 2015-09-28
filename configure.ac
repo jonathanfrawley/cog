@@ -2,11 +2,14 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT(cog, 0.1, jmf@9lines.org)
+AC_INIT([cog], [0.1], [jmf@9lines.org])
 AM_INIT_AUTOMAKE
-AC_OUTPUT(Makefile src/Makefile)
+AC_FILES(Makefile src/Makefile)
 AC_CONFIG_SRCDIR([tests/test_map.c])
 AC_CONFIG_HEADERS([config.h])
+AC_OUTPUT
+
+dist_doc_DATA = README.markdown
 
 # Checks for programs.
 AC_PROG_CC

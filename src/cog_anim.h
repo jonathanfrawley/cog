@@ -6,12 +6,10 @@
 
 #define COG_ANIM_LAYER 2
 
-struct cog_anim;
-
 /*-----------------------------------------------------------------------------
  * Anims are a collection of sprites with a specific duration between them.
  *-----------------------------------------------------------------------------*/
-typedef struct {
+typedef struct cog_anim {
     cog_anim_id id;
     uint32_t tex_id;
     uint32_t layer;
