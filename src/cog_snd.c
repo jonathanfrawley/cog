@@ -50,54 +50,34 @@ void cog_snd_init() {
 }
 
 cog_snd_id cog_snd_add(const char* fname) {
-#if SND_DISABLED
-    return 0;
-#else
     cog_snd_id id = cog_snd_cnt++;
     player.snd_add(fname, id);
     return id;
-#endif
 }
 
 cog_snd_id cog_snd_add_mus(const char* fname) {
-#if SND_DISABLED
-    return 0;
-#else
     cog_snd_id id = cog_snd_cnt++;
     player.snd_add_mus(fname, id);
     return id;
-#endif
 }
 
 void cog_snd_play(cog_snd_id id) {
-#if SND_DISABLED
-#else
     player.snd_play(id);
     cog_list_append(&activesnds, (cog_dataptr) &id);
-#endif
 }
 
 void cog_snd_stop(cog_snd_id id) {
-#if SND_DISABLED
-#else
     player.snd_stop(id);
     cog_list_remove(&activesnds, (cog_dataptr) &id);
-#endif
 }
 
 void cog_snd_stopall() {
-#if SND_DISABLED
-#else
     COG_LIST_FOREACH(&activesnds) {
         cog_snd_id* snd = (cog_snd_id*) curr->data;
         cog_snd_stop(*snd);
     }
-#endif
 }
 
 void cog_snd_quit() {
-#if SND_DISABLED
-#else
     player.snd_quit();
-#endif
 }

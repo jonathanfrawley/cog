@@ -376,7 +376,6 @@ void cog_graphics_opengl_draw_rect(cog_rect* rect, uint32_t idx) {
     glPopMatrix();
 }
 
-
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     uint32_t offset = idx * vertex_amount;

@@ -43,10 +43,7 @@ static cog_vec2 camera_vel;
 static cog_pos2 camera_pos;
 
 void cog_graphics_draw_rect(cog_rect* rect, uint32_t idx) {
-#if GRAPHICS_DISABLED
-#else
     r.draw_rect(rect, idx);
-#endif
 }
 
 /*-----------------------------------------------------------------------------
@@ -54,23 +51,14 @@ void cog_graphics_draw_rect(cog_rect* rect, uint32_t idx) {
  * engines where they are drawn from the top left.
  *-----------------------------------------------------------------------------*/
 void cog_graphics_draw_sprite(cog_sprite* sprite, uint32_t idx) {
-#if GRAPHICS_DISABLED
-#else
     r.draw_sprite(sprite, idx);
-#endif
 }
 
 void cog_graphics_draw_text(cog_text* text) {
-#if GRAPHICS_DISABLED
-#else
     r.draw_text(text);
-#endif
 }
 
 uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height) {
-#if GRAPHICS_DISABLED
-    return 0;
-#else
     //Cache textures so we don't load the same thing twice.
     void* item = cog_map_get_hash(&sprite_cache, filename);
     if(item != 0) {
@@ -83,13 +71,10 @@ uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height
         cog_debugf("Inserting tex_id %d into list for filename %s", *tex_id, filename);
         return (*tex_id);
     }
-#endif
 }
 
 
 void cog_graphics_init(cog_window* win) {
-#if GRAPHICS_DISABLED
-#else
 #if COG_RENDERER==COG_RENDERER_SDL2
     r.draw_sprite = cog_graphics_sdl2_draw_sprite;
     r.init = cog_graphics_sdl2_init;
@@ -137,70 +122,52 @@ void cog_graphics_init(cog_window* win) {
     cog_map_init(&sprite_cache);
     cog_list_init(&texture_list, sizeof(uint32_t));
     //camera_pos.x = 1.0;
-#endif
 }
 
 void cog_graphics_update(double timestep) {
-#if GRAPHICS_DISABLED
-#else
     camera_pos.x += camera_vel.x * timestep;
     camera_pos.y += camera_vel.y * timestep;
-#endif
 }
 
 void cog_graphics_render(cog_window* window) {
-#if GRAPHICS_DISABLED
-#else
     //Clear color buffer
     r.clear();
     r.set_camera_pos(&camera_pos);
     for(int i = 0; i < COG_LAYER_MAX; i++) {
+				uint32_t global_idx = 0;
         COG_LIST_FOREACH(&texture_list) {
             uint32_t tex_id = *((uint32_t*)curr->data);
             uint32_t cnt = cog_sprite_len(tex_id, i) + cog_anim_len(tex_id, i);
             if(cnt > 0) {
                 r.prepare(cnt);
-                uint32_t global_idx = 0;
                 global_idx += cog_sprite_draw_layer(i, tex_id, global_idx);
                 global_idx += cog_anim_draw_layer(i, tex_id, global_idx);
                 r.draw();
             }
         }
+        //r.prepare(cog_rect_len(i));
         r.prepare(1);
         cog_rect_draw_layer(i, 0); //TODO: Remove 0
         r.draw();
         cog_text_draw_layer(i);
     }
     r.flush();
-#endif
 }
 
 void cog_graphics_cam_set(cog_pos2* pos) {
-#if GRAPHICS_DISABLED
-#else
     camera_pos = (*pos);
-#endif
 }
 
 void cog_graphics_cam_get(cog_pos2* pos) {
-#if GRAPHICS_DISABLED
-#else
     (*pos) = camera_pos;
-#endif
 }
 
 void cog_graphics_cam_vel_set(cog_vec2* vel) {
-#if GRAPHICS_DISABLED
-#else
     camera_vel = (*vel);
-#endif
 }
 
 void cog_graphics_cam_vel_get(cog_vec2* vel) {
-#if GRAPHICS_DISABLED
-#else
     (*vel) = camera_vel;
-#endif
 }
 
 uint32_t cog_graphics_gen_tex_id() {

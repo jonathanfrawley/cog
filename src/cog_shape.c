@@ -11,16 +11,16 @@ static cog_list active_rects;
 static cog_map rects;
 static cog_rect_id rectcnt;
 
-cog_rect_id cog_rect_add_inactive(const char* img);
+cog_rect_id cog_rect_add_inactive(void);
 
-cog_rect_id cog_rect_add(const char* img) {
-    cog_rect_id id = cog_rect_add_inactive(img);
+cog_rect_id cog_rect_add(void) {
+    cog_rect_id id = cog_rect_add_inactive();
     cog_rect* rect = cog_rect_get(id);
     cog_list_append(&active_rects, (cog_dataptr) & (rect->id));
     return id;
 }
 
-cog_rect_id cog_rect_add_inactive(const char* img) {
+cog_rect_id cog_rect_add_inactive(void) {
     cog_rect* rect = COG_STRUCT_MALLOC(cog_rect);
     rect->id = rectcnt++;
     rect->layer = COG_RECT_LAYER;
@@ -77,6 +77,22 @@ void cog_rect_set(cog_rect_id id, cog_rect src) {
     rect->pixel_perfect = src.pixel_perfect;
     rect->update_func = src.update_func;
 }
+
+uint32_t cog_rect_len(uint32_t layer) {
+		uint32_t size = 0;
+    COG_LIST_FOREACH(&active_rects) {
+        //draw current rect if it is on the correct layer
+        cog_rect* curr_rect = (cog_rect*) cog_map_get(&rects,
+                                  *((cog_rect_id
+                                     *)
+                                    curr->data));
+        if(curr_rect->layer == layer) {
+						size++;
+        }
+    }
+    return size;
+}
+
 
 /*-----------------------------------------------------------------------------
  *  Internal
