@@ -9,7 +9,7 @@
 
 void cog_graphics_opengl_clear();
 void cog_graphics_opengl_draw();
-void cog_graphics_opengl_draw_rect(cog_rect* sprite, uint32_t idx);
+void cog_graphics_opengl_draw_rect(cog_rect* sprite);
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx);
 void cog_graphics_opengl_draw_text(cog_text* text);
 void cog_graphics_opengl_flush();

@@ -31,9 +31,9 @@ void cog_graphics_opengl_set_camera_pos(cog_pos2* pos) {
 static GLfloat* vertices;
 static GLfloat* tex;
 static GLuint* indices;
-static uint32_t vertex_amount = 12;
-static uint32_t tex_amount = 8;
-static uint32_t index_amount = 6;
+static const uint32_t vertex_amount = 12;
+static const uint32_t tex_amount = 8;
+static const uint32_t index_amount = 6;
 static uint32_t sprite_amount;
 
 //############### Shaders
@@ -328,8 +328,10 @@ double cog_graphics_opengl_round_h(double n) {
     return ret-1.0;
 }
 
-void cog_graphics_opengl_draw_rect(cog_rect* rect, uint32_t idx) {
-    uint32_t offset = idx * vertex_amount;
+void cog_graphics_opengl_draw_rect(cog_rect* rect) {
+    if(shaders_supported) {
+				glUseProgramObjectARB(shaders[SHADER_COLOR].program);
+		}
     //1.5 here is due to cos and sin rotation below.
     double w = rect->dim.w * 1.415;
     double h = rect->dim.h * 1.415;
@@ -343,26 +345,27 @@ void cog_graphics_opengl_draw_rect(cog_rect* rect, uint32_t idx) {
     //Rotate by PI/4 because..
     //TODO: Looks like the quads are getting stretched on rotation. Fix this somehow
     double rot = rect->rot - COG_PI/4;
-    vertices[offset + 0] = -1.0f * w * sin(rot) + x_offset;
-    vertices[offset + 1] = 1.0f * h * cos(rot) + y_offset;
-    vertices[offset + 2] = 0;
-    vertices[offset + 3] = 1.0f * w * cos(rot) + x_offset;
-    vertices[offset + 4] = 1.0f * h * sin(rot) + y_offset;
-    vertices[offset + 5] = 0;
-    vertices[offset + 6] = 1.0f * w * sin(rot) + x_offset;
-    vertices[offset + 7] = -1.0f * h * cos(rot) + y_offset;
-    vertices[offset + 8] = 0;
-    vertices[offset + 9] = -1.0f * w * cos(rot) + x_offset;
-    vertices[offset + 10] = -1.0f * h * sin(rot)+ y_offset;
-    vertices[offset + 11] = 0;
-    offset = idx * index_amount;
-    uint32_t idx_offset = idx * 4;
-    indices[offset + 0] = idx_offset + 3;
-    indices[offset + 1] = idx_offset + 0;
-    indices[offset + 2] = idx_offset + 1;
-    indices[offset + 3] = idx_offset + 3;
-    indices[offset + 4] = idx_offset + 1;
-    indices[offset + 5] = idx_offset + 2;
+
+		GLfloat vertices[vertex_amount];
+		GLuint indices[index_amount];
+    vertices[0] = -1.0f * w * sin(rot) + x_offset;
+    vertices[1] = 1.0f * h * cos(rot) + y_offset;
+    vertices[2] = 0;
+    vertices[3] = 1.0f * w * cos(rot) + x_offset;
+    vertices[4] = 1.0f * h * sin(rot) + y_offset;
+    vertices[5] = 0;
+    vertices[6] = 1.0f * w * sin(rot) + x_offset;
+    vertices[7] = -1.0f * h * cos(rot) + y_offset;
+    vertices[8] = 0;
+    vertices[9] = -1.0f * w * cos(rot) + x_offset;
+    vertices[10] = -1.0f * h * sin(rot)+ y_offset;
+    vertices[11] = 0;
+    indices[0] = 3;
+    indices[1] = 0;
+    indices[2] = 1;
+    indices[3] = 3;
+    indices[4] = 1;
+    indices[5] = 2;
 
     cog_color c = rect->col;
     glColor4d(c.r, c.g, c.b, c.a);
@@ -371,9 +374,12 @@ void cog_graphics_opengl_draw_rect(cog_rect* rect, uint32_t idx) {
     glLoadIdentity();
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glDrawElements(GL_TRIANGLES, 6 * sprite_amount, GL_UNSIGNED_INT, indices);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indices);
     glDisableClientState(GL_VERTEX_ARRAY);
     glPopMatrix();
+
+    //Restore alpha to normal
+    glColor4f(1.0, 1.0, 1.0, 1.0);
 }
 
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
@@ -450,6 +456,8 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
 #ifndef USE_LEGACY_SDL
         //Disable shader for text
         glUseProgramObjectARB(0);
+#else
+        glUseProgramObjectARB(shaders[SHADER_COLOR].program);
 #endif
     }
     cog_text_freetype* text_ft = cog_text_freetype_get(text->id);
@@ -526,11 +534,6 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
     //Restore alpha to normal
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glPopMatrix();
-    if(shaders_supported) {
-#ifndef USE_LEGACY_SDL
-        glUseProgramObjectARB(shaders[old_program].program);
-#endif
-    }
 }
 
 uint32_t cog_graphics_opengl_gen_tex_id() {
@@ -678,7 +681,8 @@ void cog_graphics_opengl_clear() {
     glLoadIdentity();
     if(shaders_supported) {
 #ifndef USE_LEGACY_SDL
-        glUseProgramObjectARB(shaders[current_shader].program);
+				// Texture is the default shader
+        glUseProgramObjectARB(shaders[SHADER_TEXTURE].program);
 #endif
     }
 }

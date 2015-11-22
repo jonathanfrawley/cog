@@ -73,6 +73,7 @@ void cog_rect_set(cog_rect_id id, cog_rect src) {
     rect->rot = src.rot;
     rect->vel = src.vel;
     rect->ang_vel = src.ang_vel;
+		if(src.layer) rect->layer = src.layer;
     rect->col = src.col;
     rect->pixel_perfect = src.pixel_perfect;
     rect->update_func = src.update_func;
@@ -102,7 +103,7 @@ void cog_rect_init(void) {
     cog_list_init(&active_rects, sizeof(cog_rect_id));
 }
 
-uint32_t cog_rect_draw_layer(uint32_t layer, uint32_t global_idx) {
+uint32_t cog_rect_draw_layer(uint32_t layer) {
     uint32_t idx = 0;
     //Draw rects
     COG_LIST_FOREACH(&active_rects) {
@@ -112,7 +113,7 @@ uint32_t cog_rect_draw_layer(uint32_t layer, uint32_t global_idx) {
                                      *)
                                     curr->data));
         if(curr_rect->layer == layer) {
-            cog_graphics_draw_rect(curr_rect, global_idx + idx);
+            cog_graphics_draw_rect(curr_rect);
             idx++;
         }
     }

@@ -27,7 +27,7 @@ typedef struct {
     void (*clear)(void);
     void (*draw)(void);
     void (*draw_sprite)(cog_sprite* sprite, uint32_t idx);
-    void (*draw_rect)(cog_rect* rect, uint32_t idx);
+    void (*draw_rect)(cog_rect* rect);
     void (*draw_text)(cog_text* text);
     uint32_t (*gen_tex_id)(void);
     uint32_t (*load_texture)(const char* filename, int* width, int* height);
@@ -42,8 +42,8 @@ static cog_list texture_list;
 static cog_vec2 camera_vel;
 static cog_pos2 camera_pos;
 
-void cog_graphics_draw_rect(cog_rect* rect, uint32_t idx) {
-    r.draw_rect(rect, idx);
+void cog_graphics_draw_rect(cog_rect* rect) {
+    r.draw_rect(rect);
 }
 
 /*-----------------------------------------------------------------------------
@@ -134,8 +134,8 @@ void cog_graphics_render(cog_window* window) {
     r.clear();
     r.set_camera_pos(&camera_pos);
     for(int i = 0; i < COG_LAYER_MAX; i++) {
-				uint32_t global_idx = 0;
         COG_LIST_FOREACH(&texture_list) {
+						uint32_t global_idx = 0;
             uint32_t tex_id = *((uint32_t*)curr->data);
             uint32_t cnt = cog_sprite_len(tex_id, i) + cog_anim_len(tex_id, i);
             if(cnt > 0) {
@@ -145,10 +145,7 @@ void cog_graphics_render(cog_window* window) {
                 r.draw();
             }
         }
-        //r.prepare(cog_rect_len(i));
-        r.prepare(1);
-        cog_rect_draw_layer(i, 0); //TODO: Remove 0
-        r.draw();
+        cog_rect_draw_layer(i);
         cog_text_draw_layer(i);
     }
     r.flush();

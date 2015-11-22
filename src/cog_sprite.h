@@ -3,7 +3,7 @@
 
 #include "cog_types.h"
 
-#define COG_SPRITE_LAYER 1
+#define COG_SPRITE_LAYER 3
 
 /*-----------------------------------------------------------------------------
  *  Represents a 2D image to be drawn to the screen
