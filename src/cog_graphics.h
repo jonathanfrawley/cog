@@ -1,7 +1,7 @@
 #ifndef  COG_GRAPHICS_H
 #define  COG_GRAPHICS_H
 
-#include "cog_shape.h"
+#include "cog_rect.h"
 #include "cog_sprite.h"
 #include "cog_text.h"
 #include "cog_window.h"

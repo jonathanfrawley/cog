@@ -1,25 +1,18 @@
 #include "cog_graphics_opengl.h"
 
-#include <cog_defs.h>
-
-#ifdef USE_LEGACY_SDL
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#include <cog_window_sdl.h>
-#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
-#include <cog_window_sdl2.h>
-#endif
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <png.h>
 
-#include <cog_log.h>
-#include <cog_math.h>
-#include <cog_main.h>
-#include <cog_text_freetype.h>
+#include "cog_defs.h"
+#include "cog_log.h"
+#include "cog_math.h"
+#include "cog_main.h"
+#include "cog_text_freetype.h"
+#include "cog_window_sdl2.h"
 
 GLuint cog_graphics_opengl_load_texture_png(const char* file_name, int* width, int* height);
 cog_window* window;

@@ -9,18 +9,10 @@
 #include "cog_list.h"
 #include "cog_map.h"
 #include "cog_math.h"
-#include "cog_shape.h"
+#include "cog_rect.h"
 #include "cog_sprite.h"
 
-#if COG_RENDERER==COG_RENDERER_SDL
-#include "cog_graphics_sdl.h"
-#elif COG_RENDERER==COG_RENDERER_SDL2
-#include "cog_graphics_sdl2.h"
-#elif COG_RENDERER==COG_RENDERER_GLES
-#include "cog_graphics_gles.h"
-#else
 #include "cog_graphics_opengl.h"
-#endif
 
 typedef struct {
     void (*init)(cog_window*);
@@ -75,36 +67,6 @@ uint32_t cog_graphics_load_texture(const char* filename, int* width, int* height
 
 
 void cog_graphics_init(cog_window* win) {
-#if COG_RENDERER==COG_RENDERER_SDL2
-    r.draw_sprite = cog_graphics_sdl2_draw_sprite;
-    r.init = cog_graphics_sdl2_init;
-    r.draw_text = cog_graphics_sdl2_draw_text;
-    r.load_texture = cog_graphics_sdl2_load_texture;
-    r.set_camera_pos = 0; //TODO: Implement
-    r.clear = cog_graphics_sdl2_clear;
-    r.flush = cog_graphics_sdl2_flush;
-#elif COG_RENDERER==COG_RENDERER_SDL
-    r.draw = cog_graphics_sdl_draw;
-    r.draw_sprite = cog_graphics_sdl_draw_sprite;
-    r.init = cog_graphics_sdl_init;
-    r.draw_text = cog_graphics_sdl_draw_text;
-    r.load_texture = cog_graphics_sdl_load_texture;
-    r.prepare = cog_graphics_sdl_prepare;
-    r.set_camera_pos = cog_graphics_sdl_set_camera_pos;
-    r.clear = cog_graphics_sdl_clear;
-    r.flush = cog_graphics_sdl_flush;
-#elif COG_RENDERER==COG_RENDERER_GLES
-    r.draw = cog_graphics_gles_draw;
-    r.draw_sprite = cog_graphics_gles_draw_sprite;
-    r.init = cog_graphics_gles_init;
-    r.draw_text = cog_graphics_gles_draw_text;
-    r.gen_tex_id = cog_graphics_gles_gen_tex_id;
-    r.load_texture = cog_graphics_gles_load_texture;
-    r.prepare = cog_graphics_gles_prepare;
-    r.set_camera_pos = cog_graphics_gles_set_camera_pos;
-    r.clear = cog_graphics_gles_clear;
-    r.flush = cog_graphics_gles_flush;
-#else
     // Default and best supported method is opengl
     r.draw = cog_graphics_opengl_draw;
     r.draw_rect = cog_graphics_opengl_draw_rect;
@@ -117,7 +79,6 @@ void cog_graphics_init(cog_window* win) {
     r.set_camera_pos = cog_graphics_opengl_set_camera_pos;
     r.clear = cog_graphics_opengl_clear;
     r.flush = cog_graphics_opengl_flush;
-#endif
     r.init(win);
     cog_map_init(&sprite_cache);
     cog_list_init(&texture_list, sizeof(uint32_t));

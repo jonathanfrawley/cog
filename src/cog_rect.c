@@ -1,4 +1,4 @@
-#include "cog_shape.h"
+#include "cog_rect.h"
 
 #include "cog_core.h"
 #include "cog_graphics.h"
@@ -55,6 +55,11 @@ bool cog_rect_collides_rect(cog_rect_id id0, cog_rect_id id1) {
     double rect1_y1 = rect1->pos.y + rect1->dim.h;
     double rect1_x2 = rect1->pos.x + rect1->dim.w;
     double rect1_y2 = rect1->pos.y - rect1->dim.h;
+
+    cog_debugf("r0 x1 %lf y1 %lf", rect0_x1, rect0_y1);
+    cog_debugf("r0 x2 %lf y2 %lf", rect0_x2, rect0_y2);
+    cog_debugf("r1 x1 %lf y1 %lf", rect1_x1, rect1_y1);
+    cog_debugf("r1 x2 %lf y2 %lf", rect1_x2, rect1_y2);
 
     if (rect0_x1 < rect1_x2 && rect0_x2 > rect1_x1 &&
         rect0_y1 < rect1_y2 && rect0_y2 > rect1_y1) {

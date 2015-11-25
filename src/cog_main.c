@@ -27,7 +27,7 @@
 #include "cog_log.h"
 #include "cog_map.h"
 #include "cog_math.h"
-#include "cog_shape.h"
+#include "cog_rect.h"
 #include "cog_sprite.h"
 #include "cog_snd.h"
 #include "cog_text.h"
