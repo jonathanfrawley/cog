@@ -28,38 +28,18 @@ cog_rect_id cog_rect_add_inactive(void) {
     return rect->id;
 }
 
-double cog_rect_dist_rect_x(cog_rect_id a, cog_rect_id b) {
-    cog_rect* arect = cog_rect_get(a);
-    cog_rect* brect = cog_rect_get(b);
-    return cog_math_sqrt((arect->pos.x - brect->pos.x) *
-                         (arect->pos.x - brect->pos.x));
-}
-
-double cog_rect_dist_rect_y(cog_rect_id a, cog_rect_id b) {
-    cog_rect* arect = cog_rect_get(a);
-    cog_rect* brect = cog_rect_get(b);
-    return cog_math_sqrt((arect->pos.y - brect->pos.y) *
-                         (arect->pos.y - brect->pos.y));
-}
-
-
 bool cog_rect_collides_rect(cog_rect_id id0, cog_rect_id id1) {
     cog_rect* rect0 = cog_rect_get(id0);
     cog_rect* rect1 = cog_rect_get(id1);
     double rect0_x1 = rect0->pos.x - rect0->dim.w;
-    double rect0_y1 = rect0->pos.y + rect0->dim.h;
+    double rect0_y1 = rect0->pos.y - rect0->dim.h;
     double rect0_x2 = rect0->pos.x + rect0->dim.w;
-    double rect0_y2 = rect0->pos.y - rect0->dim.h;
+    double rect0_y2 = rect0->pos.y + rect0->dim.h;
 
     double rect1_x1 = rect1->pos.x - rect1->dim.w;
-    double rect1_y1 = rect1->pos.y + rect1->dim.h;
+    double rect1_y1 = rect1->pos.y - rect1->dim.h;
     double rect1_x2 = rect1->pos.x + rect1->dim.w;
-    double rect1_y2 = rect1->pos.y - rect1->dim.h;
-
-    cog_debugf("r0 x1 %lf y1 %lf", rect0_x1, rect0_y1);
-    cog_debugf("r0 x2 %lf y2 %lf", rect0_x2, rect0_y2);
-    cog_debugf("r1 x1 %lf y1 %lf", rect1_x1, rect1_y1);
-    cog_debugf("r1 x2 %lf y2 %lf", rect1_x2, rect1_y2);
+    double rect1_y2 = rect1->pos.y + rect1->dim.h;
 
     if (rect0_x1 < rect1_x2 && rect0_x2 > rect1_x1 &&
         rect0_y1 < rect1_y2 && rect0_y2 > rect1_y1) {
