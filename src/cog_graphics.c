@@ -135,7 +135,7 @@ void cog_graphics_render(cog_window* window) {
     r.set_camera_pos(&camera_pos);
     for(int i = 0; i < COG_LAYER_MAX; i++) {
         COG_LIST_FOREACH(&texture_list) {
-						uint32_t global_idx = 0;
+            uint32_t global_idx = 0;
             uint32_t tex_id = *((uint32_t*)curr->data);
             uint32_t cnt = cog_sprite_len(tex_id, i) + cog_anim_len(tex_id, i);
             if(cnt > 0) {
