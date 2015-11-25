@@ -9,6 +9,7 @@
 #define COG_LAYER_MAX 16
 
 void cog_graphics_render(cog_window* window);
+void cog_graphics_set_custom_render(void (*custom_render)());
 void cog_graphics_cam_set(cog_pos2* pos);
 void cog_graphics_cam_get(cog_pos2* pos);
 void cog_graphics_cam_vel_set(cog_vec2* vel);

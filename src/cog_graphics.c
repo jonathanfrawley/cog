@@ -25,6 +25,7 @@ typedef struct {
     uint32_t (*load_texture)(const char* filename, int* width, int* height);
     void (*prepare)(uint32_t amount);
     void (*set_camera_pos)(cog_pos2* pos);
+    void (*custom_render)();
     void (*flush)(void);
 } cog_renderer;
 
@@ -79,6 +80,7 @@ void cog_graphics_init(cog_window* win) {
     r.set_camera_pos = cog_graphics_opengl_set_camera_pos;
     r.clear = cog_graphics_opengl_clear;
     r.flush = cog_graphics_opengl_flush;
+    r.custom_render = NULL;
     r.init(win);
     cog_map_init(&sprite_cache);
     cog_list_init(&texture_list, sizeof(uint32_t));
@@ -88,6 +90,10 @@ void cog_graphics_init(cog_window* win) {
 void cog_graphics_update(double timestep) {
     camera_pos.x += camera_vel.x * timestep;
     camera_pos.y += camera_vel.y * timestep;
+}
+
+void cog_graphics_set_custom_render(void (*custom_render)()) {
+    r.custom_render = custom_render;
 }
 
 void cog_graphics_render(cog_window* window) {
@@ -108,6 +114,9 @@ void cog_graphics_render(cog_window* window) {
         }
         cog_rect_draw_layer(i);
         cog_text_draw_layer(i);
+    }
+    if(r.custom_render != NULL) {
+        r.custom_render();
     }
     r.flush();
 }
