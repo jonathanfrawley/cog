@@ -49,6 +49,7 @@ typedef struct cog_config {
     uint32_t window_w;
     uint32_t window_h;
     bool fullscreen;
+    bool debug;
 } cog_config;
 
 #endif // COG_TYPES_H

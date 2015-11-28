@@ -1,7 +1,7 @@
 #ifndef COG_GRAPHICS_OPENGL
 #define COG_GRAPHICS_OPENGL
 
-#include "cog_shape.h"
+#include "cog_rect.h"
 #include "cog_sprite.h"
 #include "cog_text.h"
 #include "cog_types.h"
@@ -9,7 +9,7 @@
 
 void cog_graphics_opengl_clear();
 void cog_graphics_opengl_draw();
-void cog_graphics_opengl_draw_rect(cog_rect* sprite, uint32_t idx);
+void cog_graphics_opengl_draw_rect(cog_rect* sprite);
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx);
 void cog_graphics_opengl_draw_text(cog_text* text);
 void cog_graphics_opengl_flush();

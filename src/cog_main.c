@@ -27,7 +27,7 @@
 #include "cog_log.h"
 #include "cog_map.h"
 #include "cog_math.h"
-#include "cog_shape.h"
+#include "cog_rect.h"
 #include "cog_sprite.h"
 #include "cog_snd.h"
 #include "cog_text.h"
@@ -51,6 +51,7 @@ double cog_math_radtodeg(double rad);
 //#global vars
 static cog_window window;
 //##timing
+static bool debug;
 static uint32_t delta_millis;
 static uint32_t starttime;
 static uint32_t now;
@@ -75,6 +76,7 @@ void _cog_init(cog_config config) {
     cog_tween_init();
     cog_rect_init();
     starttime = SDL_GetTicks();
+		debug = config.debug;
     //init rng
     srand(2);
 }
@@ -126,6 +128,7 @@ void cog_update() {
     }
     cog_input_check_keys();
     cog_input_check_mouse();
+if(debug) {
     //Useful logging every second.
     frametimecounter += lastframetime;
     if(frametimecounter >= 1000) {
@@ -139,6 +142,7 @@ void cog_update() {
         cog_map_reset_counter();
         cog_map_reset_timer();
     }
+}
 }
 
 //This is to allow the user to control the mainloop

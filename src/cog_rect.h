@@ -3,7 +3,7 @@
 
 #include "cog_types.h"
 
-#define COG_RECT_LAYER 1
+#define COG_RECT_LAYER 3
 
 typedef struct cog_rect {
     cog_rect_id id;
@@ -21,8 +21,9 @@ typedef struct cog_rect {
 
 cog_rect_id cog_rect_add();
 bool cog_rect_collides_rect(cog_rect_id id0, cog_rect_id id1);
-uint32_t cog_rect_draw_layer(uint32_t layer, uint32_t global_idx);
+uint32_t cog_rect_draw_layer(uint32_t layer);
 cog_rect* cog_rect_get(cog_rect_id);
+uint32_t cog_rect_len(uint32_t layer);
 void cog_rect_remove(cog_rect_id id);
 void cog_rect_removeall(void);
 void cog_rect_update(double timestep);
