@@ -203,6 +203,8 @@ void cog_clear() {
     cog_anim_removeall();
     cog_anim_init();
     cog_group_init();
+    cog_rect_removeall();
+    cog_rect_init();
     cog_text_removeall();
     cog_text_init();
     cog_snd_stopall();

@@ -29,4 +29,6 @@ void cog_rect_removeall(void);
 void cog_rect_update(double timestep);
 void cog_rect_set(cog_rect_id id, cog_rect src);
 
+void cog_rect_init(void);
+
 #endif // COG_SHAPE_H
