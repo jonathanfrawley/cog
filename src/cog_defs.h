@@ -17,6 +17,8 @@
 #define COG_WINDOW_SDL2 1
 #define COG_WINDOW_GLES 2
 
+// Enabled for FPS logging
+//#define COG_PERF_STATS 0
 
 //Define defaults
 #define COG_RENDERER COG_RENDERER_OPENGL

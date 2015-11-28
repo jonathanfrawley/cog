@@ -16,7 +16,7 @@ void cog_window_sdl2_init(cog_config config, cog_window* window) {
     int height = config.window_h;
     if(config.window_w == 0) {
         width = 640;
-        height = 480;
+        height = 600;
     }
 #ifdef USE_SDL
     int flags = SDL_RENDERER_ACCELERATED;

@@ -129,10 +129,10 @@ void cog_update() {
     //Useful logging every second.
     frametimecounter += lastframetime;
     if(frametimecounter >= 1000) {
-#ifdef DEBUG
+#ifdef COG_PERF_STATS 
         cog_debugf("nupdates <%d>, ndraws <%d>, render_time <%d> cog_map_get_counter <%d> cog_map_get_timer <%lf>", frameupdatecounter,
                    framedrawcounter, render_time, cog_map_get_counter(), cog_map_get_timer());
-#endif //DEBUG
+#endif // COG_PERF_STATS
         frametimecounter = 0;
         framedrawcounter = 0;
         frameupdatecounter = 0;
