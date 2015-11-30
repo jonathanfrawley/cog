@@ -5,6 +5,8 @@
 #include "cog_list.h"
 #include "cog_map.h"
 
+/*
+#define USE_SDL
 #ifdef USE_LEGACY_SDL
 #include "cog_snd_sdl2.h"
 #else
@@ -14,6 +16,7 @@
 #include "cog_snd_al.h"
 #endif
 #endif
+*/
 
 typedef struct {
     void (*snd_init)(void);
@@ -30,6 +33,7 @@ static cog_snd_id cog_snd_cnt;
 //sound
 
 void cog_snd_init() {
+/*
 #if defined(USE_SDL) || defined(USE_LEGACY_SDL)
     player.snd_init = cog_snd_sdl2_init;
     player.snd_add = cog_snd_sdl2_add;
@@ -45,39 +49,40 @@ void cog_snd_init() {
     player.snd_stop = cog_snd_al_stop;
     player.snd_quit = cog_snd_al_quit;
 #endif
+*/
     cog_list_init(&activesnds, sizeof(cog_snd_id));
     player.snd_init();
 }
 
 cog_snd_id cog_snd_add(const char* fname) {
     cog_snd_id id = cog_snd_cnt++;
-    player.snd_add(fname, id);
+//    player.snd_add(fname, id);
     return id;
 }
 
 cog_snd_id cog_snd_add_mus(const char* fname) {
     cog_snd_id id = cog_snd_cnt++;
-    player.snd_add_mus(fname, id);
+//    player.snd_add_mus(fname, id);
     return id;
 }
 
 void cog_snd_play(cog_snd_id id) {
-    player.snd_play(id);
+//    player.snd_play(id);
     cog_list_append(&activesnds, (cog_dataptr) &id);
 }
 
 void cog_snd_stop(cog_snd_id id) {
-    player.snd_stop(id);
+//    player.snd_stop(id);
     cog_list_remove(&activesnds, (cog_dataptr) &id);
 }
 
 void cog_snd_stopall() {
     COG_LIST_FOREACH(&activesnds) {
         cog_snd_id* snd = (cog_snd_id*) curr->data;
-        cog_snd_stop(*snd);
+//        cog_snd_stop(*snd);
     }
 }
 
 void cog_snd_quit() {
-    player.snd_quit();
+//    player.snd_quit();
 }
