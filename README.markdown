@@ -7,7 +7,7 @@ For example on linux:
     mkdir build
     cd build
     cmake ../src
-    make
+    make examples
 
 This will build a bunch of examples and test binaries in the current directory. For example:
 
