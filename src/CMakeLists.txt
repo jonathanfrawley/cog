@@ -39,7 +39,7 @@ else()
     find_package(OpenAL REQUIRED)
     #SET(COG_DEPS ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${LIBXML2_LIBRARIES} ${JANSSON_LIBRARY} GL)
     SET(COG_DEPS ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${OPENAL_LIBRARY} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${LIBXML2_LIBRARIES} ${JANSSON_LIBRARY} ${SDL2MIXER_LIBRARY} -lmingw32 -lSDL2main -lSDL2 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid)
-    SET(cog_srcs cog_anim.c cog_core.c cog_graphics.c cog_graphics_opengl.c cog_input.c cog_list.c cog_log.c cog_main.c cog_map.c cog_math.c cog_snd.c cog_sprite.c cog_state.c cog_test.c cog_text.c cog_text_freetype.c cog_window.c cog_window_sdl2.c cog_tween.c  cog_group.c cog_rect.c cog_snd_sdl2.c)
+    SET(cog_srcs cog_anim.c cog_core.c cog_graphics.c cog_graphics_opengl.c cog_input.c cog_list.c cog_log.c cog_main.c cog_map.c cog_math.c cog_snd.c cog_sprite.c cog_state.c cog_test.c cog_text.c cog_text_freetype.c cog_window.c cog_window_sdl2.c cog_tween.c  cog_group.c cog_rect.c cog_snd_al.c)
 endif()
 
 #Copy files to dest.
