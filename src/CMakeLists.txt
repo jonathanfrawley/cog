@@ -2,13 +2,20 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 PROJECT(cog C)
 
-SET(CMAKE_BUILD_TYPE Debug)
+ADD_SUBDIRECTORY(third_party/freealut)
+
+#-------------------------------------
+# Debug and profiling compiler options
+#SET(CMAKE_BUILD_TYPE Debug)
+ADD_DEFINITIONS(-std=c99 -O0 -Wall)
 #ADD_DEFINITIONS(-std=c99 -O0 -Wall -g -DDEBUG) #-pg is for profiling
-#ADD_DEFINITIONS(-std=c99 -static-libgcc) #-pg is for profiling
 #SET(CMAKE_EXE_LINKER_FLAGS -pg)
 
+#-------------------------------------
+# Include custom Find*.cmake files.
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 
+#-------------------------------------
 # Finding dependencies 
 MESSAGE("Building using SDL2 for windowing, OpenGL for rendering, OpenAL for audio...")
 FIND_PACKAGE(SDL2 REQUIRED)
@@ -25,25 +32,19 @@ INCLUDE_DIRECTORIES(${FREETYPE_INCLUDE_DIRS})
 FIND_PACKAGE(PNG REQUIRED)
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIRS})
 FIND_PACKAGE(OpenGL REQUIRED)
-FIND_PACKAGE(ALUT REQUIRED)
-IF(NOT ALUT_FOUND)
-    MESSAGE("Could not find ALUT")
-ENDIF(NOT ALUT_FOUND)
-FIND_PACKAGE(OpenAL REQUIRED)
 
-MESSAGE("ALUT_LIBRARY: " + ${ALUT_LIBRARY})
-MESSAGE("OPENAL_LIBRARY: " + ${OPENAL_LIBRARY})
-MESSAGE("SDL2_LIBRARY: " + ${SDL2_LIBRARY})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/third_party/freealut)
 
 # Setting dependencies list
-SET(COG_DEPS ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${ALUT_LIBRARY} ${OPENAL_LIBRARY} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${JANSSON_LIBRARY})
+SET(COG_DEPS ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${JANSSON_LIBRARY} alut_static)
 # Windows needs some extra libraries
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    SET(COG_DEPS ${COG_DEPS} -limm32 -lversion )
+    SET(COG_DEPS ${COG_DEPS} -limm32 -lversion)
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
+#-------------------------------------
 # List of source files in library
-SET(cog_srcs cog_anim.c cog_core.c cog_graphics.c cog_graphics_opengl.c cog_input.c cog_list.c cog_log.c cog_main.c cog_map.c cog_math.c cog_snd.c cog_sprite.c cog_state.c cog_test.c cog_text.c cog_text_freetype.c cog_window.c cog_window_sdl2.c cog_tween.c  cog_group.c cog_rect.c cog_snd_al.c)
+SET(cog_srcs cog_anim.c cog_core.c cog_graphics.c cog_graphics_opengl.c cog_input.c cog_list.c cog_log.c cog_main.c cog_map.c cog_math.c cog_snd.c cog_sprite.c cog_state.c cog_test.c cog_text.c cog_text_freetype.c cog_window.c cog_window_sdl2.c cog_tween.c  cog_group.c cog_rect.c  cog_snd_al.c)
 
 ADD_LIBRARY(cog ${cog_srcs})
 
@@ -57,11 +58,13 @@ ADD_LIBRARY(cog ${cog_srcs})
 
 TARGET_LINK_LIBRARIES(cog m ${COG_DEPS})
 
+#-------------------------------------
+# Tests
+# Run "make tests" to build examples
 SET(TEST_DIR ../tests)
 SET(EXAMPLE_DIR ../examples)
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}" "${TEST_DIR}")
 
-# Do "make tests" to build examples
 ADD_CUSTOM_TARGET(tests)
 ADD_EXECUTABLE(cog_test_list EXCLUDE_FROM_ALL ${TEST_DIR}/test_list.c)
 TARGET_LINK_LIBRARIES(cog_test_list cog)
@@ -71,7 +74,9 @@ ADD_EXECUTABLE(cog_test_state EXCLUDE_FROM_ALL ${TEST_DIR}/test_state.c)
 TARGET_LINK_LIBRARIES(cog_test_state cog)
 ADD_DEPENDENCIES(tests cog_test_list cog_test_map cog_test_state)
 
-# Do "make examples" to build examples
+#-------------------------------------
+# Examples
+# Run "make examples" to build examples
 ADD_CUSTOM_TARGET(examples)
 ADD_EXECUTABLE(cog_example_basic EXCLUDE_FROM_ALL ${EXAMPLE_DIR}/example_basic.c)
 TARGET_LINK_LIBRARIES(cog_example_basic cog)
@@ -97,6 +102,7 @@ ADD_EXECUTABLE(cog_example_shape EXCLUDE_FROM_ALL ${EXAMPLE_DIR}/example_shape.c
 TARGET_LINK_LIBRARIES(cog_example_shape cog)
 ADD_DEPENDENCIES(examples cog_example_basic cog_example_anim cog_example_sound cog_example_text cog_example_sprite cog_example_input cog_example_grid cog_example_tiled cog_example_update cog_example_gles cog_example_shape)
 
+#-------------------------------------
 # Installation
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 INSTALL(FILES ${headers} DESTINATION include)
