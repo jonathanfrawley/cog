@@ -3,9 +3,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
+#include <png.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <png.h>
 
 #include "cog_defs.h"
 #include "cog_log.h"

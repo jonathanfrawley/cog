@@ -77,3 +77,18 @@ See tests/
 
 ##License
 MIT. See LICENSE.txt for a copy.
+
+
+### Environment setup (Debian based distro)
+sudo apt-get install cmake libsdl2-dev openal-dev libjansson-dev libopenal-dev libpng12-dev libfreetype6-dev
+
+### Cross compiling setup (Fedora)
+cd ~/build
+sudo dnf install \                              
+    autoconf automake bash bison bzip2 flex gcc-c++ \
+    gdk-pixbuf2-devel gettext git gperf intltool make \
+    sed libffi-devel libtool openssl-devel p7zip patch \
+    perl pkgconfig python ruby scons unzip wget xz cmake
+git clone https://github.com/mxe/mxe.git
+cd mxe
+make gcc sdl2 sdl2_mixer libpng jansson freetype libxml2
