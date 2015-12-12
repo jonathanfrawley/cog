@@ -128,10 +128,14 @@ void cog_sprite_set(cog_sprite_id id, cog_sprite src) {
     sprite->dim = src.dim;
     sprite->rot = src.rot;
     sprite->vel = src.vel;
-		if(src.layer) sprite->layer = src.layer;
     sprite->ang_vel = src.ang_vel;
     sprite->update_func = src.update_func;
     sprite->pixel_perfect = src.pixel_perfect;
+    if(src.layer > 0) {
+        cog_sprite_decrease_tex_sprite_len(sprite);
+        sprite->layer = src.layer;
+        cog_sprite_increase_tex_sprite_len(sprite);
+    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -174,6 +178,7 @@ uint32_t cog_sprite_draw_layer(uint32_t layer, uint32_t tex_id, uint32_t global_
                                      *)
                                     curr->data));
         if(curr_sprite->layer == layer && curr_sprite->tex_id == tex_id) {
+            cog_debugf("Drawing sprite at layer %d", layer);
             cog_graphics_draw_sprite(curr_sprite, global_idx + idx);
             idx++;
         }

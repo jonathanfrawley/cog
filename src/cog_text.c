@@ -15,7 +15,7 @@
 #include "cog_text_freetype.h"
 #endif
 
-#define COG_TEXT_LAYER 3
+#define COG_TEXT_LAYER 5
 
 typedef struct {
     void (*text_init)(void);

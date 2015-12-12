@@ -76,7 +76,7 @@ void _cog_init(cog_config config) {
     cog_tween_init();
     cog_rect_init();
     starttime = SDL_GetTicks();
-		debug = config.debug;
+    debug = config.debug;
     //init rng
     srand(2);
 }
@@ -128,21 +128,21 @@ void cog_update() {
     }
     cog_input_check_keys();
     cog_input_check_mouse();
-if(debug) {
-    //Useful logging every second.
-    frametimecounter += lastframetime;
-    if(frametimecounter >= 1000) {
+    if(debug) {
+        //Useful logging every second.
+        frametimecounter += lastframetime;
+        if(frametimecounter >= 1000) {
 #ifdef COG_PERF_STATS 
-        cog_debugf("nupdates <%d>, ndraws <%d>, render_time <%d> cog_map_get_counter <%d> cog_map_get_timer <%lf>", frameupdatecounter,
-                   framedrawcounter, render_time, cog_map_get_counter(), cog_map_get_timer());
+            cog_debugf("nupdates <%d>, ndraws <%d>, render_time <%d> cog_map_get_counter <%d> cog_map_get_timer <%lf>", frameupdatecounter,
+                    framedrawcounter, render_time, cog_map_get_counter(), cog_map_get_timer());
 #endif // COG_PERF_STATS
-        frametimecounter = 0;
-        framedrawcounter = 0;
-        frameupdatecounter = 0;
-        cog_map_reset_counter();
-        cog_map_reset_timer();
+            frametimecounter = 0;
+            framedrawcounter = 0;
+            frameupdatecounter = 0;
+            cog_map_reset_counter();
+            cog_map_reset_timer();
+        }
     }
-}
 }
 
 //This is to allow the user to control the mainloop

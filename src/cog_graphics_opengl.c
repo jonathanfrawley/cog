@@ -323,8 +323,8 @@ double cog_graphics_opengl_round_h(double n) {
 
 void cog_graphics_opengl_draw_rect(cog_rect* rect) {
     if(shaders_supported) {
-				glUseProgramObjectARB(shaders[SHADER_COLOR].program);
-		}
+        glUseProgramObjectARB(shaders[SHADER_COLOR].program);
+    }
     //1.5 here is due to cos and sin rotation below.
     double w = rect->dim.w * 1.415;
     double h = rect->dim.h * 1.415;
@@ -339,8 +339,8 @@ void cog_graphics_opengl_draw_rect(cog_rect* rect) {
     //TODO: Looks like the quads are getting stretched on rotation. Fix this somehow
     double rot = rect->rot - COG_PI/4;
 
-		GLfloat vertices[vertex_amount];
-		GLuint indices[index_amount];
+    GLfloat vertices[vertex_amount];
+    GLuint indices[index_amount];
     vertices[0] = -1.0f * w * sin(rot) + x_offset;
     vertices[1] = 1.0f * h * cos(rot) + y_offset;
     vertices[2] = 0;
@@ -376,6 +376,12 @@ void cog_graphics_opengl_draw_rect(cog_rect* rect) {
 }
 
 void cog_graphics_opengl_draw_sprite(cog_sprite* sprite, uint32_t idx) {
+    if(shaders_supported) {
+#ifndef USE_LEGACY_SDL
+        // Texture is the default shader
+        glUseProgramObjectARB(shaders[SHADER_TEXTURE].program);
+#endif
+    }
     glBindTexture(GL_TEXTURE_2D, sprite->tex_id);
     uint32_t offset = idx * vertex_amount;
     //1.5 here is due to cos and sin rotation below.
@@ -674,7 +680,7 @@ void cog_graphics_opengl_clear() {
     glLoadIdentity();
     if(shaders_supported) {
 #ifndef USE_LEGACY_SDL
-				// Texture is the default shader
+        // Texture is the default shader
         glUseProgramObjectARB(shaders[SHADER_TEXTURE].program);
 #endif
     }

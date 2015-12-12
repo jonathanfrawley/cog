@@ -74,22 +74,24 @@ void cog_rect_set(cog_rect_id id, cog_rect src) {
     rect->rot = src.rot;
     rect->vel = src.vel;
     rect->ang_vel = src.ang_vel;
-		if(src.layer) rect->layer = src.layer;
     rect->col = src.col;
     rect->pixel_perfect = src.pixel_perfect;
     rect->update_func = src.update_func;
+    if(src.layer > 0) {
+        rect->layer = src.layer;
+    }
 }
 
 uint32_t cog_rect_len(uint32_t layer) {
-		uint32_t size = 0;
+    uint32_t size = 0;
     COG_LIST_FOREACH(&active_rects) {
         //draw current rect if it is on the correct layer
         cog_rect* curr_rect = (cog_rect*) cog_map_get(&rects,
-                                  *((cog_rect_id
-                                     *)
-                                    curr->data));
+                *((cog_rect_id
+                        *)
+                    curr->data));
         if(curr_rect->layer == layer) {
-						size++;
+            size++;
         }
     }
     return size;
@@ -114,6 +116,7 @@ uint32_t cog_rect_draw_layer(uint32_t layer) {
                                      *)
                                     curr->data));
         if(curr_rect->layer == layer) {
+            cog_debugf("DRAWING AT LAYER %d", layer);
             cog_graphics_draw_rect(curr_rect);
             idx++;
         }

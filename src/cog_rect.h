@@ -3,7 +3,7 @@
 
 #include "cog_types.h"
 
-#define COG_RECT_LAYER 3
+#define COG_RECT_LAYER 2
 
 typedef struct cog_rect {
     cog_rect_id id;

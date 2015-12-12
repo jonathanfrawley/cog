@@ -126,6 +126,11 @@ void cog_anim_set(cog_anim_id id, cog_anim src) {
     anim->finished = src.finished;
     anim->pixel_perfect = src.pixel_perfect;
     anim->update_func = src.update_func;
+    if(src.layer) {
+        cog_anim_decrease_tex_anim_len(anim);
+        anim->layer = src.layer;
+        cog_anim_increase_tex_anim_len(anim);
+    }
 }
 
 void cog_anim_set_frames_array(cog_anim_id id, int frames[]) {
