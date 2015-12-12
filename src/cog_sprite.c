@@ -131,7 +131,7 @@ void cog_sprite_set(cog_sprite_id id, cog_sprite src) {
     sprite->ang_vel = src.ang_vel;
     sprite->update_func = src.update_func;
     sprite->pixel_perfect = src.pixel_perfect;
-    if(src.layer > 0) {
+    if(src.layer) {
         cog_sprite_decrease_tex_sprite_len(sprite);
         sprite->layer = src.layer;
         cog_sprite_increase_tex_sprite_len(sprite);
