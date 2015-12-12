@@ -26,9 +26,6 @@ void cog_window_sdl2_init(cog_config config, cog_window* window) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 #endif
-    if(config.fullscreen) {
-        flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
-    }
     if((sdl_window = SDL_CreateWindow("cog game",
                                       SDL_WINDOWPOS_UNDEFINED,
                                       SDL_WINDOWPOS_UNDEFINED,
@@ -46,6 +43,9 @@ void cog_window_sdl2_init(cog_config config, cog_window* window) {
     window->w = (double)width;
     window->h = (double)height;
     screen_surface = SDL_GetWindowSurface(sdl_window);
+    if(config.fullscreen) {
+        cog_window_sdl2_toggle_fullscreen(window);
+    }
 }
 
 void cog_window_sdl2_update(cog_window* window) {
@@ -60,7 +60,7 @@ void cog_window_sdl2_quit(cog_window* window) {
 }
 
 void cog_window_sdl2_toggle_fullscreen(cog_window* window) {
-    SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN);
 }
 
 SDL_Window* cog_window_sdl2_get_window(void) {
