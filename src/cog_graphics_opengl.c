@@ -482,7 +482,7 @@ void cog_graphics_opengl_draw_text(cog_text* text) {
                 continue;
             }
         }
-        if(FT_Load_Char(text_ft->face, *p, FT_LOAD_RENDER|FT_LOAD_MONOCHROME)) {
+        if(FT_Load_Char(text_ft->face, *p, FT_LOAD_RENDER)) {
             continue;
         }
         glTexImage2D(
