@@ -2,3 +2,4 @@
  - Make sprite example change position and rotation
  - Key example
  - Add lerp function from cucumbersome
+ - Easy way to tell enter and num keys when checking input.
