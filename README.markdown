@@ -82,6 +82,12 @@ MIT. See LICENSE.txt for a copy.
 ### Environment setup (Debian based distro)
 sudo apt-get install cmake libsdl2-dev openal-dev libjansson-dev libopenal-dev libpng12-dev libfreetype6-dev
 
+### Environment setup (Fedora based distro)
+sudo dnf install cmake SDL2-devel openal-soft-devel jansson-devel libpng12-devel freetype-devel
+
+### Runtime setup (Fedora based distro)
+sudo dnf install SDL2 openal-soft jansson libpng12 freetype
+
 ### Cross compiling setup (Fedora)
 cd ~/build
 sudo dnf install \                              
